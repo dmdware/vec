@@ -1,18 +1,10 @@
 ﻿#ifndef APPMAIN_H
 #define APPMAIN_H
 
-#define VER_MAJ				0	//major version / sequal
-#define VER_FS				0	//feature set
-#define VER_ATT				7	//attempt
-#define VER_STAT			VERSTAT_A		//status
-#define VER_POST			0	//post-release number, or release candidate number
-//#define VERSION				MakeVer(VER_MAJ, VER_FS, VER_ATT, VER_STAT, VER_POST)
 #define VERSION				0
 
 #define CONFIGFILE			"config.ini"
-//#define TITLE				STRTABLE[STR_TITLE]
 #define TITLE				"T"
-#define SERVER_ADDR			"corpstates.com"
 
 #define APPMODE_LOGO		0
 #define APPMODE_INTRO		1
@@ -23,7 +15,7 @@
 #define APPMODE_PAUSE		6
 #define APPMODE_EDITOR		7
 #define APPMODE_JOINING		8
-extern char g_mode;
+extern char g_appmode;
 
 #define VIEWMODE_FIRST		0
 #define VIEWMODE_THIRD		1
