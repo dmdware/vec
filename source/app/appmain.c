@@ -68,13 +68,8 @@ void UpdLoad()
 	case 1:
 		if(!Load1Texture())
 		{
-			for(it=g_modload.head; it; it=it->next)
-				free(it->data[0]);
-			for(it=g_texload.head; it; it=it->next)
-				free(it->data[0]);
-
-			List_clear(&g_modload);
-			List_clear(&g_texload);
+			List_free(&g_modload);
+			List_free(&g_texload);
 
 			g_lastLMd = -1;
 			g_lastLTex = -1;
