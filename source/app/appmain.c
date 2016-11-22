@@ -280,8 +280,8 @@ void Draw()
 	float modelview[16];
 	float modelmat[16];
 	Vec3f viewdir;
-	float translation[3];
-
+	float trans[3];
+	float viewmat[16];
 	CHECKGLERROR();
 
 	if(g_appmode == APPMODE_LOADING)
@@ -296,14 +296,16 @@ void Draw()
 		PerspProj(projection, FIELD_OF_VIEW, aspect, MIN_DIST, MAX_DIST);
 		
 		viewvec = g_pcam->view;
-		posvec = g_pcam->lookpos();
+		Cam_lookpos(&posvec, g_pcam);
 		upvec = g_pcam->up;
 
 		if(g_appmode == APPMODE_PLAY && g_viewmode == VIEWMODE_THIRD)
 		{
-			viewdir = Normalize(viewvec - posvec);
+			Vec3f_sub(&viewdir, viewvec, posvec);
+			viewdir = Normalize(viewdir);
 			viewvec = g_pcam->pos;
-			posvec = viewvec - viewdir * 1000;
+			Vec3f_mulf(&posvec, viewdir, 1000);
+			Vec3f_sub(&posvec, viewvec, posvec);
 
 			//TraceWork tw;
 			//TraceRay(&g_map.brush, &tw, viewvec, posvec);
@@ -311,20 +313,22 @@ void Draw()
 			posvec = g_bsp.traceray(viewvec, posvec);
 		}
 
-		Matrix viewmat = gluLookAt2(posvec.x, posvec.y, posvec.z,
+		gluLookAt2(viewmat,
+			posvec.x, posvec.y, posvec.z,
 			viewvec.x, viewvec.y, viewvec.z,
 			upvec.x, upvec.y, upvec.z);
 
-		translation = {0, 0, 0};
-		modelview.translation(translation);
-		modelmat.translation(translation);
-		modelview.postmult(viewmat);
+		trans.x = 0;
+		trans.y = 0;
+		trans.z = 0;
+		Mat_trans(modelview, trans);
+		Mat_trans(modelmat, trans);
+		Mat_postmult(modelview, viewmat);
 
-		g_frustum.construct(projection.matrix, modelview.matrix);
+		Frust_init(g_frustum, projection, modelview);
 
 		RenderToShadowMap(projection, viewmat, modelmat, viewvec, DrawSceneDepth);
 		RenderShadowedScene(projection, viewmat, modelmat, modelview, DrawScene);
-		//AfterDraw(projection, viewmat, modelmat);
 	}
 
 	Widget_frameupd((Widget*)gui);
@@ -333,14 +337,46 @@ void Draw()
 
 void LoadCfg()
 {
-	EnumDisplay();
+	EnumDisp();
+	Node *rit; /* Resl */
+	Resl *rp;
+	Vec2i winsz;
+	int w, h;
+	float scale;
+	char cfgfull[SFH_MAX_PATH+1];
+	char line[128];
+	char key[128];
+	char act[128];
+	FILE *fp;
+	float valuef;
+	int valuei;
+	dmbool valueb;
 
-	g_selres = g_resolution[0];
-
-	for(auto rit=g_resolution.begin(); rit!=g_resolution.end(); rit++)
+	if(g_ress.size)
 	{
-#if 0
-		//below acceptable height?
+		rit = g_ress.head;
+		rp = (Resl*)rit->data;
+		g_selres = *rp;
+	}
+	else
+	{
+		g_selres.width = 1280;
+		g_selres.height = 640;
+
+		SDL_GL_GetDrawableSize(g_window, &winsz.x, &winsz.y);
+
+		w = imax(winsz.x, winsz.y);
+		h = imin(winsz.x, winsz.y);
+
+		scale = 640.0f / (float)h;
+
+		g_selres.width = (int)( w * scale );
+		g_selres.height = (int)( h * scale );
+	}
+
+	for(rit=g_ress.head; rit; rit=rit->next)
+	{
+		/* below acceptable height? */
 		if(g_selres.height < 480)
 		{
 			if(rit->height > g_selres.height &&
@@ -349,9 +385,8 @@ void LoadCfg()
 				g_selres = *rit;
 			}
 		}
-		//already of acceptable height?
+		/* already of acceptable height? */
 		else
-#endif
 		{
 			//get smallest acceptable resolution
 			if(rit->height < g_selres.height &&
@@ -364,95 +399,86 @@ void LoadCfg()
 		}
 	}
 
-	//g_selres.width = 568;
-	//g_selres.height = 320;
+	SwitchLang("english");
 
-	//g_selres.height = 568;
-	//g_selres.width = 320;
+	FullWritePath(CONFIGFILE, cfgfull);
 
-	g_lang = LANG_ENG;
-	SwitchLang(g_lang);
+	fp = fopen(cfgfull, "r");
 
-	char full[DMD_MAX_PATH+1];
-	FullWritePath(CONFIGFILE, full);
-
-	FILE* f = fopen(full, "r");
-
-	if(!f)
+	if(!fp)
 		return;
 
-	char line[256];
-	char keystr[128];
-	char actstr[128];
-
-	while(!f.eof())
+	while(!feof(fp))
 	{
-		strcpy(keystr, "");
-		strcpy(actstr, "");
+		strcpy(key, "");
+		strcpy(act, "");
 
-		gets(f, line);
+		getline(fp, line);
 
 		if(strlen(line) > 127)
 			continue;
 
-		actstr[0] = 0;
+		act[0] = 0;
 
-		sscanf(line, "%s %s", keystr, actstr);
+		sscanf(line, "%s %s", key, act);
 
-		float valuef = StrToFloat(actstr);
-		int valuei = StrToInt(actstr);
-		bool valueb = valuei ? dmtrue : dmfalse;
+		valuef = StrToFloat(act);
+		valuei = StrToInt(act);
+		valueb = valuei ? dmtrue : dmfalse;
 
-		if(stricmp(keystr, "fullscreen") == 0)					g_fullscreen = valueb;
-		else if(stricmp(keystr, "client_width") == 0)			g_width = g_selres.width = valuei;
-		else if(stricmp(keystr, "client_height") == 0)			g_height = g_selres.height = valuei;
-		else if(stricmp(keystr, "screen_bpp") == 0)				g_bpp = valuei;
-		else if(stricmp(keystr, "volume") == 0)					SetVol(valuei);
-		else if(stricmp(keystr, "language") == 0)				SwitchLang(actstr);
+		if(strcmp(key, "fullscreen") == 0)					g_fs = valueb;
+		else if(strcmp(key, "client_width") == 0)			g_width = g_selres.width = g_origwidth = valuei;
+		else if(strcmp(key, "client_height") == 0)			g_height = g_selres.height = g_origheight = valuei;
+		else if(strcmp(key, "screen_bpp") == 0)				g_bpp = valuei;
+		else if(strcmp(key, "volume") == 0)					SetVol(valuei);
+		else if(strcmp(key, "language") == 0)				SwitchLang(act);
 	}
 
-	fclose(f);
+	fclose(fp);
 }
 
 void LoadName()
 {
-	char full[DMD_MAX_PATH+1];
-	FullWritePath("name.txt", full);
+	char cfgfull[SFH_MAX_PATH+1];
+	FILE *fp;
+	char line[128];
 
-	FILE* f = fopen(full, "r");
+	FullWritePath("name.txt", cfgfull);
 
-	if(!f)
+	fp = fopen(cfgfull, "r");
+
+	if(!fp)
 	{
 		GenName(g_name);
 		return;
 	}
 
-	gets(f, g_name);
-
-	fclose(f);
+	getline(fp, line);
+	strcpy(g_name, line);
+	fclose(fp);
 }
 
 void WriteConfig()
 {
-	char full[DMD_MAX_PATH+1];
-	FullWritePath(CONFIGFILE, full);
-	FILE* fp = fopen(full, "w");
+	char cfgfull[SFH_MAX_PATH+1];
+	FILE* fp = fopen(cfgfull, "w");
+	FullWritePath(CONFIGFILE, cfgfull);
 	if(!fp)
 		return;
-	fprintf(fp, "fullscreen %d \r\n\r\n", g_fullscreen ? 1 : 0);
+	fprintf(fp, "fullscreen %d \r\n\r\n", g_fs ? 1 : 0);
 	fprintf(fp, "client_width %d \r\n\r\n", g_selres.width);
 	fprintf(fp, "client_height %d \r\n\r\n", g_selres.height);
 	fprintf(fp, "screen_bpp %d \r\n\r\n", g_bpp);
 	fprintf(fp, "volume %d \r\n\r\n", g_volume);
-	fprintf(fp, "language %s\r\n\r\n", g_lang.c_str());
+	fprintf(fp, "language %s\r\n\r\n", g_lang);
 	fclose(fp);
 }
 
 void WriteName()
 {
-	char full[DMD_MAX_PATH+1];
-	FullWritePath("name.txt", full);
-	FILE* fp = fopen(full, "w");
+	char cfgfull[SFH_MAX_PATH+1];
+	FILE* fp = fopen(cfgfull, "w");
+	FullWritePath("name.txt", cfgfull);
 	if(!fp)
 		return;
 	fprintf(fp, "%s", g_name);
@@ -538,6 +564,7 @@ void Deinit()
 {
 	Node *cit;
 	GUI* gui;
+	unsigned __int64 start;
 
 	EndSess();
 	FreeMap();
@@ -552,7 +579,7 @@ void Deinit()
 		Disconnect((NetConn*)cit->data);
 	}
 
-	const unsigned long long start = GetTicks();
+	start = GetTicks();
 	/* After quit, wait to send out quit packet to make sure host/clients recieve it. */
 	while (GetTicks() - start < QUIT_DELAY)
 	{
