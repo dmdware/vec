@@ -363,7 +363,7 @@ void LoadCfg()
 		g_selres.width = 1280;
 		g_selres.height = 640;
 
-		SDL_GL_GetDrawableSize(g_window, &winsz.x, &winsz.y);
+		SDL_GL_GetDrawableSize(g_win, &winsz.x, &winsz.y);
 
 		w = imax(winsz.x, winsz.y);
 		h = imin(winsz.x, winsz.y);
@@ -834,7 +834,7 @@ void EventLoop()
 
 			Draw();
 			CHECKGLERROR();
-			SDL_GL_SwapWindow(g_window);
+			SDL_GL_SwapWindow(g_win);
 			CHECKGLERROR();
 
 			CHECKGLERROR();
@@ -940,7 +940,7 @@ void Main()
 	SDL_ShowCursor(dmtrue);
 }
 
-bool RunOptions(const char* cmdline)
+dmbool RunOptions(const char* cmdline)
 {
 	if(strcmp(cmdline, "") == 0)
 	{
@@ -1026,10 +1026,6 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 #endif
-#endif
-
-#ifdef PLATFORM_IOS
-	exit(0);
 #endif
 
 	return 0;

@@ -182,6 +182,22 @@
 				RelativePath="..\..\..\source\app\appres.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\platform.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\platform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\window.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\window.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
