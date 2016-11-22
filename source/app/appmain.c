@@ -56,7 +56,7 @@ void UpdLogo()
 void UpdLoad()
 {
 	Widget *gui, *menu;
-	Link* it;
+	Node* it;
 
 	gui = (Widget*)&g_gui;
 
