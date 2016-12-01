@@ -6,15 +6,15 @@
 #ifndef MATCHMAKER
 #endif
 
-dmbool g_quit = false;
-dmbool g_background = false;
-double g_drawfrinterval = 0.0f;
-dmbool g_fs = true;
-Resl g_selres;
-Vector g_ress; /* Resl */
+dmbool g_quit = dmfalse;
+dmbool g_background = dmfalse;
+dmbool g_fs = dmtrue;
+Vec2i g_selres;
+Vector g_ress; /* Vec2i */
 Vector g_bpps; /* char */
-double g_instantdrawfps = 0.0f;
+double g_instantdrawfps = 0;
 double g_instantupdfps = 0;
+double g_drawfrinterval = 0;
 double g_updfrinterval = 0;
 
 #ifndef MATCHMAKER
@@ -25,13 +25,13 @@ int g_height = INI_HEIGHT;
 int g_bpp = INI_BPP;
 Vec2i g_mouse;
 Vec2i g_mousestart;
-dmbool g_keyintercepted = false;
+dmbool g_keyintercepted = dmfalse;
 dmbool g_keys[SDL_NUM_SCANCODES] = {0};
 dmbool g_mousekeys[5] = {0};
 float g_zoom = INI_ZOOM;
-dmbool g_mouseout = false;
-dmbool g_moved = false;
-dmbool g_canplace = false;
+dmbool g_mouseout = dmfalse;
+dmbool g_moved = dmfalse;
+dmbool g_canplace = dmfalse;
 int g_bpcol = -1;
 int g_build = BL_NONE;
 Vec3i g_vdrag[2];
@@ -39,7 +39,7 @@ Camera g_bpcam;
 int g_bptype = -1;
 float g_bpyaw = 0;
 Sel g_sel;
-dmbool g_mouseoveraction = false;
+dmbool g_mouseoveraction = dmfalse;
 int g_curst = CU_DEFAULT;	//cursor state
 int g_kbfocus = 0;	//keyboad focus counter
 #endif
@@ -59,7 +59,7 @@ void EnumDisp()
 	{
 		SDL_GetDisplayMode(0, i, &mode);
 
-		found = ecfalse;
+		found = dmfalse;
 
 		for(rit=g_ress.head; rit; rit=rit->next)
 		{
@@ -68,7 +68,7 @@ void EnumDisp()
 			if(rp->width == mode.w &&
 				rp->height == mode.h)
 			{
-				found = ectrue;
+				found = dmtrue;
 				break;
 			}
 		}
@@ -139,10 +139,10 @@ dmbool DrawNextFrame()
 	if(deltaTime >= desiredFPMS)
 	{
 		lastdrawtick = currentTime;
-		return true;
+		return dmtrue;
 	}
 
-	return false;
+	return dmfalse;
 }
 
 
@@ -182,10 +182,10 @@ dmbool UpdNextFrame()
 	if(deltaTime >= desiredFPMS)
 	{
 		lastupdtick = currentTime;
-		return true;
+		return dmtrue;
 	}
 
-	return false;
+	return dmfalse;
 }
 
 #ifndef MATCHMAKER
@@ -238,7 +238,7 @@ dmbool InitWindow()
 	InitGLSL();
 	LoadFonts();
 
-	return true;
+	return dmtrue;
 }
 
 SDL_bool IsFullScreen(SDL_Window *win)
@@ -275,7 +275,7 @@ int SDL_ToggleFS(SDL_Window *win)
 int SDL_ToggleFS(SDL_Window *win, int w, int h)
 {
 	Uint32 flags = (SDL_GetWindowFlags(win) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
-	if (SDL_SetWindowFullscreen(win, flags) < 0) return -1; // NOTE: this takes FLAGS as the second param, NOT true/false!
+	if (SDL_SetWindowFullscreen(win, flags) < 0) return -1; // NOTE: this takes FLAGS as the second param, NOT dmtrue/dmfalse!
 	SDL_SetWindowSize(win, w, h);
 	return 0; 
 }
@@ -351,7 +351,7 @@ dmbool MakeWin(const char* title)
 	{
 		sprintf(msg, "Could not create window: %s\n", SDL_GetError());
 		ErrMess("Error", msg);
-		return false;
+		return dmfalse;
 	}
 
 	g_gx = SDL_GL_CreateContext(g_win);
@@ -360,7 +360,7 @@ dmbool MakeWin(const char* title)
 	{
 		BreakWin(title);
 		ErrMess("Error", "Couldn't create GL context");
-		return false;
+		return dmfalse;
 	}
 
 	SDL_GL_MakeCurrent(g_win, g_gx);
@@ -374,12 +374,12 @@ dmbool MakeWin(const char* title)
 	{
 		BreakWin(title);
 		ErrMess("Error", "Initialization failed");
-		return false;
+		return dmfalse;
 	}
 
 	CenterMouse();
 
-	return true;
+	return dmtrue;
 }
 
 #endif

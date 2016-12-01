@@ -16,15 +16,14 @@
 #define INI_BPP				32
 #define DRAW_FRAME_RATE		30
 #define SIM_FRAME_RATE		30
-#define MIN_DISTANCE		1.0f
-#define MAX_DISTANCE		(5.0f * 1000.0f * 10.0f)
-#define FIELD_OF_VIEW		45.0f
+#define MIN_DISTANCE		1
+#define MAX_DISTANCE		(5 * 1000 * 10)
+#define FIELD_OF_VIEW		90
 #define PROJ_RIGHT			600
 #define MIN_ZOOM		0.05f
 #define MAX_ZOOM		0.7f
 #define INI_ZOOM			0.05f
 
-extern double g_drawfrinterval;
 extern dmbool g_quit;
 extern dmbool g_background;
 extern dmbool g_active;
@@ -32,14 +31,9 @@ extern dmbool g_fs;
 extern double g_instantdrawfps;
 extern double g_instantupdfps;
 extern double g_updfrinterval;
+extern double g_drawfrinterval;
 
-struct Resl
-{
-	int width;
-	int height;
-};
-
-extern Resl g_selres;
+extern Vec2i g_selres;
 extern Vector g_ress;
 extern Vector g_bpps;
 

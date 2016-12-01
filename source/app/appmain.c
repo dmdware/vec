@@ -3,6 +3,7 @@
 
 #include "appmain.h"
 #include "appres.h"
+#include "../utils.h"
 
 char g_appmode = APPMODE_LOGO;
 char g_viewmode = VIEWMODE_FIRST;
@@ -151,14 +152,14 @@ void Update()
 		UpdEd();
 }
 
-void DrawScene(Matrix projection, Matrix viewmat, Matrix modelmat, Matrix modelviewinv, float mvLightPos[3], float lightDir[3])
+void DrawScene(Matrix proj, Matrix viewmat, Matrix modelmat, Matrix modelviewinv, float mvLightPos[3], float lightDir[3])
 {
 	Shader* s;
 
 	if(g_projtype == PROJ_ORTHO)
-		UseShadow(SHADER_MODEL, projection, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
+		UseShadow(SHADER_MODEL, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
 	else
-		UseShadow(SHADER_MODELPERSP, projection, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
+		UseShadow(SHADER_MODELPERSP, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
 	s = g_sh+g_curS;
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, g_depth);
@@ -170,9 +171,9 @@ void DrawScene(Matrix projection, Matrix viewmat, Matrix modelmat, Matrix modelv
 	EndS();
 
 	if(g_projtype == PROJ_ORTHO)
-		UseShadow(SHADER_MAP, projection, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
+		UseShadow(SHADER_MAP, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
 	else
-		UseShadow(SHADER_MAPPERSP, projection, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
+		UseShadow(SHADER_MAPPERSP, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
 
 	CHECKGLERROR();
 	glActiveTexture(GL_TEXTURE4);
@@ -193,35 +194,6 @@ void DrawSceneDepth()
 {
 	DrawModelHolders();
 	DrawEdMapDepth(&g_edmap, dmfalse);
-}
-
-/* get a power of 2 number that is big enough to hold 'lowerbound' but does not exceed 2048 */
-int Max2Pow(int lowerbound)
-{
-	int twopow = 2;
-
-	while( twopow < lowerbound
-#if 0
-		&& twopow < 2048
-#endif
-		)
-		twopow *= 2;
-
-	return twopow;
-}
-
-int Max2Pow32(int lowerbound)
-{
-	int twopow = 32;
-
-	while( twopow < lowerbound
-#if 0
-		&& twopow < 2048
-#endif
-		)
-		twopow *= 2;
-
-	return twopow;
 }
 
 void MakeFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* renderfb, unsigned int* renderdepthtex, int w, int h)
@@ -273,7 +245,7 @@ void DelFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* rende
 void Draw()
 {
 	float aspect;
-	float projection[16];
+	float proj[16];
 	Vec3f viewvec;
 	Vec3f posvec;
 	Vec3f upvec;
@@ -293,7 +265,7 @@ void Draw()
 	if(g_appmode == APPMODE_PLAY)
 	{	
 		aspect = fabsf((float)g_width / (float)g_height);
-		PerspProj(projection, FIELD_OF_VIEW, aspect, MIN_DIST, MAX_DIST);
+		PerspProj(proj, FIELD_OF_VIEW, aspect, MIN_DIST, MAX_DIST);
 		
 		viewvec = g_pcam->view;
 		Cam_lookpos(&posvec, g_pcam);
@@ -304,16 +276,17 @@ void Draw()
 			Vec3f_sub(&viewdir, viewvec, posvec);
 			viewdir = Normalize(viewdir);
 			viewvec = g_pcam->pos;
-			Vec3f_mulf(&posvec, viewdir, 1000);
-			Vec3f_sub(&posvec, viewvec, posvec);
+			posvec.x = viewvec.x - viewdir.x * 1000;
+			posvec.y = viewvec.y - viewdir.y * 1000;
+			posvec.z = viewvec.z - viewdir.z * 1000;
 
 			//TraceWork tw;
 			//TraceRay(&g_map.brush, &tw, viewvec, posvec);
 			//posvec = tw.clip;
-			posvec = g_bsp.traceray(viewvec, posvec);
+			//posvec = g_bsp.traceray(viewvec, posvec);
 		}
 
-		gluLookAt2(viewmat,
+		LookAt(viewmat,
 			posvec.x, posvec.y, posvec.z,
 			viewvec.x, viewvec.y, viewvec.z,
 			upvec.x, upvec.y, upvec.z);
@@ -325,10 +298,10 @@ void Draw()
 		Mat_trans(modelmat, trans);
 		Mat_postmult(modelview, viewmat);
 
-		Frust_init(g_frustum, projection, modelview);
+		Frust_init(g_frustum, proj, modelview);
 
-		RenderToShadowMap(projection, viewmat, modelmat, viewvec, DrawSceneDepth);
-		RenderShadowedScene(projection, viewmat, modelmat, modelview, DrawScene);
+		RenderToShadowMap(proj, viewmat, modelmat, viewvec, DrawSceneDepth);
+		RenderShadowedScene(proj, viewmat, modelmat, modelview, DrawScene);
 	}
 
 	Widget_frameupd((Widget*)gui);

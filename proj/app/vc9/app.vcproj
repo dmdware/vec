@@ -183,11 +183,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\gui.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\platform.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\platform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\render\shader.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\render\shader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\utils.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\utils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\widget.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\widget.h"
 				>
 			</File>
 			<File

@@ -324,7 +324,6 @@ typedef unsigned int uint;
 #endif
 
 extern SDL_Window *g_win;
-extern SDL_Renderer* g_renderer;
 extern SDL_GLContext g_gx;
 
 #define SPECBUMPSHADOW
