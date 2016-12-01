@@ -40,121 +40,110 @@ void Widget_hideall(Widget *w)
 	Node *i;
 	Widget *iw;
 
-	for(i=sub.head; i; i=i->next)
+	for(i=w->sub.head; i; i=i->next)
 	{
 		iw = (Widget*)iw->data;
 		Widget_hide(iw);
 	}
 }
 
-void Widget_frameupd()
+void Widget_frameupd(Widget *w)
 {
-	for(std::list<Widget*>::iterator i=sub.begin(); i!=sub.end(); i++)
-		(*i)->frameupd();
+	Node *i;
+	Widget *iw;
+
+	for(i=w->sub.head; i; i=i->next)
+	{
+		iw = (Widget*)iw->data;
+		Widget_frameupd(iw);
+	}
 }
 
-void Widget::reframe()	//resized or moved
+void Widget_reframe(Widget *w)	//resized or moved
 {
+	Node *i;
+	Widget *iw;
+
 	if(reframefunc)
 		reframefunc(this);
 
-#if 1
-
-	if(parent)
+	if(w->parent)
 	{
-		SubCrop(parent->crop, pos, crop);
+		SubCrop(w->parent->crop, pos, crop);
 	}
 	else
 	{
-		crop[0] = 0;
-		crop[1] = 0;
-		crop[2] = (float)g_width-1;
-		crop[3] = (float)g_height-1;
+		w->crop[0] = 0;
+		w->crop[1] = 0;
+		w->crop[2] = (float)g_width-1;
+		w->crop[3] = (float)g_height-1;
 	}
-#endif
 
-#if 0	//only use when add windows widgets, and then fix parent bounds of "zoom text" and "max elev" labels
-	if(parent)
+	for(i=w->sub.head; i; i=i->next)
 	{
-		float* parp = parent->pos;
-		
-		//must be bounded by the parent's frame
-
-		pos[0] = fmax(parp[0], pos[0]);
-		pos[0] = fmin(parp[2], pos[0]);
-		pos[2] = fmax(parp[0], pos[2]);
-		pos[2] = fmin(parp[2], pos[2]);
-		pos[1] = fmax(parp[1], pos[1]);
-		pos[1] = fmin(parp[3], pos[1]);
-		pos[3] = fmax(parp[1], pos[3]);
-		pos[3] = fmin(parp[3], pos[3]);
-
-		pos[1] = fmin(pos[1], pos[3]);
-		pos[0] = fmin(pos[0], pos[2]);
+		iw = (Widget*)iw->data;
+		Widget_reframe(iw);
 	}
-#endif
-
-	for(std::list<Widget*>::iterator i=sub.begin(); i!=sub.end(); i++)
-		(*i)->reframe();
 }
 
-void Widget::draw()
+void Widget::draw(Widget *w)
 {
-	for(std::list<Widget*>::iterator wit=sub.begin(); wit!=sub.end(); wit++)
-	{
-		Widget* w = *wit;
+	Node *i;
+	Widget *iw;
 
-		if(w->hidden)
+	for(i=w->sub.head; i; i=i->next)
+	{
+		iw = (Widget*)iw->data;
+
+		if(iw->hidden)
 			continue;
 
-		w->draw();
+		Widget_draw(iw);
 	}
 }
 
-void Widget::drawover()
-{
-	for(std::list<Widget*>::iterator wit=sub.begin(); wit!=sub.end(); wit++)
-	{
-		Widget* w = *wit;
+void Widget::drawover(Widget *w)
+{	
+	Node *i;
+	Widget *iw;
 
-		if(w->hidden)
+	for(i=w->sub.head; i; i=i->next)
+	{
+		iw = (Widget*)iw->data;
+
+		if(iw->hidden)
 			continue;
 
-		w->drawover();
+		Widget_drawover(iw);
 	}
 }
 
-void Widget::inev(InEv* ie)
+void Widget_inev(Widget *w, InEv* ie)
 {
-	ecbool intercepted = ie->intercepted;
+	Node *i;
+	Widget *iw;
+	ecbool intercepted;
 	
-	//safe, may shift during call
-	for(std::list<Widget*>::reverse_iterator wit=sub.rbegin(); wit!=sub.rend();)
+	intercepted = ie->intercepted;
+	
+	i = w->sub.tail;
+	/* safe, may shift during call */
+	while(i)
 	{
-		Widget* w = *wit;
-		wit++;	//safe, may shift during call
+		iw = (Widget*)iw->data;
+		i = i->prev;	/* safe, may shift during call */
 
-		if(w->hidden)
+		if(iw->hidden)
 			continue;
 		
-		w->inev(ie);
-		
-		if(ie->intercepted != intercepted)
-		{
-			intercepted = ie->intercepted;
-			wit = sub.rbegin();
-		}
+		Widget_inev(iw, ie);
 	}
 }
 
-void Widget::tofront()
+void Widget_tofront(Widget *w)
 {
-	//return;
-
-	if(!parent)
+	if(!w->parent)
 		return;
-
-	//return;
 
 	std::list<Widget*>* subs = &parent->sub;
 
@@ -174,13 +163,6 @@ void CenterLabel(Widget* w)
 	Font* f = &g_font[w->font];
 
 	int texwidth = TextWidth(w->font, &w->label);
-
-#if 0
-	char msg[128];
-	sprintf(msg, "tw %d, tl %d, fn %d, gh %f", texwidth, w->label.texlen(), w->font, f->gheight);
-	if(g_netmode == NETM_CLIENT)
-	InfoMess(msg, msg);
-#endif
 
 	w->tpos[0] = (w->pos[2]+w->pos[0])/2 - texwidth/2;
 	w->tpos[1] = (w->pos[3]+w->pos[1])/2 - f->gheight/2;
