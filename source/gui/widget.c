@@ -35,6 +35,11 @@ void Widget_free(Widget *w)
 	w->value = NULL;
 }
 
+void Widget_chcall(Widget *w, Widget* ch, int type, void* data)
+{
+	/* TODO window scroll-bars call */
+}
+
 void Widget_hideall(Widget *w)
 {
 	Node *i;
@@ -142,93 +147,111 @@ void Widget_inev(Widget *w, InEv* ie)
 
 void Widget_tofront(Widget *w)
 {
+	Node *i;
+	Widget *iw;
+	List *parsub;
+
 	if(!w->parent)
 		return;
 
-	std::list<Widget*>* subs = &parent->sub;
+	parsub = &parent->sub;
 
-	for(std::list<Widget*>::iterator wi=subs->begin(); wi!=subs->end(); wi++)
+	for(i=parsub->head; i; i=i->next)
 	{
-		if(*wi == this)
+		iw = (Widget*)i->data;
+
+		if(iw == w)
 		{
-			subs->erase(wi);
-			subs->push_back(this);
-			break;
+			List_erase(parsub, i);
+			List_pushback2(parsub, sizeof(Widget*), &iw);
+			return;
 		}
 	}
 }
 
-void CenterLabel(Widget* w)
+void CenterLabel(Widget *w, float *tpos)
 {
-	Font* f = &g_font[w->font];
+	Font* f;
+	int texwidth;
 
-	int texwidth = TextWidth(w->font, &w->label);
+	f = g_font+w->font;
 
-	w->tpos[0] = (w->pos[2]+w->pos[0])/2 - texwidth/2;
-	w->tpos[1] = (w->pos[3]+w->pos[1])/2 - f->gheight/2;
+	texwidth = TextWidth(w->font, w->label);
+
+	tpos[0] = (w->pos[2]+w->pos[0])/2 - texwidth/2;
+	tpos[1] = (w->pos[3]+w->pos[1])/2 - f->gheight/2;
 }
 
-Widget* Widget::get(const char* name)
+Widget* Widget_get(Widget *w, const char* name)
 {
-	for(std::list<Widget*>::iterator i=sub.begin(); i!=sub.end(); i++)
-		if(stricmp((*i)->name.c_str(), name) == 0)
-			return *i;
+	Node *i;
+	Widget *iw;
+
+	for(i=w->sub.head; i; i=i->next)
+	{
+		iw = (Widget*)i->data;
+		if(!strcmp(iw->name, name))
+			return iw;
+	}
 
 	return NULL;
 }
 
-void Widget::add(Widget* neww)
+void Widget_add(Widget *w, Widget *neww)
 {
 	if(!neww)
 		OUTOFMEM();
 
-	sub.push_back(neww);
+	List_pushback2(&w->sub, sizeof(Widget*), &neww);
 }
 
-void Widget::gainfocus()
+void Widget_gainfocus(Widget *w)
 {
 }
 
-//TODO lose focus win blview members edit boxes
-
-void Widget::losefocus()
+void Widget_losefocus(Widget *w)
 {
-	for(std::list<Widget*>::iterator i=sub.begin(); i!=sub.end(); i++)
-		(*i)->losefocus();
+	Node *i;
+	Widget *iw;
+
+	/* TODO lose focus win blview members edit boxes */
+
+	for(i=w->sub.head; i; i=i->next)
+	{
+		iw = (Widget*)i->data;
+		Widget_losefocus(iw);
+	}
 }
 
-void Widget::hide()
+void Widget_hide(Widget *w)
 {
-	hidden = ectrue;
-	losefocus();
-	
-	//for(std::list<Widget*>::iterator i=sub.begin(); i!=sub.end(); i++)
-	//	(*i)->hide();
+	w->hidden = ectrue;
+	Widget_losefocus(w);
 }
 
-void Widget::show()
+void Widget_show(Widget *w)
 {
-	hidden = ecfalse;
-	//necessary for window widgets:
+	w->hidden = ecfalse;
+	/* necessary for window widgets: */
 	//tofront();	//can't break list iterator, might shift
 
 	//for(std::list<Widget*>::iterator i=sub.begin(); i!=sub.end(); i++)
 	//	(*i)->show();
 }
 
-void Widget::chcall(Widget* ch, int type, void* data)
+/* free subwidget children */
+void Widget_freech(Widget *w)
 {
-}
+	Node *i;
+	Widget *iw;
 
-//free subwidget children
-void Widget::freech()
-{
-	std::list<Widget*>::iterator witer = sub.begin();
-	while(witer != sub.end())
+	i = w->sub.begin();
+	while(i)
 	{
-		delete *witer;
-		witer = sub.erase(witer);
+		iw = (Widget*)i->data;
+		free(iw);
 	}
+	List_free(&w->sub);
 }
 
 void SubCrop(float *src1, float *src2, float *dest)
@@ -237,12 +260,4 @@ void SubCrop(float *src1, float *src2, float *dest)
 	dest[1] = fmax(src1[1], src2[1]);
 	dest[2] = fmin(src1[2], src2[2]);
 	dest[3] = fmin(src1[3], src2[3]);
-
-	//purposely inverted frame means it's out of view
-	
-	//if(ndest[0] > ndest[2])
-	//	ndest[0] = ndest[2]+1.0f;
-
-	//if(ndest[1] > ndest[3])
-	//	ndest[1] = ndest[3]+1.0f;
 }
