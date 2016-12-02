@@ -179,7 +179,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\app\appres.h"
+				RelativePath="..\..\..\source\algo\bool.h"
 				>
 			</File>
 			<File
@@ -188,6 +188,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\gui\gui.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\algo\list.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\algo\list.h"
 				>
 			</File>
 			<File
@@ -212,6 +220,22 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\utils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\vec3f.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\vec3f.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\algo\vector.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\algo\vector.h"
 				>
 			</File>
 			<File

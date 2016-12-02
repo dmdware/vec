@@ -35,7 +35,7 @@ void Widget_free(Widget *w)
 	w->value = NULL;
 }
 
-void Widget_chcall(Widget *w, Widget* ch, int type, void* data)
+void Widget_chcall(Widget *w, Widget* ch, char type, void* data)
 {
 	/* TODO window scroll-bars call */
 }

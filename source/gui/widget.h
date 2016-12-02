@@ -100,7 +100,7 @@ Widget* Widget_get(Widget *w, const char* name);
 void Widget_add(Widget *w, Widget* neww);
 void Widget_hide(Widget *w);
 void Widget_show(Widget *w);
-void Widget_chcall(Widget *w, Widget* ch, int type, void* data);	/* child callback */
+void Widget_chcall(Widget *w, Widget* ch, char type, void* data);	/* child callback */
 void Widget_freech(Widget *w);	/* free subwidget children */
 void Widget_tofront(Widget *w);	/* only used for windows. edit: needed for everything since droplist uses it on parent tree. */
 void Widget_hideall(Widget *w);

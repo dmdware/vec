@@ -53,6 +53,8 @@ void EndS();
 void InitGLSL();
 void LoadSh(int shader, const char* filev, const char* filef, bool hastexc, bool hasnorm);
 
+const char *SHTEXT [SHADERS][2];
+
 #endif
 
 

@@ -13,6 +13,49 @@
 Shader g_sh[SHADERS];
 signed char g_curS = 0;
 
+const char *SHTEXT [SHADERS][2]
+=
+{
+	/* SHADER_ORTHO */
+	{
+""\		
+"#version 120"\
+""\
+"attribute vec4 position;"\
+""\
+"uniform float width;"\
+"uniform float height;"\
+""\
+"attribute vec2 texCoordIn0;"\
+"varying vec2 texCoordOut0;"\
+""\
+"void main(void)"\
+"{"\
+"	gl_Position = vec4(gl_Vertex.x * 2.0 / width - 1.0,"\
+"		gl_Vertex.y * -2.0 / height + 1.0,"\
+"		gl_Vertex.z, "\
+"		1.0);"\
+"                    "\
+"	gl_TexCoord[0] = gl_MultiTexCoord0;"\
+"}"\
+"",
+
+""\
+"#version 120"\
+""\
+"uniform vec4 color;"\
+""\
+"varying vec2 texCoordOut0;"\
+"uniform sampler2D texture0;"\
+""\
+"void main(void)"\
+"{"\
+"	gl_FragColor = color * texture2D(texture0, gl_TexCoord[0].xy);"\
+"}"\
+""
+	}
+};
+
 void Sh_init(Shader* s)
 {
 	s->program = NULL;

@@ -2,8 +2,8 @@
 
 
 #include "appmain.h"
-#include "appres.h"
 #include "../utils.h"
+#include "../math/vec3f.h"
 
 char g_appmode = APPMODE_LOGO;
 char g_viewmode = VIEWMODE_FIRST;

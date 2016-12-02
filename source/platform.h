@@ -93,17 +93,8 @@
 #include <sys/stat.h>	//mkdir
 #endif
 
-#include <string>
-#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vector>
-#include <list>
-#include <deque>
-#include <set>
-#include <map>
-#include <fstream>
-#include <iostream>
 #include <math.h>
 #include <float.h>
 #ifndef PLATFORM_WIN
@@ -111,7 +102,6 @@
 #include <stdint.h>
 #endif
 #include <limits.h>
-#include <unordered_map>
 
 #ifdef PLATFORM_WIN
 #include <jpeglib.h>
@@ -254,11 +244,11 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/cimport.h>      // C++ importer interface
 //#include <Importer.hpp>      // C++ importer interface
 //#include <scene.h>       // Output data structure
 //#include <postprocess.h> // Post processing flags
-#include <assimp/DefaultLogger.hpp>
+//#include <assimp/DefaultLogger.h>
 #endif
 
 #ifdef PLATFORM_WIN
