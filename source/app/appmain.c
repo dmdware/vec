@@ -245,6 +245,8 @@ void DelFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* rende
 void Draw()
 {
 	/* TODO leave as float for now then use fixmath int's */
+#if 0	
+	/* unfinished */
 	float aspect;
 	float proj[16];
 	Vec3f viewvec;
@@ -306,6 +308,7 @@ void Draw()
 		RenderToShadowMap(proj, viewmat, modelmat, viewvec, DrawSceneDepth);
 		RenderShadowedScene(proj, viewmat, modelmat, modelview, DrawScene);
 	}
+#endif
 
 	Widget_frameupd((Widget*)gui);
 	Widget_draw((Widget*)gui);
