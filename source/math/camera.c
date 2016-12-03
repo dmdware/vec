@@ -5,86 +5,9 @@
 
 Camera g_cam;
 
-Vec3f Camera::up2()		
-{
-	return Normalize( Cross( strafe, view - pos ) );
-}
 
-float Camera::yaw()
-{
-	return orientv.y;
-}
 
-float Camera::pitch()
-{
-	return orientv.x;
-}
-
-void Camera::calcyaw()
-{
-	Vec3f d = view - pos;
-	orientv.y = GetYaw(d.x, d.z);
-}
-
-void Camera::calcpitch()
-{
-	Vec3f d = view - pos;
-	float lateral = MAG_VEC3F(Vec3f(d.x, 0, d.z));
-	orientv.x = RADTODEG( atan2(d.y, lateral) );
-}
-
-void Camera::calcroll()
-{
-	Vec3f d = view - pos;
-	float lateral = MAG_VEC3F(Vec3f(d.x, 0, d.z));
-	orientv.x = RADTODEG( atan2(d.y, lateral) );
-}
-
-void Camera::frameupd()
-{
-	pos = pos + vel;
-	view = view + vel;
-
-	//Vec3f vNew = pos + vel * g_drawfrinterval;
-	//MoveTo(vNew);
-}
-
-Vec3f Camera::lookpos()
-{
-	return pos;
-
-	/*
-	if(g_viewmode == FIRSTPERSON)
-		return pos;
-	else
-	{
-		Vec3f d = Normalize(view - pos);
-		Vec3f l[2];
-		l[0] = pos;
-		l[1] = pos - d * 64.0f;
-
-		l[1] = g_edmap.TraceRay(pos, l[1]);
-
-		CEntity* e;
-		int localE = g_py[g_localP].entity;
-		for(int i=0; i<ENTITIES; i++)
-		{
-			e = &g_entity[i];
-
-			if(!e->on)
-				continue;
-
-			if(localE == i)
-				continue;
-
-			l[1] = e->TraceRay(l);
-		}
-
-		return l[1];
-	}*/
-}
-
-Camera::Camera()
+void Cam_init(Camera *c)
 {
 	pos	= Vec3f(0.0, 0.0, 0.0);
 	view	= Vec3f(0.0, -1.0, 1.0);
@@ -95,26 +18,48 @@ Camera::Camera()
 	orientv.x = 0;
 	orientv.y = 0;
 
-	calcstrafe();
+	Cam_calcstrafe(c);
 }
 
-Camera::Camera(float posx, float posy, float posz, float viewx, float viewy, float viewz, float upx, float upy, float upz)
+Vec3i Cam_up2(Camera *c)		
 {
-	position(posx, posy, posz, viewx, viewy, viewz, upx, upy, upz);
+	return Normalize( Cross( strafe, view - pos ) );
 }
 
-void Camera::position(float posx, float posy, float posz, float viewx, float viewy, float viewz, float upx, float upy, float upz)
+void Cam_rotateview(Camera *c, int angle, int x, int y, int z)
 {
-	pos = Vec3f(posx, posy, posz);
-	view  = Vec3f(viewx, viewy, viewz);
-	up = Vec3f(upx, upy, upz);
+	Vec3f vNewView;
 
-	calcstrafe();
+	Vec3f vView = view - pos;		
+
+	float costheta = (float)cos(angle);
+	float sintheta = (float)sin(angle);
+
+	vNewView.x  = (costheta + (1 - costheta) * x * x)		* vView.x;
+	vNewView.x += ((1 - costheta) * x * y - z * sintheta)	* vView.y;
+	vNewView.x += ((1 - costheta) * x * z + y * sintheta)	* vView.z;
+
+	vNewView.y  = ((1 - costheta) * x * y + z * sintheta)	* vView.x;
+	vNewView.y += (costheta + (1 - costheta) * y * y)		* vView.y;
+	vNewView.y += ((1 - costheta) * y * z - x * sintheta)	* vView.z;
+
+	vNewView.z  = ((1 - costheta) * x * z - y * sintheta)	* vView.x;
+	vNewView.z += ((1 - costheta) * y * z + x * sintheta)	* vView.y;
+	vNewView.z += (costheta + (1 - costheta) * z * z)		* vView.z;
+
+	view = pos + vNewView;
 	calcyaw();
-	calcpitch();
+	calcstrafe();
 }
 
-void Camera::rotatebymouse(int dx, int dy)
+void Cam_lookat(Camera *c, Vec3i at)
+{
+	view = at;
+	calcyaw();
+	calcstrafe();
+}
+
+void Cam_rotatebymouse(Camera *c, int dx, int dy)
 {
 	if( (dx == 0) && (dy == 0) ) return;
 
@@ -188,7 +133,50 @@ void Camera::rotatebymouse(int dx, int dy)
 	//calcpitch();
 }
 
-void Camera::rotateabout(Vec3f center, float rad, float x, float y, float z)
+Vec3i Cam_lookpos(Camera *c)
+{
+	return pos;
+
+	/*
+	if(g_viewmode == FIRSTPERSON)
+		return pos;
+	else
+	{
+		Vec3f d = Normalize(view - pos);
+		Vec3f l[2];
+		l[0] = pos;
+		l[1] = pos - d * 64.0f;
+
+		l[1] = g_edmap.TraceRay(pos, l[1]);
+
+		CEntity* e;
+		int localE = g_py[g_localP].entity;
+		for(int i=0; i<ENTITIES; i++)
+		{
+			e = &g_entity[i];
+
+			if(!e->on)
+				continue;
+
+			if(localE == i)
+				continue;
+
+			l[1] = e->TraceRay(l);
+		}
+
+		return l[1];
+	}*/
+}
+
+void Cam_grounded(Camera *c, ecbool ground)
+{
+	grounded = ground;
+
+	if(grounded && vel.y < 0.0f)
+		vel.y = 0.0f;
+}
+
+void Cam_rotateabout(Camera *c, Vec3i center, int rad, int x, int y, int z)
 {
 	view = RotateAround(view, center, rad, x, y, z);
 	pos = RotateAround(pos, center, rad, x, y, z);
@@ -198,15 +186,75 @@ void Camera::rotateabout(Vec3f center, float rad, float x, float y, float z)
 	calcyaw();
 }
 
-void Camera::grounded(ecbool ground)
+void Cam_strafe(Camera *c, int speed)
 {
-	grounded = ground;
+	pos.x += strafe.x * speed;
+	pos.z += strafe.z * speed;
 
-	if(grounded && vel.y < 0.0f)
-		vel.y = 0.0f;
+	view.x += strafe.x * speed;
+	view.z += strafe.z * speed;
 }
 
-void Camera::limithvel(float vLimit)
+void Cam_move(Camera *c, int speed)
+{
+	Vec3f v = view - pos;
+
+	v = Normalize(v);
+
+	pos.x += v.x * speed;
+	pos.z += v.z * speed;
+	view.x += v.x * speed;
+	view.z += v.z * speed;
+}
+
+void Cam_accelerate(Camera *c, int speed)
+{
+	Vec3f v = view - pos;
+
+	v = Normalize(v);
+	
+	vel.x += v.x * speed;
+	vel.z += v.z * speed;
+}
+
+void Cam_accelstrafe(Camera *c, int speed)
+{
+	Vec3f v = Normalize(strafe);
+	
+	vel.x += v.x * speed;
+	vel.z += v.z * speed;
+}
+
+void Cam_accelrise(Camera *c, int speed)
+{
+	Vec3f v = Normalize(up);
+	
+	vel.y += v.y * speed;
+}
+
+void Cam_rise(Camera *c, int speed)
+{
+	Vec3f up = Normalize(up);
+
+	pos.y += up.y * speed;
+	view.y += up.y * speed; 
+}	
+
+void Cam_move(Camera *c, Vec3i delta)
+{
+	pos = pos + delta;
+	view = view + delta;
+}
+
+void Cam_moveto(Camera *c, Vec3i newpos)
+{
+	Vec3f delta = newpos - pos;
+	//Move(delta);
+	view = view + delta;
+	pos = newpos;
+}
+
+void Cam_limithvel(Camera *c, int limit)
 {
 	Vec3f hVel = Vec3f(vel.x, 0, vel.z);
 	float vVel = MAG_VEC3F( hVel );
@@ -220,158 +268,42 @@ void Camera::limithvel(float vLimit)
 	vel.z = hVel.z;
 }
 
-void Camera::rotateview(float angle, float x, float y, float z)
+void Cam_stop(Camera *c)
 {
-	Vec3f vNewView;
-
-	Vec3f vView = view - pos;		
-
-	float costheta = (float)cos(angle);
-	float sintheta = (float)sin(angle);
-
-	vNewView.x  = (costheta + (1 - costheta) * x * x)		* vView.x;
-	vNewView.x += ((1 - costheta) * x * y - z * sintheta)	* vView.y;
-	vNewView.x += ((1 - costheta) * x * z + y * sintheta)	* vView.z;
-
-	vNewView.y  = ((1 - costheta) * x * y + z * sintheta)	* vView.x;
-	vNewView.y += (costheta + (1 - costheta) * y * y)		* vView.y;
-	vNewView.y += ((1 - costheta) * y * z - x * sintheta)	* vView.z;
-
-	vNewView.z  = ((1 - costheta) * x * z - y * sintheta)	* vView.x;
-	vNewView.z += ((1 - costheta) * y * z + x * sintheta)	* vView.y;
-	vNewView.z += (costheta + (1 - costheta) * z * z)		* vView.z;
-
-	view = pos + vNewView;
-	calcyaw();
-	calcstrafe();
+	vel = Vec3f(0, 0, 0);
 }
 
-void Camera::lookat(Vec3f at)
+void Cam_calcstrafe(Camera *c)
 {
-	view = at;
-	calcyaw();
-	calcstrafe();
+	Vec3f vCross = Cross(Normalize(view - pos), up);
+	strafe = Normalize(vCross);
 }
 
-/*
-void Camera::Strafe(float speed)
+void Cam_frameupd(Camera *c)
 {
-	vel.x += strafe.x * speed;
-	vel.z += strafe.z * speed;
+	pos = pos + vel;
+	view = view + vel;
 }
 
-void Camera::Move(float speed)
-{
-	Vec3f v = view - pos;
-
-	v = Normalize(v);
-
-	vel.x += v.x * speed;
-	vel.z += v.z * speed;
-}
-*/
-
-void Camera::strafe(float speed)
-{
-	pos.x += strafe.x * speed;
-	pos.z += strafe.z * speed;
-
-	view.x += strafe.x * speed;
-	view.z += strafe.z * speed;
-}
-
-void Camera::move(float speed)
-{
-	Vec3f v = view - pos;
-
-	v = Normalize(v);
-
-	pos.x += v.x * speed;
-	pos.z += v.z * speed;
-	view.x += v.x * speed;
-	view.z += v.z * speed;
-}
-
-//ecbool g_debug2 = ecfalse;
-
-void Camera::accelerate(float speed)
-{
-	Vec3f v = view - pos;
-
-	v = Normalize(v);
-	
-	vel.x += v.x * speed;
-	vel.z += v.z * speed;
-}
-
-void Camera::accelstrafe(float speed)
-{
-	Vec3f v = Normalize(strafe);
-	
-	vel.x += v.x * speed;
-	vel.z += v.z * speed;
-}
-
-void Camera::accelrise(float speed)
-{
-	Vec3f v = Normalize(up);
-	
-	vel.y += v.y * speed;
-}
-
-void Camera::friction()
+void Cam_friction(Camera *c)
 {
 	vel.x *= INVFRICTION;
 	vel.z *= INVFRICTION;
 }
 
-void Camera::friction2()
+void Cam_friction2(Camera *c)
 {
 	vel.x *= INVFRICTION;
 	vel.y *= INVFRICTION;
 	vel.z *= INVFRICTION;
 }
 
-/*
-void Camera::Rise(float speed)
+int Cam_yaw(Camera *c)
 {
-	Vec3f v = up;
-
-	v = Normalize(v);
-
-	vel.y += v.y * speed;
-}		
-*/
-
-void Camera::rise(float speed)
-{
-	Vec3f up = Normalize(up);
-
-	pos.y += up.y * speed;
-	view.y += up.y * speed; 
-}	
-
-void Camera::move(Vec3f delta)
-{
-	pos = pos + delta;
-	view = view + delta;
+	return orientv.y;
 }
 
-void Camera::moveto(Vec3f newpos)
+int Cam_pitch(Camera *c)
 {
-	Vec3f delta = newpos - pos;
-	//Move(delta);
-	view = view + delta;
-	pos = newpos;
-}
-
-void Camera::stop()
-{
-	vel = Vec3f(0, 0, 0);
-}
-
-void Camera::calcstrafe() 
-{
-	Vec3f vCross = Cross(Normalize(view - pos), up);
-	strafe = Normalize(vCross);
+	return orientv.x;
 }

@@ -183,6 +183,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\math\camera.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\camera.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\gui.cpp"
 				>
 			</File>

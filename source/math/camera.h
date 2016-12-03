@@ -4,52 +4,48 @@
 
 #include "vec3f.h"
 #include "quaternion.h"
+#include "fixmath.h"
 
 #define MOUSE_SENSITIVITY	0.0001f	//radians over pixels
 
 struct Camera 
 {
-public:
-	Vec3f pos;					
-	Vec3f view;			
-	Vec3f up;		
-	Vec3f strafe;		
-	Vec3f vel;
-	Vec3f orientv;	// pitch, yaw, roll
+	Vec3i pos;					
+	Vec3i view;			
+	Vec3i up;		
+	Vec3i strafe;		
+	Vec3i vel;
+	Vec3i orientv;	// pitch, yaw, roll
 	Quaternion orientq;	//orientation quaternion
 	ecbool grounded;
+};
 
-	Camera();
-	Camera(float posx, float posy, float posz, float viewx, float viewy, float viewz, float upx, float upy, float upz);
+typedef struct Camera Camera;
 
-	Vec3f up2();
-	void position(float posx, float posy, float posz, float viewx, float viewy, float viewz, float upx, float upy, float upz);
-	void rotateview(float angle, float x, float y, float z);
-	void lookat(Vec3f at);
-	void rotatebymouse(int dx, int dy);
-	Vec3f lookpos();
-	void grounded(ecbool ground);
-	void rotateabout(Vec3f center, float rad, float x, float y, float z);
-	void strafe(float speed);
-	void move(float speed);
-	void accelerate(float speed);
-	void accelstrafe(float speed);
-	void accelrise(float speed);
-	void rise(float speed);
-	void move(Vec3f delta);
-	void moveto(Vec3f newpos);
-	void limithvel(float limit);
-	void stop();
-	void calcstrafe();
-	void calcyaw();
-	void calcpitch();
-	void calcroll();
-	void frameupd();
-	void friction();
-	void friction2();
-	float yaw();
-	float pitch();
-};									
+void Cam_init(Camera *c);
+Vec3i Cam_up2(Camera *c);
+void Cam_rotateview(Camera *c, int angle, int x, int y, int z);
+void Cam_lookat(Camera *c, Vec3i at);
+void Cam_rotatebymouse(Camera *c, int dx, int dy);
+Vec3i Cam_lookpos(Camera *c);
+void Cam_grounded(Camera *c, ecbool ground);
+void Cam_rotateabout(Camera *c, Vec3i center, int rad, int x, int y, int z);
+void Cam_strafe(Camera *c, int speed);
+void Cam_move(Camera *c, int speed);
+void Cam_accelerate(Camera *c, int speed);
+void Cam_accelstrafe(Camera *c, int speed);
+void Cam_accelrise(Camera *c, int speed);
+void Cam_rise(Camera *c, int speed);
+void Cam_move(Camera *c, Vec3i delta);
+void Cam_moveto(Camera *c, Vec3i newpos);
+void Cam_limithvel(Camera *c, int limit);
+void Cam_stop(Camera *c);
+void Cam_calcstrafe(Camera *c);
+void Cam_frameupd(Camera *c);
+void Cam_friction(Camera *c);
+void Cam_friction2(Camera *c);
+int Cam_yaw(Camera *c);
+int Cam_pitch(Camera *c);
 
 extern Camera g_cam;
 
