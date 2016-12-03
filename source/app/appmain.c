@@ -244,6 +244,7 @@ void DelFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* rende
 
 void Draw()
 {
+	/* TODO leave as float for now then use fixmath int's */
 	float aspect;
 	float proj[16];
 	Vec3f viewvec;
@@ -273,7 +274,9 @@ void Draw()
 
 		if(g_appmode == APPMODE_PLAY && g_viewmode == VIEWMODE_THIRD)
 		{
-			Vec3f_sub(&viewdir, viewvec, posvec);
+			viewdir.x = viewvec.x - posvec.x;
+			viewdir.y = viewvec.y - posvec.y;
+			viewdir.z = viewvec.z - posvec.z;
 			viewdir = Normalize(viewdir);
 			viewvec = g_pcam->pos;
 			posvec.x = viewvec.x - viewdir.x * 1000;

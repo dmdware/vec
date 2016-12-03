@@ -6,8 +6,6 @@
 #include "quaternion.h"
 #include "fixmath.h"
 
-#define MOUSE_SENSITIVITY	0.0001f	//radians over pixels
-
 struct Camera 
 {
 	Vec3i pos;					
@@ -22,6 +20,7 @@ struct Camera
 
 typedef struct Camera Camera;
 
+void Cam_lookpos(Vec3f *v, Camera *c);
 
 extern Camera g_cam;
 

@@ -13,12 +13,9 @@ void Vector_init(Vector *v, int unitsz)
 
 void Vector_free(Vector *v)
 {
-	if(v->items)
-	{
-		free(v->items);
-		v->items = NULL;
-		//is it the responsibility of the vector to free the item contents?
-	}
+	free(v->items);
+	v->items = NULL;
+	//is it the responsibility of the vector to free the item contents?
 	
 	v->total = 0;
 	v->capacity = 0;
