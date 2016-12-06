@@ -22,39 +22,23 @@ Vector g_texload; /* TextureToLoad */
 
 int g_texwidth;
 int g_texheight;
-//int g_texindex;
 int g_lastLTex = -1;
 
-char jpegBuffer[JPEG_BUFFER_SIZE];
-JPEGSource   jpegSource;
-FILE* g_src;
-//CFile g_src;
-int srcLen;
-
-ecbool g_hidetexerr = false;
-ecbool g_usepalette = false;
+ecbool g_hidetexerr = ecfalse;
+ecbool g_usepalette = ecfalse;
 int g_savebitdepth = 8;
 
 
-LoadedTex::LoadedTex()
+void LoadedTex_init(LoadedTex *lt)
 {
-	data = NULL;
+	lt->data = NULL;
 }
 
-void LoadedTex::destroy()
+void LoadedTex_free(LoadedTex *lt)
 {
-	if(data)
-	{
-		free(data);
-		data = NULL;
-	}
+	free(lt->data);
+	lt->data = NULL;
 }
-
-LoadedTex::~LoadedTex()
-{
-	destroy();
-}
-
 
 void Tex_init(Texture *tex)
 {
@@ -70,86 +54,11 @@ void Tex_free(Texture *tex)
 }
 
 
-LoadedTex *LoadBMP(const char *fullpath)
-{
-	LoadedTex *pImage = new LoadedTex;
-	FILE *pFile = NULL;
-
-	if((pFile = fopen(fullpath, "rb")) == NULL)
-	{
-		char msg[WF_MAX_PATH+1];
-		sprintf(msg, "Unable to load BMP File: %s", fullpath);
-		ErrMess("Error", msg);
-		return NULL;
-	}
-
-	if(!pImage)
-		OutOfMem(__FILE__, __LINE__);
-
 	/*
 	TODO
 	Switch to SDL2_Image usage for
 	formats that require platform split.
 	*/
-
-#ifdef PLATFORM_WIN
-	AUX_RGBImageRec *pBitbldg = NULL;
-
-	// Load the bitbldg using the aux function stored in glaux.lib
-	pBitbldg = auxDIBImageLoad(fullpath);
-
-	pImage->channels = 3;
-	pImage->sizex = pBitbldg->sizeX;
-	pImage->sizey = pBitbldg->sizeY;
-	pImage->data  = pBitbldg->data;
-
-	free(pBitbldg);
-#endif // PLATFORM_WIN
-#ifdef PLATFORM_LINUX
-	SDL_Surface *s = nullptr;
-	s = SDL_LoadBMP(fullpath);
-
-	pImage->channels = 3;
-	pImage->sizex = s->h;
-	pImage->sizey = s->w;
-	pImage->data  = (unsigned char*)s->pixels; // Dunno if this right. TODO Confirm.
-#endif // PLATFORM_LINUX
-
-	/*
-	int stride = pImage->channels * pBitbldg->sizex;
-	int i;
-	int y2;
-	int temp;
-
-	for(int y = 0; y < pImage->sizey/2; y++)
-	{
-		y2 = pImage->sizey - y;
-		// Store a pointer to the current line of pixels
-		unsigned char *pLine = &(pImage->data[stride * y]);
-		unsigned char *pLine2 = &(pImage->data[stride * y2]);
-
-		// Go through all of the pixels and swap the B and R values since TGA
-		// files are stored as BGR instead of RGB (or use GL_BGR_EXT verses GL_RGB)
-		for(i = 0; i < stride; i += pImage->channels)
-		{
-			temp = pLine[i];
-			pLine[i] = pLine2[i];
-			pLine2[i] = temp;
-
-			temp = pLine[i+1];
-			pLine[i+1] = pLine2[i+1];
-			pLine2[i+1] = temp;
-
-			temp = pLine[i+2];
-			pLine[i+2] = pLine2[i+2];
-			pLine2[i+2] = temp;
-		}
-	}*/
-
-	fclose(pFile);
-
-	return pImage;
-}
 
 LoadedTex *LoadTGA(const char *fullpath)
 {
@@ -165,7 +74,7 @@ LoadedTex *LoadTGA(const char *fullpath)
 
 	if((pFile = fopen(fullpath, "rb")) == NULL)
 	{
-		char msg[WF_MAX_PATH+1];
+		char msg[DMD_MAX_PATH+1];
 		sprintf(msg, "Unable to load TGA File: %s", fullpath);
 		ErrMess("Error", msg);
 		return NULL;
@@ -545,7 +454,7 @@ LoadedTex *LoadJPG2(const char *fullpath)
 		if(!g_hidetexerr)
 		{
 			// Display an error message saying the file was not found, then return NULL
-			char msg[WF_MAX_PATH+1];
+			char msg[DMD_MAX_PATH+1];
 			sprintf(msg, "Unable to load JPG File: %s \n errno = %d", fullpath, errno);
 			ErrMess("Error", msg);
 		}
@@ -997,7 +906,7 @@ ecbool FindTexture(unsigned int &textureidx, const char* relative)
 
 void FreeTexture(const char* relative)
 {
-	char corrected[WF_MAX_PATH+1];
+	char corrected[DMD_MAX_PATH+1];
 	strcpy(corrected, relative);
 	CorrectSlashes(corrected);
 
@@ -1110,13 +1019,13 @@ void FreeTextures()
 
 void FindTextureExtension(char *relative)
 {
-	char strJPGPath[WF_MAX_PATH] = {0};
-	char strPNGPath[WF_MAX_PATH] = {0};
-	char strTGAPath[WF_MAX_PATH]    = {0};
-	char strBMPPath[WF_MAX_PATH]    = {0};
+	char strJPGPath[DMD_MAX_PATH] = {0};
+	char strPNGPath[DMD_MAX_PATH] = {0};
+	char strTGAPath[DMD_MAX_PATH]    = {0};
+	char strBMPPath[DMD_MAX_PATH]    = {0};
 	FILE *fp = NULL;
 
-	//GetCurrentDirectory(WF_MAX_PATH, strJPGPath);
+	//GetCurrentDirectory(DMD_MAX_PATH, strJPGPath);
 
 	//strcat(strJPGPath, "\\");
 	FullPath("", strJPGPath);
@@ -1230,7 +1139,6 @@ LoadedTex* LoadTexture(const char* full)
 	if(strstr(full, ".jpg") || strstr(full, ".JPG") || strstr(full, ".jpeg") || strstr(full, ".JPEG") || strstr(full, ".jpe") || strstr(full, ".JPE"))
 	{
 		return LoadJPG(full);
-		//return LoadJPG2(full);
 	}
 	else if(strstr(full, ".png") || strstr(full, ".PNG"))
 	{
@@ -1240,12 +1148,8 @@ LoadedTex* LoadTexture(const char* full)
 	{
 		return LoadTGA(full);
 	}
-	else if(strstr(full, ".bmp") || strstr(full, ".BMP"))
-	{
-		return LoadBMP(full);
-	}
 
-	Log("Unrecognized texture file extension: %s. Only .jpg .png .tga and .bmp are accepted.", full);
+	Log("Unrecognized texture file extension: %s. Only .jpg .png .tga are accepted.", full);
 
 	return NULL;
 }
@@ -1656,12 +1560,13 @@ void Blit(LoadedTex* src, LoadedTex* dest, Vec2i pos)
 	}
 }
 
-static std::vector<JOCTET> my_buffer;
+static Vector my_buffer; /* JOCTET */
 #define BLOCK_SIZE 16384
 
 void my_init_destination(j_compress_ptr cinfo)
 {
     my_buffer.resize(BLOCK_SIZE);
+	Vector_init(&my_buffer, sizeof(JOCTET));
     cinfo->dest->next_output_byte = &my_buffer[0];
     cinfo->dest->free_in_buffer = my_buffer.size();
 }
@@ -1681,7 +1586,7 @@ void my_term_destination(j_compress_ptr cinfo)
 }
 
 
-void SaveJPEG2(const char* fullpath, LoadedTex* image, float quality)
+void SaveJPEG(const char* fullpath, LoadedTex* image, float quality)
 {
 	FILE *outfile;
 	if ((outfile = fopen(fullpath, "wb")) == NULL)
@@ -1733,53 +1638,8 @@ void SaveJPEG2(const char* fullpath, LoadedTex* image, float quality)
 	fclose(outfile);
 
 	jpeg_destroy_compress(&cinfo);
-}
 
-void SaveJPEG(const char* fullpath, LoadedTex* image, float quality)
-{
-#if 1
-	FILE *outfile;
-	if ((outfile = fopen(fullpath, "wb")) == NULL)
-	{
-		return;
-	}
-
-	struct jpeg_compress_struct cinfo;
-	struct jpeg_error_mgr       jerr;
-
-	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_compress(&cinfo);
-	jpeg_stdio_dest(&cinfo, outfile);
-
-	cinfo.image_width      = image->sizex;
-	cinfo.image_height     = image->sizey;
-	cinfo.input_components = 3;
-	cinfo.in_color_space   = JCS_RGB;
-
-	jpeg_set_defaults(&cinfo);
-	/*set the quality [0..100]  */
-    //have to use TRUE instead of true or else doesn't work
-	//in xcode which requires conversion to custom type boolean
-	//jpeg_set_quality (&cinfo, 100*quality, TRUE);
-	//jpeg_start_compress(&cinfo, TRUE);
-	jpeg_set_quality (&cinfo, (int32_t)(100*quality), (boolean)TRUE);
-	jpeg_start_compress(&cinfo, (boolean)TRUE);
-
-	JSAMPROW row_pointer;
-	int row_stride = image->sizex * 3;
-
-	while (cinfo.next_scanline < cinfo.image_height)
-	{
-		row_pointer = (JSAMPROW) &image->data[cinfo.next_scanline*row_stride];
-		jpeg_write_scanlines(&cinfo, &row_pointer, 1);
-	}
-
-	jpeg_finish_compress(&cinfo);
-
-	fclose(outfile);
-
-	jpeg_destroy_compress(&cinfo);
-#endif
+	Vector_free(&my_buffer);
 }
 
 static FILE* savepngfp = NULL;
@@ -1927,7 +1787,7 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 	*npal = PNG_MAX_PALETTE_LENGTH;
 }
 
-int SavePNG2(const char* fullpath, LoadedTex* image)
+int SavePNG(const char* fullpath, LoadedTex* image)
 {
 	//FILE *fp;
 	png_structp png_ptr;
@@ -2101,196 +1961,6 @@ int SavePNG2(const char* fullpath, LoadedTex* image)
 
 	/* Close the file */
 	fclose(savepngfp);
-
-	/* That's it */
-	return (1);
-}
-
-int SavePNG(const char* fullpath, LoadedTex* image)
-{
-	FILE *fp;
-	png_structp png_ptr;
-	png_infop info_ptr;
-	//png_colorp palette;
-
-	/* Open the file */
-	fp = fopen(fullpath, "wb");
-	if (fp == NULL)
-		return (ERROR);
-
-	/* Create and initialize the png_struct with the desired error handler
-	 * functions.  If you want to use the default stderr and longjump method,
-	 * you can supply NULL for the last three parameters.  We also check that
-	 * the library version is compatible with the one used at compile time,
-	 * in case we are using dynamically linked libraries.  REQUIRED.
-	 */
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-	                                  (png_voidp) NULL, NULL, NULL);
-
-	if (png_ptr == NULL)
-	{
-		fclose(fp);
-		return (ERROR);
-	}
-
-	/* Allocate/initialize the image information data.  REQUIRED */
-	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL)
-	{
-		fclose(fp);
-		png_destroy_write_struct(&png_ptr,  NULL);
-		return (ERROR);
-	}
-
-	int color_type = PNG_COLOR_TYPE_RGB;
-
-	if(image->channels == 4)
-		color_type = PNG_COLOR_TYPE_RGBA;
-
-	if(g_usepalette)
-	{
-		color_type = PNG_COLOR_TYPE_PALETTE;
-	}
-
-	int bit_depth = 8;
-
-	if(g_savebitdepth == 2 ||
-		g_savebitdepth == 4 ||
-		g_savebitdepth == 8 ||
-		g_savebitdepth == 16)
-	{
-		bit_depth = g_savebitdepth;
-	}
-	else if(!g_hidetexerr)
-	{
-		ErrMess("PNG write_bit_depth", "write_bit_depth must be either 2, 4, 8, or 16. Defaulting to 8.");
-	}
-
-	png_set_IHDR(png_ptr, info_ptr, image->sizex, image->sizey, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-	/* Set error handling.  REQUIRED if you aren't supplying your own
-	 * error handling functions in the png_create_write_struct() call.
-	 */
-	if (setjmp(png_jmpbuf(png_ptr)))
-	{
-		/* If we get here, we had a problem writing the file */
-		fclose(fp);
-		png_destroy_write_struct(&png_ptr, &info_ptr);
-		return (ERROR);
-	}
-
-	if(g_usepalette)
-	{
-		png_colorp palette = (png_colorp)png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH * sizeof(png_color));//4
-		if (!palette) {
-			ErrMess("PNG error", "Error allocating palette");
-			OUTOFMEM();
-			fclose(savepngfp);
-			png_destroy_write_struct(&png_ptr, &info_ptr);//
-			return false;
-		}
-		png_set_PLTE(png_ptr, info_ptr, palette, PNG_MAX_PALETTE_LENGTH);//12
-		
-		png_color_16 Colors[PNG_MAX_PALETTE_LENGTH];
-		png_byte Trans[PNG_MAX_PALETTE_LENGTH];
-		int npal = 0;
-
-		Palletize(Colors, Trans, &npal, image, palette);
-		//BGColor[0].index = 0;
-		//TrnsColor[0] = 100; //0 = transparent , 255 = opaque
-		png_set_tRNS(png_ptr, info_ptr, Trans, npal, NULL);//Colors);
-	}
-
-	/* One of the following I/O initialization functions is REQUIRED */
-
-	/* Set up the output control if you are using standard C streams */
-	png_init_io(png_ptr, fp);
-	//png_set_write_fn(png_ptr, NULL, png_file_write, png_file_flush);
-
-	png_bytep* row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * image->sizey);
-
-	if(!row_pointers)
-	{
-		OutOfMem(__FILE__, __LINE__);
-		return NULL;
-	}
-
-	//if(bit_depth == 8)
-	{
-		for (int y=0; y<image->sizey; y++)
-			row_pointers[y] = (png_byte*)&image->data[y*image->sizex*image->channels];
-	}
-	//else
-	{
-		for(int y=0; y<image->sizey; y++)
-		{
-			for(int x=0; x<image->sizex; x++)
-			{
-	//			image->data[y*image->sizex*image->channels]
-	//			 = image->data[y*image->sizex*image->channels];
-			}
-		}
-	}
-
-	png_text text_ptr[1];
-
-	char srcstr[123];
-	sprintf(srcstr, "Rendered using %s Version %d", TITLE, APPVERSION);
-#ifdef USESTEAM
-	strcat(srcstr, " Authorized Steam Build");
-#endif
-	text_ptr[0].key = "Source";
-	text_ptr[0].text = srcstr;
-	text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
-	// text_ptr[2].compression = PNG_TEXT_COMPRESSION_zTXt;
-#ifdef PNG_iTXt_SUPPORTED
-	text_ptr[0].lang = NULL;
-#endif
-	text_ptr[0].lang_key = NULL;
-
-	png_set_text(png_ptr, info_ptr, text_ptr, 1);
-
-	png_write_info(png_ptr, info_ptr);
-	png_write_image(png_ptr, row_pointers);
-	png_write_end(png_ptr, NULL);
-
-	//for (y=0; y<image->sizey; y++)
-	//   free(row_pointers[y]);
-	free(row_pointers);
-
-
-	/* This is the easy way.  Use it if you already have all the
-	 * image info living in the structure.  You could "|" many
-	 * PNG_TRANSFORM flags into the png_transforms integer here.
-	 */
-	//png_write_png(png_ptr, info_ptr, NULL, NULL);
-
-	/* If you png_malloced a palette, free it here (don't free info_ptr->palette,
-	 * as recommended in versions 1.0.5m and earlier of this example; if
-	 * libpng mallocs info_ptr->palette, libpng will free it).  If you
-	 * allocated it with malloc() instead of png_malloc(), use free() instead
-	 * of png_free().
-	 */
-	//png_free(png_ptr, palette);
-	//palette = NULL;
-
-	/* Similarly, if you png_malloced any data that you passed in with
-	 * png_set_something(), such as a hist or trans array, free it here,
-	 * when you can be sure that libpng is through with it.
-	 */
-	//png_free(png_ptr, trans);
-	//trans = NULL;
-	/* Whenever you use png_free() it is a good idea to set the pointer to
-	 * NULL in case your application inadvertently tries to png_free() it
-	 * again.  When png_free() sees a NULL it returns without action, thus
-	 * avoiding the double-free security problem.
-	 */
-
-	/* Clean up after the write, and free any memory allocated */
-	png_destroy_write_struct(&png_ptr, &info_ptr);
-
-	/* Close the file */
-	fclose(fp);
 
 	/* That's it */
 	return (1);

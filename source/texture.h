@@ -36,6 +36,8 @@ struct Texture
 	ecbool mipmaps;
 };
 
+typedef struct Texture Texture;
+
 #define TEXTURES	40960
 extern Texture g_texture[TEXTURES];
 
@@ -51,53 +53,42 @@ extern Texture g_texture[TEXTURES];
 
 #define JPEG_BUFFER_SIZE (8 << 10)
 
-#if 1
-typedef struct
+struct LoadedTex
 {
-	struct jpeg_source_mgr  pub;
-} JPEGSource;
-#endif
-
-class LoadedTex
-{
-public:
 	int channels;			// The channels in the image (3 = RGB : 4 = RGBA)
 	int sizex;				// The width of the image in pixels
 	int sizey;				// The height of the image in pixels
 	unsigned char *data;	// The image pixel data
-
-	void destroy();
-	LoadedTex();
-	~LoadedTex();
 };
+
+typedef struct LoadedTex LoadedTex;
+
+void LoadedTex_init(LoadedTex *lt);
+void LoadedTex_free(LoadedTex *lt);
 
 struct TextureToLoad
 {
 	unsigned int* ptexindex;
 	unsigned int texindex;
-	char relative[WF_MAX_PATH+1];
+	char relative[DMD_MAX_PATH+1];
 	ecbool clamp;
 	ecbool reload;
 	ecbool mipmaps;
 };
 
+typedef struct TextureToLoad TextureToLoad;
+
 extern Vector g_texload;
 
-extern int g_texwidth;
-extern int g_texheight;
-//extern int g_texindex;
 extern int g_lastLTex;
 
 void Tex_init(Texture *tex);
 void Tex_free(Texture *tex);
 
-LoadedTex *LoadBMP(const char *fullpath);
 LoadedTex *LoadTGA(const char *fullpath);
 void DecodeJPG(jpeg_decompress_struct* cinfo, LoadedTex *pImageData);
 LoadedTex *LoadJPG(const char *fullpath);
-LoadedTex *LoadJPG2(const char *fullpath);
 LoadedTex *LoadPNG(const char *fullpath);
-LoadedTex *LoadPNG2(const char *fullpath);
 ecbool FindTexture(unsigned int &texture, const char* relative);
 int NewTexture();
 ecbool TextureLoaded(unsigned int texture, const char* relative, ecbool transp, ecbool clamp, ecbool mipmaps, unsigned int& texindex);
@@ -122,7 +113,6 @@ void Blit(LoadedTex* src, LoadedTex* dest, Vec2i pos);
 void SaveJPEG(const char* fullpath, LoadedTex* image, float quality);
 void SaveJPEG2(const char* fullpath, LoadedTex* image, float quality);
 int SavePNG(const char* fullpath, LoadedTex* image);
-int SavePNG2(const char* fullpath, LoadedTex* image);
 void FlipImage(LoadedTex* image);
 int SaveBMP(const char* fullpath, LoadedTex* image);
 ecbool SaveRAW(const char* fullpath, LoadedTex* image);
