@@ -49,9 +49,9 @@ void EnumDisp()
 	short i;
 	SDL_DisplayMode mode;
 	ecbool found;
-	Node* rit;	/* Resl */
-	Resl* rp;
-	Resl r;
+	Node* rit;	/* Vec2i */
+	Vec2i* rp;
+	Vec2i r;
 
 	List_free(&g_ress);
 
@@ -63,7 +63,7 @@ void EnumDisp()
 
 		for(rit=g_ress.head; rit; rit=rit->next)
 		{
-			rp = (Resl*)rit->data;
+			rp = (Vec2i*)rit->data;
 
 			if(rp->width == mode.w &&
 				rp->height == mode.h)
@@ -82,8 +82,6 @@ void EnumDisp()
 	}
 }
 
-#ifndef MATCHMAKER
-
 void Resize(int width, int height)
 {
 	Widget* gui;
@@ -101,13 +99,11 @@ void Resize(int width, int height)
 	Widget_reframe(gui);
 }
 
-#endif
-
 void CalcDrawRate()
 {
 	static unsigned __int64 lasttime;
-	static unsigned __int64 frametime = 0;
-	static int framecounter = 0;
+	static unsigned __int64 frametime;
+	static int framecounter;
 
 	unsigned __int64 currtime = GetTicks();
 
@@ -129,8 +125,8 @@ void CalcDrawRate()
 
 dmbool DrawNextFrame()
 {
-	static unsigned __int64 lastdrawtick = GetTicks();
-	static unsigned __int64 elapseddrawtime = 0;
+	static unsigned __int64 lastdrawtick;
+	static unsigned __int64 elapseddrawtime;
 
 	unsigned __int64 currentTime = GetTicks();
 	float desiredFPMS = 1000.0f/(float)DRAW_FRAME_RATE;

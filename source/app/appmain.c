@@ -4,6 +4,7 @@
 #include "appmain.h"
 #include "../utils.h"
 #include "../math/vec3f.h"
+#include "../window.h"
 
 char g_appmode = APPMODE_LOGO;
 char g_viewmode = VIEWMODE_FIRST;
@@ -165,9 +166,8 @@ void Draw()
 void LoadCfg()
 {
 	EnumDisp();
-	Node *rit; /* Resl */
-	Resl *rp;
-	Vec2i winsz;
+	Node *rit; /* Vec2i */
+	Vec2i *rp;
 	int w, h;
 	float scale;
 	char cfgfull[SFH_MAX_PATH+1];
@@ -182,32 +182,26 @@ void LoadCfg()
 	if(g_ress.size)
 	{
 		rit = g_ress.head;
-		rp = (Resl*)rit->data;
+		rp = (Vec2i*)rit->data;
 		g_selres = *rp;
 	}
 	else
 	{
-		g_selres.width = 1280;
-		g_selres.height = 640;
+		SDL_GL_GetDrawableSize(g_win, &w, &h);
 
-		SDL_GL_GetDrawableSize(g_win, &winsz.x, &winsz.y);
-
-		w = imax(winsz.x, winsz.y);
-		h = imin(winsz.x, winsz.y);
-
-		scale = 640.0f / (float)h;
-
-		g_selres.width = (int)( w * scale );
-		g_selres.height = (int)( h * scale );
+		g_selres.x = w;
+		g_selres.y = h;
 	}
 
 	for(rit=g_ress.head; rit; rit=rit->next)
 	{
 		/* below acceptable height? */
-		if(g_selres.height < 480)
+		if(g_selres.y < 480)
 		{
-			if(rit->height > g_selres.height &&
-				rit->width > rit->height)
+			rp = (Vec2i*)rit->data;
+
+			if(rp->y > g_selres.y &&
+				rp->x > rp->y)
 			{
 				g_selres = *rit;
 			}
@@ -215,9 +209,10 @@ void LoadCfg()
 		/* already of acceptable height? */
 		else
 		{
+			rp = (Vec2i*)rit->data;
 			//get smallest acceptable resolution
-			if(rit->height < g_selres.height &&
-				rit->width > rit->height)
+			if(rp->x < g_selres.y &&
+				rp->x > rp->y)
 			{
 				g_selres = *rit;
 			}
@@ -226,7 +221,7 @@ void LoadCfg()
 		}
 	}
 
-	SwitchLang("english");
+	SwitchLang(LANG_ENG);
 
 	FullWritePath(CONFIGFILE, cfgfull);
 
@@ -258,7 +253,7 @@ void LoadCfg()
 		else if(strcmp(key, "client_height") == 0)			g_height = g_selres.height = g_origheight = valuei;
 		else if(strcmp(key, "screen_bpp") == 0)				g_bpp = valuei;
 		else if(strcmp(key, "volume") == 0)					SetVol(valuei);
-		else if(strcmp(key, "language") == 0)				SwitchLang(act);
+		else if(strcmp(key, "language") == 0)				SwitchLang(GetLang(act));
 	}
 
 	fclose(fp);
@@ -433,11 +428,11 @@ void Deinit()
 
 int HandleEvent(void *userdata, SDL_Event *e)
 {
-	GUI* gui;
+	Widget *gui;
 	InEv ie;
 	Vec2i old;
 
-	gui = &g_gui;
+	gui = (Widget*)&g_gui;
 
 	ie.intercepted = dmfalse;
 	ie.curst = CU_DEFAULT;
@@ -470,7 +465,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			}
 
 			CHECKGLERROR();
-			Widget_inev((Widget*)gui, &ie);
+			Widget_inev(gui, &ie);
 			CHECKGLERROR();
 
 			if(!ie.intercepted)
@@ -484,7 +479,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			ie.scancode = e->key.keysym.scancode;
 
 			CHECKGLERROR();
-			Widget_inev((Widget*)gui, &ie);
+			Widget_inev(gui, &ie);
 			CHECKGLERROR();
 
 			if(!ie.intercepted)
@@ -498,7 +493,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			ie.text = e->text.text;
 
 			CHECKGLERROR();
-			Widget_inev((Widget*)gui, &ie);
+			Widget_inev(gui, &ie);
 			CHECKGLERROR();
 			break;
 
@@ -507,7 +502,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			ie.amount = e->wheel.y;
 
 			CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 			CHECKGLERROR();
 			break;
 		case SDL_MOUSEBUTTONDOWN:
@@ -524,7 +519,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.y = g_mouse.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 
 				g_keyintercepted = ie.intercepted;
@@ -539,7 +534,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.y = g_mouse.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 				break;
 			case SDL_BUTTON_MIDDLE:
@@ -552,7 +547,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.y = g_mouse.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 				break;
 			}
@@ -570,7 +565,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.y = g_mouse.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 				break;
 			case SDL_BUTTON_RIGHT:
@@ -583,7 +578,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.y = g_mouse.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 				break;
 			case SDL_BUTTON_MIDDLE:
@@ -596,7 +591,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.y = g_mouse.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 				break;
 			}
@@ -621,7 +616,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				ie.dy = g_mouse.y - old.y;
 
 				CHECKGLERROR();
-				Widget_inev((Widget*)gui, &ie);
+				Widget_inev(gui, &ie);
 				CHECKGLERROR();
 
 				g_curst = ie.curst;
@@ -787,7 +782,7 @@ dmbool RunOptions(const char* cmdline)
 		{
 			strcpy(g_startmap, "");
 
-			startmap = cmdlinestr.substr(found+find.length(), cmdlinestr.length()-found-find.length());
+			startmap = cmdlinestr.psubstr(found+find.length(), cmdlinestr.length()-found-find.length());
 
 			fprintf(g_applog, "%s\r\n", cmdline);
 			fprintf(g_applog, "%s\r\n", startmap);

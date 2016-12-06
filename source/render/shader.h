@@ -15,7 +15,7 @@
 #define SSLOT_TEXCOORD0			6
 #define SSLOTS					7
 
-class Shader
+struct Shader
 {
 	bool hastexc;
 	bool hasnorm;
@@ -32,6 +32,8 @@ class Shader
 	GLhandleARB program;
 #endif
 };
+
+typedef struct Shader Shader;
 
 #define SH_ORTHO				0
 #define SHADERS					1

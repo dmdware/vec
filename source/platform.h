@@ -240,7 +240,7 @@
 #include <steagameserver.h>
 #endif
 
-#if 1
+#if 000
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

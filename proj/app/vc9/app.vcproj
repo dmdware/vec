@@ -199,11 +199,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\font.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\font.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\gui.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\gui\gui.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\icon.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\icon.h"
 				>
 			</File>
 			<File
@@ -223,11 +239,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\richtext.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\richtext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\render\shader.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\render\shader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\str.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\str.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\texture.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\texture.h"
 				>
 			</File>
 			<File
