@@ -7,52 +7,6 @@
 
 char g_appmode = APPMODE_LOGO;
 char g_viewmode = VIEWMODE_FIRST;
-static char g_restage = 0;
-
-void SkipLogo()
-{
-	Widget *gui, *load;
-
-	if(g_appmode != APPMODE_LOGO)
-		return;
-
-	g_appmode = APPMODE_LOADING;
-	gui = (Widget*)&g_gui;
-
-	Widget_hide( gui );
-	load = Widget_get( gui, "loading" );
-	Widget_show( load );
-}
-
-void UpdLogo()
-{
-	Widget *gui, *logo;
-	float a;
-	static int stage = 0;
-
-	SkipLogo();
-
-	gui = (Widget*)&g_gui;
-
-	if(stage < 60)
-	{
-		a = (float)stage / 60.0f;
-		logo = Widget_get( gui, "logo");
-		logo = Widget_get( logo, "logo");
-		logo->rgba[3] = a;
-	}
-	else if(stage < 120)
-	{
-		a = 1.0f - (float)(stage-60) / 60.0f;
-		logo = Widget_get( gui, "logo");
-		logo = Widget_get( logo, "logo");
-		logo->rgba[3] = a;
-	}
-	else
-		SkipLogo();
-
-	stage++;
-}
 
 void UpdLoad()
 {
@@ -123,16 +77,6 @@ void UpdSim()
 {
 }
 
-void UpdEd()
-{
-	Cam *c = &g_cam;
-
-	UpdIn();
-
-	Cam_frameupd(c);
-	Cam_friction2(c);
-}
-
 void Update()
 {
 	if(g_sock)
@@ -154,46 +98,10 @@ void Update()
 
 void DrawScene(Matrix proj, Matrix viewmat, Matrix modelmat, Matrix modelviewinv, float mvLightPos[3], float lightDir[3])
 {
-	Shader* s;
-
-	if(g_projtype == PROJ_ORTHO)
-		UseShadow(SHADER_MODEL, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
-	else
-		UseShadow(SHADER_MODELPERSP, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
-	s = g_sh+g_curS;
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, g_depth);
-	glUniform1i(s->slot[SSLOT_SHADOWMAP], 4);
-	DrawModelHolders();
-	DrawEntities(dmfalse);
-	DrawEntities(dmtrue);
-
-	EndS();
-
-	if(g_projtype == PROJ_ORTHO)
-		UseShadow(SHADER_MAP, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
-	else
-		UseShadow(SHADER_MAPPERSP, proj, viewmat, modelmat, modelviewinv, mvLightPos, lightDir);
-
-	CHECKGLERROR();
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, g_depth);
-	s = g_sh+g_curS;
-	glUniform1i(s->slot[SSLOT_SHADOWMAP], 4);
-
-	CHECKGLERROR();
-	if(g_appmode == APPMODE_EDITOR)
-		DrawEdMap(&g_edmap, g_showsky);
-	else if(g_appmode == APPMODE_PLAY)
-		DrawMap(&g_map);
-	CHECKGLERROR();
-	EndS();
 }
 
 void DrawSceneDepth()
 {
-	DrawModelHolders();
-	DrawEdMapDepth(&g_edmap, dmfalse);
 }
 
 void MakeFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* renderfb, unsigned int* renderdepthtex, int w, int h)
@@ -244,74 +152,14 @@ void DelFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* rende
 
 void Draw()
 {
+	Widget *gui;
+
+	gui = (Widget*)&g_gui;
+
 	/* TODO leave as float for now then use fixmath int's */
-#if 0	
-	/* unfinished */
-	float aspect;
-	float proj[16];
-	Vec3f viewvec;
-	Vec3f posvec;
-	Vec3f upvec;
-	float modelview[16];
-	float modelmat[16];
-	Vec3f viewdir;
-	float trans[3];
-	float viewmat[16];
-	CHECKGLERROR();
 
-	if(g_appmode == APPMODE_LOADING)
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	else if(g_appmode == APPMODE_EDITOR)
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	if(g_appmode == APPMODE_PLAY)
-	{	
-		aspect = fabsf((float)g_width / (float)g_height);
-		PerspProj(proj, FIELD_OF_VIEW, aspect, MIN_DIST, MAX_DIST);
-		
-		viewvec = g_pcam->view;
-		Cam_lookpos(&posvec, g_pcam);
-		upvec = g_pcam->up;
-
-		if(g_appmode == APPMODE_PLAY && g_viewmode == VIEWMODE_THIRD)
-		{
-			viewdir.x = viewvec.x - posvec.x;
-			viewdir.y = viewvec.y - posvec.y;
-			viewdir.z = viewvec.z - posvec.z;
-			viewdir = Normalize(viewdir);
-			viewvec = g_pcam->pos;
-			posvec.x = viewvec.x - viewdir.x * 1000;
-			posvec.y = viewvec.y - viewdir.y * 1000;
-			posvec.z = viewvec.z - viewdir.z * 1000;
-
-			//TraceWork tw;
-			//TraceRay(&g_map.brush, &tw, viewvec, posvec);
-			//posvec = tw.clip;
-			//posvec = g_bsp.traceray(viewvec, posvec);
-		}
-
-		LookAt(viewmat,
-			posvec.x, posvec.y, posvec.z,
-			viewvec.x, viewvec.y, viewvec.z,
-			upvec.x, upvec.y, upvec.z);
-
-		trans.x = 0;
-		trans.y = 0;
-		trans.z = 0;
-		Mat_trans(modelview, trans);
-		Mat_trans(modelmat, trans);
-		Mat_postmult(modelview, viewmat);
-
-		Frust_init(g_frustum, proj, modelview);
-
-		RenderToShadowMap(proj, viewmat, modelmat, viewvec, DrawSceneDepth);
-		RenderShadowedScene(proj, viewmat, modelmat, modelview, DrawScene);
-	}
-#endif
-
-	Widget_frameupd((Widget*)gui);
-	Widget_draw((Widget*)gui);
+	Widget_frameupd(gui);
+	Widget_draw(gui);
 }
 
 void LoadCfg()
@@ -841,7 +689,7 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 	::OutputDebugString( pchDebugText );
 #endif
 
-	if(!g_applog.is_open())
+	if(!g_applog)
 		OpenLog("log.txt", VERSION);
 
 	Log(pchDebugText);

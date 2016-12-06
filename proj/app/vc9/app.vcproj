@@ -171,6 +171,14 @@
 			Name="source"
 			>
 			<File
+				RelativePath="..\..\..\source\gui\layouts\appgui.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\layouts\appgui.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\app\appmain.c"
 				>
 			</File>
@@ -191,7 +199,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\gui\gui.cpp"
+				RelativePath="..\..\..\source\gui\gui.c"
 				>
 			</File>
 			<File

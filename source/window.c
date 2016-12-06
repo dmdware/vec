@@ -311,7 +311,8 @@ dmbool MakeWin(const char* title)
 	unsigned int flags;
 	int startx;
 	int starty;
-	Vec2i winsz;
+	int winszx;
+	int winszy;
 
 #if 1
 #ifdef PLATFORM_GL14
@@ -367,8 +368,8 @@ dmbool MakeWin(const char* title)
 
 	SDL_GL_SetSwapInterval(0);
 
-	SDL_GetWindowSize(g_win, &winsz.x, &winsz.y);
-	Resize(winsz.x, winsz.y);
+	SDL_GetWindowSize(g_win, &winszx, &winszy);
+	Resize(winszx, winszy);
 
 	if(!InitWindow())
 	{
