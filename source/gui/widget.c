@@ -69,8 +69,8 @@ void Widget_reframe(Widget *w)	//resized or moved
 	Node *i;
 	Widget *iw;
 
-	if(reframefunc)
-		reframefunc(this);
+	if(w->reframefunc)
+		w->reframefunc(this);
 
 	if(w->parent)
 	{
@@ -91,10 +91,16 @@ void Widget_reframe(Widget *w)	//resized or moved
 	}
 }
 
-void Widget::draw(Widget *w)
+void Widget_draw(Widget *w)
 {
 	Node *i;
 	Widget *iw;
+
+	switch(w->type)
+	{
+	default:
+		break;
+	}
 
 	for(i=w->sub.head; i; i=i->next)
 	{
@@ -105,9 +111,16 @@ void Widget::draw(Widget *w)
 
 		Widget_draw(iw);
 	}
+	
+	switch(w->type)
+	{
+	case WIDGET_GUI:
+		GUI_draw2((GUI*)w);
+		break;
+	}
 }
 
-void Widget::drawover(Widget *w)
+void Widget_drawover(Widget *w)
 {	
 	Node *i;
 	Widget *iw;
@@ -142,6 +155,13 @@ void Widget_inev(Widget *w, InEv* ie)
 			continue;
 		
 		Widget_inev(iw, ie);
+	}
+
+	switch(w->type)
+	{
+	case WIDGET_GUI:
+		GUI_inev2((GUI*)w, ie);
+		break;
 	}
 }
 

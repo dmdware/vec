@@ -32,12 +32,9 @@ struct GUI
 	void (*mousewheelfunc)(int delta);
 };
 
-
 void GUI_init(GUI* gui);
-void draw();
-void drawover(){}
-void inev(InEv* ie);
-void reframe();
+void GUI_draw2(GUI* gui);
+void GUI_inev2(GUI* gui, InEv* ie);
 
 extern GUI g_gui;
 

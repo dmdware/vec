@@ -22,6 +22,8 @@ void GUI_init(GUI* gui)
 
 	w = (Widget*)gui;
 
+	Widget_init(w);
+
 	w->type = WIDGET_GUI;
 
 	for(i=0; i<SDL_NUM_SCANCODES; ++i)
@@ -44,7 +46,7 @@ void GUI_init(GUI* gui)
 	w->hidden = ecfalse;
 }
 
-void GUI_draw(GUI *gui)
+void GUI_draw2(GUI *gui)
 {
 	unsigned int spi;
 	Sprite* sp;
@@ -91,13 +93,8 @@ void GUI_draw(GUI *gui)
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GUI_inev(GUI *gui, InEv* ie)
+void GUI_inev2(GUI *gui, InEv* ie)
 {
-	/* TODO
-	in Widget::
-	Widget::inev(ie);
-	*/
-
 	if(!ie->intercepted)
 	{
 		if(ie->type == INEV_MOUSEMOVE && gui->mousemovefunc) gui->mousemovefunc(ie);
@@ -115,23 +112,6 @@ void GUI_inev(GUI *gui, InEv* ie)
 
 		if(ie->type != INEV_MOUSEMOVE && gui->anykeydownfunc) gui->anykeydownfunc(-1);
 	}
-}
-
-void GUI_reframe(GUI *gui)
-{
-	Widget *w;
-
-	w = (Widget*)gui;
-
-	w->pos[0] = 0;
-	w->pos[1] = 0;
-	w->pos[2] = g_width-1;
-	w->pos[3] = g_height-1;
-
-	/*
-	called from 
-	Widget_reframe(w);
-	*/
 }
 
 void SetStatus(const char* status, ecbool logthis)
