@@ -239,6 +239,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\math\quaternion.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\quaternion.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\richtext.c"
 				>
 			</File>
@@ -276,6 +284,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\utils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\vec2i.h"
 				>
 			</File>
 			<File

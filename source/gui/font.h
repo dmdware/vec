@@ -2,7 +2,7 @@
 #define FONT_H
 
 #include "../platform.h"
-#include "../algo/bool.h"
+#include "../algo/ecbool.h"
 
 #define MAX_CHARS	256
 #define CODE_POINTS	110000

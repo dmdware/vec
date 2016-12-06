@@ -17,8 +17,8 @@
 
 struct Shader
 {
-	bool hastexc;
-	bool hasnorm;
+	ecbool hastexc;
+	ecbool hasnorm;
 	GLint slot[SSLOTS];
 
 	// http://lists.apple.com/archives/mac-opengl/2005/Nov/msg00182.html
@@ -53,7 +53,7 @@ void Sh_ma(int slot, const char* variable);
 void UseS(int shader);
 void EndS();
 void InitGLSL();
-void LoadSh(int shader, const char* filev, const char* filef, bool hastexc, bool hasnorm);
+void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ecbool hasnorm);
 
 const char *SHTEXT [SHADERS][2];
 

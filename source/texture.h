@@ -14,32 +14,26 @@
 #define TEXTURE_H
 
 #include "platform.h"
-#include "../algo/vector.h"
+#include "algo/vector.h"
+#include "algo/bool.h"
 #include "math/vec2i.h"
 
-class Texture
+struct Texture
 {
-public:
 	unsigned int texname;
-	std::string fullpath;
-	bool loaded;
+	char* fullpath;
+	ecbool loaded;
 	int width, height;
-	bool transp;
-	bool sky;
-	bool breakable;
-	bool passthru;
-	bool grate;
-	bool ladder;
-	bool water;
-	bool fabric;
-	bool clamp;
-	bool mipmaps;
-
-	Texture()
-	{
-		fullpath = '\0';
-		loaded = false;
-	}
+	ecbool transp;
+	ecbool sky;
+	ecbool breakable;
+	ecbool passthru;
+	ecbool grate;
+	ecbool ladder;
+	ecbool water;
+	ecbool fabric;
+	ecbool clamp;
+	ecbool mipmaps;
 };
 
 #define TEXTURES	40960
@@ -82,9 +76,9 @@ struct TextureToLoad
 	unsigned int* ptexindex;
 	unsigned int texindex;
 	char relative[WF_MAX_PATH+1];
-	bool clamp;
-	bool reload;
-	bool mipmaps;
+	ecbool clamp;
+	ecbool reload;
+	ecbool mipmaps;
 };
 
 extern Vector g_texload;
@@ -94,6 +88,9 @@ extern int g_texheight;
 //extern int g_texindex;
 extern int g_lastLTex;
 
+void Tex_init(Texture *tex);
+void Tex_free(Texture *tex);
+
 LoadedTex *LoadBMP(const char *fullpath);
 LoadedTex *LoadTGA(const char *fullpath);
 void DecodeJPG(jpeg_decompress_struct* cinfo, LoadedTex *pImageData);
@@ -101,17 +98,17 @@ LoadedTex *LoadJPG(const char *fullpath);
 LoadedTex *LoadJPG2(const char *fullpath);
 LoadedTex *LoadPNG(const char *fullpath);
 LoadedTex *LoadPNG2(const char *fullpath);
-bool FindTexture(unsigned int &texture, const char* relative);
+ecbool FindTexture(unsigned int &texture, const char* relative);
 int NewTexture();
-bool TextureLoaded(unsigned int texture, const char* relative, bool transp, bool clamp, bool mipmaps, unsigned int& texindex);
+ecbool TextureLoaded(unsigned int texture, const char* relative, ecbool transp, ecbool clamp, ecbool mipmaps, unsigned int& texindex);
 void FindTextureExtension(char *relative);
 void FreeTextures();
-bool Load1Texture();
-void QueueTex(unsigned int* texindex, const char* relative, bool clamp, bool mipmaps);
-void RequeueTex(unsigned int texindex, const char* relative, bool clamp, bool mipmaps);
+ecbool Load1Texture();
+void QueueTex(unsigned int* texindex, const char* relative, ecbool clamp, ecbool mipmaps);
+void RequeueTex(unsigned int texindex, const char* relative, ecbool clamp, ecbool mipmaps);
 LoadedTex* LoadTexture(const char* full);
-bool CreateTex(LoadedTex* pImage, unsigned int* texname, bool clamp, bool mipmaps);
-bool CreateTex(unsigned int &texindex, const char* relative, bool clamp, bool mipmaps, bool reload=false);
+ecbool CreateTex(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps);
+ecbool CreateTex(unsigned int &texindex, const char* relative, ecbool clamp, ecbool mipmaps, ecbool reload=false);
 void ReloadTextures();
 void FreeTexture(const char* relative);
 void FreeTexture(int i);
@@ -128,7 +125,7 @@ int SavePNG(const char* fullpath, LoadedTex* image);
 int SavePNG2(const char* fullpath, LoadedTex* image);
 void FlipImage(LoadedTex* image);
 int SaveBMP(const char* fullpath, LoadedTex* image);
-bool SaveRAW(const char* fullpath, LoadedTex* image);
+ecbool SaveRAW(const char* fullpath, LoadedTex* image);
 void Resample(LoadedTex* original, LoadedTex* empty, Vec2i newdim);
 void Extract(LoadedTex* original, LoadedTex* empty, int x1, int y1, int x2, int y2);
 

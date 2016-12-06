@@ -4,6 +4,7 @@
 #define LIST_H
 
 #include "../platform.h"
+#include "ecbool.h"
 
 struct Node
 {

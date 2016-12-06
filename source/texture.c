@@ -31,8 +31,8 @@ FILE* g_src;
 //CFile g_src;
 int srcLen;
 
-bool g_hidetexerr = false;
-bool g_usepalette = false;
+ecbool g_hidetexerr = false;
+ecbool g_usepalette = false;
 int g_savebitdepth = 8;
 
 
@@ -54,6 +54,21 @@ LoadedTex::~LoadedTex()
 {
 	destroy();
 }
+
+
+void Tex_init(Texture *tex)
+{
+	tex->filepath = NULL;
+	tex->loaded = ecfalse;
+}
+
+void Tex_free(Texture *tex)
+{
+	free(&tex->fullpath);
+	tex->filepath = NULL;
+	tex->loaded = ecfalse;
+}
+
 
 LoadedTex *LoadBMP(const char *fullpath)
 {
@@ -671,7 +686,7 @@ LoadedTex *LoadPNG(const char *strFileName)
   // get info about png
   png_get_IHDR(png_ptr, info_ptr, &twidth, &theight, &bit_depth, &color_type, NULL, NULL, NULL);
 
-//	bool alphaFlag;
+//	ecbool alphaFlag;
 
         //pImageData = (Image*)malloc(sizeof(Image));
 		pImageData = new LoadedTex;
@@ -956,7 +971,7 @@ LoadedTex *LoadPNG2(const char *fullpath)
 	return pImageData;
 }
 
-bool FindTexture(unsigned int &textureidx, const char* relative)
+ecbool FindTexture(unsigned int &textureidx, const char* relative)
 {
 	char corrected[1024];
 	strcpy(corrected, relative);
@@ -1023,7 +1038,7 @@ int NewTexture()
 	return -1;
 }
 //extern int thetex;
-bool TextureLoaded(unsigned int texture, const char* relative, bool transp, bool clamp, bool mipmaps, unsigned int& texindex, bool reload)
+ecbool TextureLoaded(unsigned int texture, const char* relative, ecbool transp, ecbool clamp, ecbool mipmaps, unsigned int& texindex, ecbool reload)
 {
 	char corrected[1024];
 	strcpy(corrected, relative);
@@ -1145,7 +1160,7 @@ void FindTextureExtension(char *relative)
 	}
 }
 
-bool Load1Texture()
+ecbool Load1Texture()
 {
 	if(g_lastLTex+1 < (int32_t)g_texload.size())
 		SetStatus(g_texload[g_lastLTex+1].relative);
@@ -1171,7 +1186,7 @@ bool Load1Texture()
 	return true;	// Not finished loading textures
 }
 
-void QueueTex(unsigned int* texindex, const char* relative, bool clamp, bool mipmaps)
+void QueueTex(unsigned int* texindex, const char* relative, ecbool clamp, ecbool mipmaps)
 {
 	TextureToLoad toLoad;
 	toLoad.ptexindex = texindex;
@@ -1183,7 +1198,7 @@ void QueueTex(unsigned int* texindex, const char* relative, bool clamp, bool mip
 	g_texload.push_back(toLoad);
 }
 
-void RequeueTex(unsigned int texindex, const char* relative, bool clamp, bool mipmaps)
+void RequeueTex(unsigned int texindex, const char* relative, ecbool clamp, ecbool mipmaps)
 {
 	TextureToLoad toLoad;
 	toLoad.texindex = texindex;
@@ -1235,7 +1250,7 @@ LoadedTex* LoadTexture(const char* full)
 	return NULL;
 }
 
-bool CreateTex(LoadedTex* pImage, unsigned int* texname, bool clamp, bool mipmaps)
+ecbool CreateTex(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps)
 {
 	if(!pImage)
 		return false;
@@ -1257,7 +1272,7 @@ bool CreateTex(LoadedTex* pImage, unsigned int* texname, bool clamp, bool mipmap
 	// Assume that the texture is a 24 bit RGB texture (We convert 16-bit ones to 24-bit)
 	int internalFormat = GL_RGB8;
 	int textureType = GL_RGB;
-	bool transp = false;
+	ecbool transp = false;
 	
 	// If the image is 32-bit (4 channels), then we need to specify GL_RGBA for an alpha
 	if(pImage->channels == 4)
@@ -1475,7 +1490,7 @@ bool CreateTex(LoadedTex* pImage, unsigned int* texname, bool clamp, bool mipmap
 	return true;
 }
 
-bool CreateTex(unsigned int &texindex, const char* relative, bool clamp, bool mipmaps, bool reload)
+ecbool CreateTex(unsigned int &texindex, const char* relative, ecbool clamp, ecbool mipmaps, ecbool reload)
 {
 	CHECKGLERROR();
 
@@ -1514,7 +1529,7 @@ bool CreateTex(unsigned int &texindex, const char* relative, bool clamp, bool mi
 		return false;
 	}
 
-	bool transp = false;
+	ecbool transp = false;
 	
 	if(pImage->channels == 4)
 	{
@@ -2381,7 +2396,7 @@ int SaveBMP(const char* fullpath, LoadedTex* image)
 }
 
 
-bool SaveRAW(const char* fullpath, LoadedTex* image)
+ecbool SaveRAW(const char* fullpath, LoadedTex* image)
 {
 	FILE* fp = fopen(fullpath, "wb");
 

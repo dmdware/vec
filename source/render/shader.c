@@ -227,7 +227,7 @@ quit:
 	g_quit = true;
 }
 
-void LoadSh(int shader, const char* filev, const char* filef, bool hastexc, bool hasnorm)
+void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ecbool hasnorm)
 {
 	Shader* s;
 	char *strv, *strf;

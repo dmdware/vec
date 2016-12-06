@@ -1,6 +1,6 @@
 
 
-#include "bool.h"
+#include "ecbool.h"
 #include "list.h"
 
 void List_init(List *l)

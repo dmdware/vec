@@ -6,9 +6,9 @@
 #ifndef MATCHMAKER
 #endif
 
-dmbool g_quit = dmfalse;
-dmbool g_background = dmfalse;
-dmbool g_fs = dmtrue;
+ecbool g_quit = dmfalse;
+ecbool g_background = dmfalse;
+ecbool g_fs = dmtrue;
 Vec2i g_selres;
 Vector g_ress; /* Vec2i */
 Vector g_bpps; /* char */
@@ -25,13 +25,13 @@ int g_height = INI_HEIGHT;
 int g_bpp = INI_BPP;
 Vec2i g_mouse;
 Vec2i g_mousestart;
-dmbool g_keyintercepted = dmfalse;
-dmbool g_keys[SDL_NUM_SCANCODES] = {0};
-dmbool g_mousekeys[5] = {0};
+ecbool g_keyintercepted = dmfalse;
+ecbool g_keys[SDL_NUM_SCANCODES] = {0};
+ecbool g_mousekeys[5] = {0};
 float g_zoom = INI_ZOOM;
-dmbool g_mouseout = dmfalse;
-dmbool g_moved = dmfalse;
-dmbool g_canplace = dmfalse;
+ecbool g_mouseout = dmfalse;
+ecbool g_moved = dmfalse;
+ecbool g_canplace = dmfalse;
 int g_bpcol = -1;
 int g_build = BL_NONE;
 Vec3i g_vdrag[2];
@@ -39,7 +39,7 @@ Camera g_bpcam;
 int g_bptype = -1;
 float g_bpyaw = 0;
 Sel g_sel;
-dmbool g_mouseoveraction = dmfalse;
+ecbool g_mouseoveraction = dmfalse;
 int g_curst = CU_DEFAULT;	//cursor state
 int g_kbfocus = 0;	//keyboad focus counter
 #endif
@@ -123,7 +123,7 @@ void CalcDrawRate()
 	}
 }
 
-dmbool DrawNextFrame()
+ecbool DrawNextFrame()
 {
 	static unsigned __int64 lastdrawtick;
 	static unsigned __int64 elapseddrawtime;
@@ -166,7 +166,7 @@ void CalcUpdRate()
 	}
 }
 
-dmbool UpdNextFrame()
+ecbool UpdNextFrame()
 {
 	static unsigned __int64 lastupdtick = GetTicks();
 	static unsigned __int64 elapsedupdtime = 0;
@@ -186,7 +186,7 @@ dmbool UpdNextFrame()
 
 #ifndef MATCHMAKER
 
-dmbool InitWindow()
+ecbool InitWindow()
 {
 	char path[DMD_MAX_PATH+1];
 	LoadedTex* pixels;
@@ -301,7 +301,7 @@ void BreakWin(const char* title)
 	SDL_ShowCursor(SDL_FALSE);
 }
 
-dmbool MakeWin(const char* title)
+ecbool MakeWin(const char* title)
 {
 	char msg[256];
 	unsigned int flags;

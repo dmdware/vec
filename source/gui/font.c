@@ -1,6 +1,6 @@
 #include "../platform.h"
 #include "font.h"
-#include "../algo/bool.h"
+#include "../algo/ecbool.h"
 #include "../algo/list.h"
 #include "../richtext.h"
 

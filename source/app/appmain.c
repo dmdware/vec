@@ -177,7 +177,7 @@ void LoadCfg()
 	FILE *fp;
 	float valuef;
 	int valuei;
-	dmbool valueb;
+	ecbool valueb;
 
 	if(g_ress.size)
 	{
@@ -762,7 +762,7 @@ void Main()
 	SDL_ShowCursor(dmtrue);
 }
 
-dmbool RunOptions(const char* cmdline)
+ecbool RunOptions(const char* cmdline)
 {
 	if(strcmp(cmdline, "") == 0)
 	{

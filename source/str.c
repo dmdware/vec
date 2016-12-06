@@ -1,38 +1,27 @@
 #include "platform.h"
 #include "utils.h"
 
-//only use with dynamic array string
+/* only use with dynamic array string */
+
 void pstrset(char **out, char *in)
 {
 	int len = strlen(in);
-	
-	//might not be initialized to null
-	//if(*out)
-	//	free(*out);
 	
 	*out = (char*)malloc(len+1);
 	memcpy(*out, in, len+1);
 }
 
-//only use with dynamic array string
 void pstradd(char **out, char *in)
 {
 	int addlen = strlen(in);
 	int len = 0;
 	
-	//assume "out" is already allocated
-	//if(*out)
-	//{
-		len = strlen(*out);
-		*out = (char*)realloc(*out, len + addlen + 1);
-	//}
-	//else
-	//	*out = (char*)malloc(sizeof(char) * (addlen + 1));
+	len = strlen(*out);
+	*out = (char*)realloc(*out, len + addlen + 1);
 	
 	memcpy(&(*out)[len], in, addlen + 1);
 }
 
-//only use with dynamic array string
 void psubstr(char **out, char *in, int beg, int len)
 {
 	*out = (char*)malloc(len + 1);
