@@ -221,10 +221,10 @@ void InitGLSL()
 	}
 #endif
 
-	LoadSh(SH_ORTHO, "shaders/ortho.vert", "shaders/ortho.frag", true, false);
+	LoadSh(SH_ORTHO, "shaders/ortho.vert", "shaders/ortho.frag", ectrue, ecfalse);
 
 quit:
-	g_quit = true;
+	g_quit = ectrue;
 }
 
 void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ecbool hasnorm)

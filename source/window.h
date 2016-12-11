@@ -50,13 +50,6 @@ extern ecbool g_keyintercepted;
 extern ecbool g_keys[SDL_NUM_SCANCODES];
 extern ecbool g_mousekeys[5];
 extern float g_zoom;
-extern ecbool g_mouseout;
-extern ecbool g_moved;
-extern ecbool g_canplace;
-extern int g_bpcol;
-extern int g_build;
-extern Sel g_sel;
-extern ecbool g_mouseoveraction;
 extern int g_curst;	/* cursor state */
 extern int g_kbfocus;	/* keyboad focus counter */
 

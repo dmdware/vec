@@ -246,7 +246,7 @@ void LoadCfg()
 
 		valuef = StrToFloat(act);
 		valuei = StrToInt(act);
-		valueb = valuei ? dmtrue : dmfalse;
+		valueb = valuei ? ectrue : ecfalse;
 
 		if(strcmp(key, "fullscreen") == 0)					g_fs = valueb;
 		else if(strcmp(key, "client_width") == 0)			g_width = g_selres.width = g_origwidth = valuei;
@@ -434,13 +434,13 @@ int HandleEvent(void *userdata, SDL_Event *e)
 
 	gui = (Widget*)&g_gui;
 
-	ie.intercepted = dmfalse;
+	ie.intercepted = ecfalse;
 	ie.curst = CU_DEFAULT;
 
 	switch(e->type)
 	{
 		case SDL_QUIT:
-			g_quit = dmtrue;
+			g_quit = ectrue;
 			break;
 		case SDL_KEYDOWN:
 			ie.type = INEV_KEYDOWN;
@@ -469,7 +469,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			CHECKGLERROR();
 
 			if(!ie.intercepted)
-				g_keys[e->key.keysym.scancode] = dmtrue;
+				g_keys[e->key.keysym.scancode] = ectrue;
 
 			g_keyintercepted = ie.intercepted;
 			break;
@@ -483,7 +483,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			CHECKGLERROR();
 
 			if(!ie.intercepted)
-				g_keys[e->key.keysym.scancode] = dmfalse;
+				g_keys[e->key.keysym.scancode] = ecfalse;
 
 			g_keyintercepted = ie.intercepted;
 			break;
@@ -509,8 +509,8 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			switch (e->button.button)
 			{
 			case SDL_BUTTON_LEFT:
-				g_mousekeys[MOUSE_LEFT] = dmtrue;
-				g_moved = dmfalse;
+				g_mousekeys[MOUSE_LEFT] = ectrue;
+				g_moved = ecfalse;
 
 				ie.type = INEV_MOUSEDOWN;
 				ie.key = MOUSE_LEFT;
@@ -525,7 +525,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				g_keyintercepted = ie.intercepted;
 				break;
 			case SDL_BUTTON_RIGHT:
-				g_mousekeys[MOUSE_RIGHT] = dmtrue;
+				g_mousekeys[MOUSE_RIGHT] = ectrue;
 
 				ie.type = INEV_MOUSEDOWN;
 				ie.key = MOUSE_RIGHT;
@@ -538,7 +538,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				CHECKGLERROR();
 				break;
 			case SDL_BUTTON_MIDDLE:
-				g_mousekeys[MOUSE_MIDDLE] = dmtrue;
+				g_mousekeys[MOUSE_MIDDLE] = ectrue;
 
 				ie.type = INEV_MOUSEDOWN;
 				ie.key = MOUSE_MIDDLE;
@@ -556,7 +556,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			switch (e->button.button)
 			{
 			case SDL_BUTTON_LEFT:
-				g_mousekeys[MOUSE_LEFT] = dmfalse;
+				g_mousekeys[MOUSE_LEFT] = ecfalse;
 
 				ie.type = INEV_MOUSEUP;
 				ie.key = MOUSE_LEFT;
@@ -569,7 +569,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				CHECKGLERROR();
 				break;
 			case SDL_BUTTON_RIGHT:
-				g_mousekeys[MOUSE_RIGHT] = dmfalse;
+				g_mousekeys[MOUSE_RIGHT] = ecfalse;
 
 				ie.type = INEV_MOUSEUP;
 				ie.key = MOUSE_RIGHT;
@@ -582,7 +582,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 				CHECKGLERROR();
 				break;
 			case SDL_BUTTON_MIDDLE:
-				g_mousekeys[MOUSE_MIDDLE] = dmfalse;
+				g_mousekeys[MOUSE_MIDDLE] = ecfalse;
 
 				ie.type = INEV_MOUSEUP;
 				ie.key = MOUSE_MIDDLE;
@@ -600,14 +600,14 @@ int HandleEvent(void *userdata, SDL_Event *e)
 
 			if(g_mouseout)
 			{
-				g_mouseout = dmfalse;
+				g_mouseout = ecfalse;
 			}
 
 			old = g_mouse;
 
 			if(MousePosition())
 			{
-				g_moved = dmtrue;
+				g_moved = ectrue;
 
 				ie.type = INEV_MOUSEMOVE;
 				ie.x = g_mouse.x;
@@ -751,7 +751,7 @@ void Main()
 
 	MakeWin(TITLE);
 
-	SDL_ShowCursor(dmfalse);
+	SDL_ShowCursor(ecfalse);
 	LoadSysRes();
 	QueueSimRes();
 	FillGUI();
@@ -759,7 +759,7 @@ void Main()
 	EventLoop();
 
 	Deinit();
-	SDL_ShowCursor(dmtrue);
+	SDL_ShowCursor(ectrue);
 }
 
 ecbool RunOptions(const char* cmdline)
@@ -768,7 +768,7 @@ ecbool RunOptions(const char* cmdline)
 	{
 		strcpy(g_startmap, "");
 
-		return dmfalse;
+		return ecfalse;
 	}
 	else
 	{

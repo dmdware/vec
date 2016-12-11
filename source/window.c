@@ -2,13 +2,14 @@
 
 
 #include "window.h"
+#include "algo/bool.h"
 
 #ifndef MATCHMAKER
 #endif
 
-ecbool g_quit = dmfalse;
-ecbool g_background = dmfalse;
-ecbool g_fs = dmtrue;
+ecbool g_quit = ecfalse;
+ecbool g_background = ecfalse;
+ecbool g_fs = ectrue;
 Vec2i g_selres;
 Vector g_ress; /* Vec2i */
 Vector g_bpps; /* char */
@@ -25,21 +26,11 @@ int g_height = INI_HEIGHT;
 int g_bpp = INI_BPP;
 Vec2i g_mouse;
 Vec2i g_mousestart;
-ecbool g_keyintercepted = dmfalse;
+ecbool g_keyintercepted = ecfalse;
 ecbool g_keys[SDL_NUM_SCANCODES] = {0};
 ecbool g_mousekeys[5] = {0};
 float g_zoom = INI_ZOOM;
-ecbool g_mouseout = dmfalse;
-ecbool g_moved = dmfalse;
-ecbool g_canplace = dmfalse;
-int g_bpcol = -1;
-int g_build = BL_NONE;
-Vec3i g_vdrag[2];
-Camera g_bpcam;
-int g_bptype = -1;
-float g_bpyaw = 0;
-Sel g_sel;
-ecbool g_mouseoveraction = dmfalse;
+ecbool g_mouseout = ecfalse;
 int g_curst = CU_DEFAULT;	//cursor state
 int g_kbfocus = 0;	//keyboad focus counter
 #endif
@@ -59,7 +50,7 @@ void EnumDisp()
 	{
 		SDL_GetDisplayMode(0, i, &mode);
 
-		found = dmfalse;
+		found = ecfalse;
 
 		for(rit=g_ress.head; rit; rit=rit->next)
 		{
@@ -68,7 +59,7 @@ void EnumDisp()
 			if(rp->width == mode.w &&
 				rp->height == mode.h)
 			{
-				found = dmtrue;
+				found = ectrue;
 				break;
 			}
 		}
@@ -135,10 +126,10 @@ ecbool DrawNextFrame()
 	if(deltaTime >= desiredFPMS)
 	{
 		lastdrawtick = currentTime;
-		return dmtrue;
+		return ectrue;
 	}
 
-	return dmfalse;
+	return ecfalse;
 }
 
 
@@ -178,10 +169,10 @@ ecbool UpdNextFrame()
 	if(deltaTime >= desiredFPMS)
 	{
 		lastupdtick = currentTime;
-		return dmtrue;
+		return ectrue;
 	}
 
-	return dmfalse;
+	return ecfalse;
 }
 
 #ifndef MATCHMAKER
@@ -234,7 +225,7 @@ ecbool InitWindow()
 	InitGLSL();
 	LoadFonts();
 
-	return dmtrue;
+	return ectrue;
 }
 
 SDL_bool IsFullScreen(SDL_Window *win)
@@ -271,7 +262,7 @@ int SDL_ToggleFS(SDL_Window *win)
 int SDL_ToggleFS(SDL_Window *win, int w, int h)
 {
 	Uint32 flags = (SDL_GetWindowFlags(win) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
-	if (SDL_SetWindowFullscreen(win, flags) < 0) return -1; // NOTE: this takes FLAGS as the second param, NOT dmtrue/dmfalse!
+	if (SDL_SetWindowFullscreen(win, flags) < 0) return -1; // NOTE: this takes FLAGS as the second param, NOT ectrue/ecfalse!
 	SDL_SetWindowSize(win, w, h);
 	return 0; 
 }
@@ -348,7 +339,7 @@ ecbool MakeWin(const char* title)
 	{
 		sprintf(msg, "Could not create window: %s\n", SDL_GetError());
 		ErrMess("Error", msg);
-		return dmfalse;
+		return ecfalse;
 	}
 
 	g_gx = SDL_GL_CreateContext(g_win);
@@ -357,7 +348,7 @@ ecbool MakeWin(const char* title)
 	{
 		BreakWin(title);
 		ErrMess("Error", "Couldn't create GL context");
-		return dmfalse;
+		return ecfalse;
 	}
 
 	SDL_GL_MakeCurrent(g_win, g_gx);
@@ -371,12 +362,12 @@ ecbool MakeWin(const char* title)
 	{
 		BreakWin(title);
 		ErrMess("Error", "Initialization failed");
-		return dmfalse;
+		return ecfalse;
 	}
 
 	CenterMouse();
 
-	return dmtrue;
+	return ectrue;
 }
 
 #endif

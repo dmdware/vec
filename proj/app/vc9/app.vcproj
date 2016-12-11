@@ -199,6 +199,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\cursor.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\cursor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\fixmath.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\fixmath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\font.c"
 				>
 			</File>
@@ -263,6 +279,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\render\sprite.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\render\sprite.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\str.c"
 				>
 			</File>
@@ -296,6 +320,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\math\vec3f.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\vec3i.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\math\vec3i.h"
 				>
 			</File>
 			<File

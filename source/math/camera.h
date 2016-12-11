@@ -2,9 +2,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "vec3f.h"
+#include "vec3i.h"
+#include "../algo/bool.h"
 #include "quaternion.h"
-#include "fixmath.h"
 
 struct Camera 
 {
@@ -20,7 +20,7 @@ struct Camera
 
 typedef struct Camera Camera;
 
-void Cam_lookpos(Vec3f *v, Camera *c);
+void Cam_lookpos(Vec3i *v, Camera *c);
 
 extern Camera g_cam;
 
