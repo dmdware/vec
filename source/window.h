@@ -10,6 +10,7 @@
 #include "math/camera.h"
 #include "algo/vector.h"
 #include "algo/list.h"
+#include "gui/cursor.h"
 
 #define INI_WIDTH			640
 #define INI_HEIGHT			480

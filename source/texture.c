@@ -535,7 +535,7 @@ LoadedTex* LoadTexture(const char* full)
 	return NULL;
 }
 
-ecbool CreateTex(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps)
+ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps)
 {
 	if(!pImage)
 		return ecfalse;
@@ -775,7 +775,7 @@ ecbool CreateTex(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool 
 	return ectrue;
 }
 
-ecbool CreateTex(unsigned int &texindex, const char* relative, ecbool clamp, ecbool mipmaps, ecbool reload)
+ecbool CreateTex(unsigned int *texindex, const char* relative, ecbool clamp, ecbool mipmaps)
 {
 	CHECKGLERROR();
 

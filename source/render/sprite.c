@@ -69,7 +69,7 @@ void FreeSprites()
 	}
 }
 
-bool Load1Sprite()
+ecbool Load1Sprite()
 {
 	if(g_lastLSp+1 < g_spriteload.size())
 		SetStatus(g_spriteload[g_lastLSp+1].relative.c_str());
@@ -104,7 +104,7 @@ bool Load1Sprite()
 	return true;	// Not finished loading
 }
 
-void QueueSprite(const char* relative, uint32_t* spindex, bool loadteam, bool loaddepth)
+void QueueSprite(const char* relative, uint32_t* spindex, ecbool loadteam, ecbool loaddepth)
 {
 	SpriteToLoad stl;
 	stl.relative = relative;
@@ -140,7 +140,7 @@ int NewSpriteList()
 	return -1;
 }
 
-bool FindSprite(uint32_t &spriteidx, const char* relative)
+ecbool FindSprite(uint32_t &spriteidx, const char* relative)
 {
 	char corrected[WF_MAX_PATH+1];
 	strcpy(corrected, relative);
@@ -173,7 +173,7 @@ All class to struct
 LoadedTex -> loadedtex_t or loadedtex
 */
 
-bool LoadSprite(const char* relative, uint32_t* spindex, bool loadteam, bool loaddepth)
+ecbool LoadSprite(const char* relative, uint32_t* spindex, ecbool loadteam, ecbool loaddepth)
 {
 #ifdef ISOTOP
 	loaddepth = false;
@@ -229,7 +229,7 @@ bool LoadSprite(const char* relative, uint32_t* spindex, bool loadteam, bool loa
 	return true;
 }
 
-bool LoadSpriteList(const char* relative, uint32_t* splin, bool loadteam, bool loaddepth, bool queue)
+ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ecbool loaddepth, ecbool queue)
 {
 	//if(FindSpriteList(*splin, relative))
 	//	return;
@@ -254,10 +254,10 @@ bool LoadSpriteList(const char* relative, uint32_t* splin, bool loadteam, bool l
 	sprintf(txtpath, "%s_list.txt", full);
 
 	int nsides = 1;
-	bool dorots = false;	//rotations
-	bool dosides = false;	//sides
-	bool doincls = false;	//inclines
-	bool doframes = false;	//frames
+	ecbool dorots = false;	//rotations
+	ecbool dosides = false;	//sides
+	ecbool doincls = false;	//inclines
+	ecbool doframes = false;	//frames
 	int nframes = 1;
 
 	FILE* fp = fopen(txtpath, "r");
@@ -688,7 +688,7 @@ void ParseSprite(const char* relative, Sprite* s)
 #endif
 }
 
-bool PlayAnim(float& frame, int first, int last, bool loop, float rate)
+ecbool PlayAnim(float& frame, int first, int last, ecbool loop, float rate)
 {
     if(frame < first || frame >= last)
     {
@@ -712,7 +712,7 @@ bool PlayAnim(float& frame, int first, int last, bool loop, float rate)
 }
 
 //Play animation backwards
-bool PlayAnimB(float& frame, int first, int last, bool loop, float rate)
+ecbool PlayAnimB(float& frame, int first, int last, ecbool loop, float rate)
 {
     if(frame < first-1 || frame > last)
     {
