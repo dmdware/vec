@@ -100,7 +100,6 @@ LoadedTex* LoadTexture(const char* full);
 ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps);
 ecbool CreateTex(unsigned int *texindex, const char* relative, ecbool clamp, ecbool mipmaps);
 void ReloadTextures();
-void FreeTexture(const char* relative);
 void FreeTexture(int i);
 void DiffPath(const char* basepath, char* diffpath);
 void DiffPathPNG(const char* basepath, char* diffpath);

@@ -5,20 +5,20 @@
 
 ecbool PlayAnim(int* frame, int first, int last, ecbool loop, int rate)
 {
-    if(frame < first || frame >= last)
+    if(*frame < first || *frame >= last)
     {
-        frame = first;
+       *frame = first;
         return ecfalse;
     }
 
-    frame += rate;
+    *frame += rate;
 
-    if(frame > last)
+    if(*frame > last)
     {
         if(loop)
-            frame = first;
+            *frame = first;
 		else
-			frame = last;
+			*frame = last;
 
         return ectrue;
     }
@@ -29,20 +29,20 @@ ecbool PlayAnim(int* frame, int first, int last, ecbool loop, int rate)
 //Play animation backwards
 ecbool PlayAnimB(int* frame, int first, int last, ecbool loop, int rate)
 {
-    if(frame < first-1 || frame > last)
+    if(*frame < first-1 || *frame > last)
     {
-        frame = last;
+        *frame = last;
         return ecfalse;
     }
 
-    frame -= rate;
+    *frame -= rate;
 
-    if(frame < first)
+    if(*frame < first)
     {
         if(loop)
-            frame = last;
+            *frame = last;
 		else
-			frame = first;
+			*frame = first;
 
         return ectrue;
     }

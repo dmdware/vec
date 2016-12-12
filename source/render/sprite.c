@@ -54,6 +54,20 @@ void SpList_free(SpList *sl)
 	sl->nslices = 1;
 }
 
+void SpLoad_init(SpriteToLoad *stl)
+{
+	stl->relative = NULL;
+	stl->spindex = NULL;
+}
+
+void SpLoad_free(SpriteToLoad *stl)
+{
+	free(stl->relative)
+	free(stl->spindex);
+	stl->relative = NULL;
+	stl->spindex = NULL;
+}
+
 void FreeSprites()
 {
 	Sprite *s;

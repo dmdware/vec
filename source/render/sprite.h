@@ -34,7 +34,7 @@ struct Sprite
 typedef struct Sprite Sprite;
 
 void Sprite_init(Sprite *s);
-void Sprite_free(Spite *s);
+void Sprite_free(Sprite *s);
 
 #define SPRITES	40
 extern Sprite g_sprite[SPRITES];
@@ -64,14 +64,18 @@ void SpList_free(SpList *sl);
 #define SPRITELISTS	4
 extern SpList g_splist[SPRITELISTS];
 
-class SpriteToLoad
+struct SpriteToLoad
 {
-public:
-	std::string relative;
+	char* relative;
 	unsigned int* spindex;
 	ecbool loadteam;
 	ecbool loaddepth;
 };
+
+typedef struct SpriteToLoad SpriteToLoad;
+
+void SpLoad_init(SpriteToLoad *stl);
+void SpLoad_free(SpriteToLoad *stl);
 
 extern Vector g_spriteload;
 
@@ -82,8 +86,6 @@ void FreeSprites();
 ecbool LoadSprite(const char* relative, unsigned int* spindex, ecbool loadteam, ecbool loaddepth);
 void QueueSprite(const char* relative, unsigned int* spindex, ecbool loadteam, ecbool loaddepth);
 void ParseSprite(const char* relative, Sprite* s);
-ecbool PlayAnim(float& frame, int first, int last, ecbool loop, float rate);
-ecbool PlayAnimB(float& frame, int first, int last, ecbool loop, float rate);	//Play animation backwards
 int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 				  int slicex, int slicey);
 ecbool LoadSpriteList(const char* relative, unsigned int* splin, ecbool loadteam, ecbool loaddepth, ecbool queue);

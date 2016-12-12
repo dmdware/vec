@@ -326,28 +326,6 @@ ecbool FindTexture(unsigned int *textureidx, const char* relative)
 	return ecfalse;
 }
 
-void FreeTexture(const char* relative)
-{
-	int i;
-	char corrected[DMD_MAX_PATH+1];
-	Texture* t;
-
-	strcpy(corrected, relative);
-	CorrectSlashes(corrected);
-
-	for(i=0; i<TEXTURES; i++)
-	{
-		t = g_texture+i;
-
-		if(t->loaded && strcmp(t->fullpath, corrected) == 0)
-		{
-			t->loaded = ecfalse;
-			glDeleteTextures(1, &t->texname);
-			return;
-		}
-	}
-}
-
 void FreeTexture(int i)
 {
 	Texture* t;
