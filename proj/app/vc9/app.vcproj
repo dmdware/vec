@@ -255,6 +255,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\inevent.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\inevent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\algo\list.c"
 				>
 			</File>

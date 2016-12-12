@@ -4,7 +4,7 @@
 #define SHADER_H
 
 #include "../platform.h"
-
+#include "../algo/bool.h"
 
 #define SSLOT_TEXTURE0			0
 #define SSLOT_POSITION			1

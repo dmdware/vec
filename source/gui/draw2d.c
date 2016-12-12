@@ -27,7 +27,7 @@ void DrawImage(unsigned int tex, float left, float top, float right, float botto
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex);
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
 
 	newleft = left;
@@ -120,7 +120,7 @@ void DrawSquare(float r, float g, float b, float a, float left, float top, float
 	if(crop[1] >= crop[3])
 		return;
 
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 
 	glUniform4f(s->slot[SSLOT_COLOR], r, g, b, a);
 
@@ -257,7 +257,7 @@ void DrawLine(float r, float g, float b, float a, float x1, float y1, float x2, 
 		y2 -= dy;
 	}
 
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	glUniform4f(s->slot[SSLOT_COLOR], r, g, b, a);
 
 	v[0] = x1;
