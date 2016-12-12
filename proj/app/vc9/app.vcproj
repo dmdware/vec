@@ -171,6 +171,14 @@
 			Name="source"
 			>
 			<File
+				RelativePath="..\..\..\source\render\anim.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\render\anim.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\layouts\appgui.c"
 				>
 			</File>

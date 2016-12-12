@@ -20,105 +20,110 @@ int g_lastLSp = -1;
 Sprite g_sprite[SPRITES];
 SpList g_splist[SPRITELISTS];
 
-Sprite::Sprite()
+void Sprite_init(Sprite *s)
 {
-	on = false;
-	difftexi = 0;
-	teamtexi = 0;
-	pixels = NULL;
+	s->on = ecfalse;
+	s->difftexi = 0;
+	s->teamtexi = 0;
+	s->pixels = NULL;
 }
 
-Sprite::~Sprite()
+void Sprite_free(Spite *s)
 {
-    free();
+	if(s->pixels)
+		LoadedTex_free(s->pixels);
+	free(s->pixels);
+	s->pixels = NULL;
+	s->on = false;
 }
 
-void Sprite::free()
+void SpList_init(SpList *sl)
 {
-    if(pixels)
-    {
-        delete pixels;
-        pixels = NULL;
-    }
+	sl->nsp = 0;
+	sl->sprites = NULL;
+	sl->on = ecfalse;
+	sl->nslices = 1;
+}
 
-	//Free textures?
-
-	on = false;
+void SpList_free(SpList *sl)
+{
+	sl->nsp = 0;
+	free(sl->spites);
+	sl->sprites = NULL;
+	sl->on = ecfalse;
+	sl->nslices = 1;
 }
 
 void FreeSprites()
 {
-	for(int i=0; i<SPRITES; i++)
-	{
-		Sprite* s = &g_sprite[i];
+	Sprite *s;
+	SpList *sl;
 
+	for(s=g_sprites; s<g_sprites+SPRITES; ++s)
+	{
 		if(!s->on)
 			continue;
 
-		s->free();
+		Sprite_free(s);
 	}
 	
-	for(int i=0; i<SPRITELISTS; i++)
+	for(sl=g_splist; sl<g_splist+SPRITELISTS; ++sl)
 	{
-		SpList* sl = &g_splist[i];
-
 		if(!sl->on)
 			continue;
 
-		sl->free();
+		SpList_free(sl);
 	}
 }
 
 ecbool Load1Sprite()
 {
-	if(g_lastLSp+1 < g_spriteload.size())
-		SetStatus(g_spriteload[g_lastLSp+1].relative.c_str());
+	SpriteToLoad* s;
+	char m[128];
 
-	//char m[123];
-	//sprintf(m, "l%d", (int)g_spriteload.size()-g_lastLSp);
-	//InfoMess("asd",m);
+	if(g_lastLSp+1 < g_spriteload.size)
+		SetStatus(g_spriteload[g_lastLSp+1].relative.c_str());
 
 	CHECKGLERROR();
 
-	//g_gui.hideall();
-	//g_gui.show("loading");
-
 	if(g_lastLSp >= 0)
 	{
-		SpriteToLoad* s = &g_spriteload[g_lastLSp];
-		if(!LoadSprite(s->relative.c_str(), s->spindex, s->loadteam, s->loaddepth))
+		s = g_spriteload+g_lastLSp;
+		if(!LoadSprite(s->relative, s->spindex, s->loadteam, s->loaddepth))
 		{
-			char m[128];
-			sprintf(m, "Failed to load sprite %s", s->relative.c_str());
+			sprintf(m, "Failed to load sprite %s", s->relative);
 			ErrMess("Error", m);
 		}
 	}
 
 	g_lastLSp ++;
 
-	if(g_lastLSp >= g_spriteload.size())
+	if(g_lastLSp >= g_spriteload.size)
 	{
-		return false;	// Done loading all
+		return ecfalse;	// Done loading all
 	}
 
-	return true;	// Not finished loading
+	return ectrue;	// Not finished loading
 }
 
-void QueueSprite(const char* relative, uint32_t* spindex, ecbool loadteam, ecbool loaddepth)
+void QueueSprite(const char* relative, unsigned int* spindex, ecbool loadteam, ecbool loaddepth)
 {
 	SpriteToLoad stl;
-	stl.relative = relative;
+	pstrset(&stl.relativ, relative);
 	stl.spindex = spindex;
 	stl.loadteam = loadteam;
 	stl.loaddepth = loaddepth;
-	g_spriteload.push_back(stl);
+	Vector_pushback2(&g_spriteload, sizeof(SpriteToLoad), &stl);
 }
 
 int NewSprite()
 {
-	for(int i=0; i<SPRITES; i++)
+	Sprite* s;
+	int i;
+
+	for(i=0; i<SPRITES; ++i)
 	{
-		Sprite* s = &g_sprite[i];
+		s = g_sprite+i;
 
 		if(!s->on)
 			return i;
@@ -129,9 +134,12 @@ int NewSprite()
 
 int NewSpriteList()
 {
-	for(int i=0; i<SPRITELISTS; i++)
+	SpList* sl;
+	int i;
+
+	for(i=0; i<SPRITELISTS; ++i)
 	{
-		SpList* sl = &g_splist[i];
+		sl = g_splist+i;
 
 		if(!sl->on)
 			return i;
@@ -140,23 +148,23 @@ int NewSpriteList()
 	return -1;
 }
 
-ecbool FindSprite(uint32_t &spriteidx, const char* relative)
+ecbool FindSprite(unsigned int *spriteidx, const char* relative)
 {
-	char corrected[WF_MAX_PATH+1];
+	char corrected[DMD_MAX_PATH+1];
+	char fullpath[DMD_MAX_PATH+1];
+	int i;
+	Sprite* s;
 	strcpy(corrected, relative);
 	CorrectSlashes(corrected);
-	char fullpath[WF_MAX_PATH+1];
 	FullPath(corrected, fullpath);
 
-	for(int i=0; i<SPRITES; i++)
+	for(i=0; i<SPRITES; ++i)
 	{
-		Sprite* s = &g_sprite[i];
+		s = g_sprite+i;
 
-		if(s->on && stricmp(s->fullpath.c_str(), fullpath) == 0)
+		if(s->on && strcmp(s->fullpath, fullpath) == 0)
 		{
-			//g_texindex = i;
-			//texture = t->texname;
-			spriteidx = i;
+			*spriteidx = i;
 			return true;
 		}
 	}
@@ -173,33 +181,33 @@ All class to struct
 LoadedTex -> loadedtex_t or loadedtex
 */
 
-ecbool LoadSprite(const char* relative, uint32_t* spindex, ecbool loadteam, ecbool loaddepth)
+ecbool LoadSprite(const char* relative, unsigned int* spindex, ecbool loadteam, ecbool loaddepth)
 {
-#ifdef ISOTOP
-	loaddepth = false;
-#endif
+	int i;
+	Sprite* s;
+	char full[DMD_MAX_PATH+1];
+	char reltxt[DMD_MAX_PATH+1];
+	char reldiff[DMD_MAX_PATH+1];
+	char relteam[DMD_MAX_PATH+1];
+	char reldepth[DMD_MAX_PATH+1];
+	char pixfull[DMD_MAX_PATH+1];
 
 	if(FindSprite(*spindex, relative))
-		return true;
+		return ectrue;
 
-	int i = NewSprite();
+	i = NewSprite();
 
 	if(i < 0)
-		return false;
+		return ecfalse;
 
-	Sprite* s = &g_sprite[i];
-	s->on = true;
+	s = g_sprite+i;
+	s->on = ectrue;
 	*spindex = i;
 
-	char full[WF_MAX_PATH+1];
 	FullPath(relative, full);
 	CorrectSlashes(full);
 	s->fullpath = full;
 
-	char reltxt[WF_MAX_PATH+1];
-	char reldiff[WF_MAX_PATH+1];
-	char relteam[WF_MAX_PATH+1];
-	char reldepth[WF_MAX_PATH+1];
 	sprintf(reltxt, "%s.txt", relative);
 	sprintf(reldiff, "%s.png", relative);
 	sprintf(relteam, "%s_team.png", relative);
@@ -207,71 +215,88 @@ ecbool LoadSprite(const char* relative, uint32_t* spindex, ecbool loadteam, ecbo
 	ParseSprite(reltxt, s);
 
 	CreateTex(s->difftexi, reldiff, true, false);
-	//if(loadteam)
+	if(loadteam)
 		CreateTex(s->teamtexi, relteam, true, false);
-#ifndef PLATFORM_MOBILE
 	if(loaddepth)
-		CreateTex(s->depthtexi, reldepth, true, false);
-#endif
+		CreateTex(s->depthtexi, reldepth, true, false);]
 	
-	char pixfull[WF_MAX_PATH+1];
 	FullPath(reldiff, pixfull);
 	s->pixels = LoadTexture(pixfull);
 
 	if(!s->pixels)
 	{
-		Log("Failed to load sprite %s\r\n", relative);
-		return false;
+		fprintf(g_applog, "Failed to load sprite %s\r\n", relative);
+		return ecfalse;
 	}
 	else
-		Log("%s\r\n", relative);
+		fprintf(g_applog, "%s\r\n", relative);
 
-	return true;
+	return ectrue;
 }
 
-ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ecbool loaddepth, ecbool queue)
+ecbool LoadSpriteList(const char* relative, unsigned int* splin, ecbool loadteam, ecbool loaddepth, ecbool queue)
 {
-	//if(FindSpriteList(*splin, relative))
-	//	return;
+	int i;
+	SpList* sl;
+	char full[DMD_MAX_PATH+1];
+	char txtpath[DMD_MAX_PATH+1];
+	int nsides;
+	ecbool dorots;	//rotations
+	ecbool dosides;	//sides
+	ecbool doincls;	//inclines
+	ecbool doframes;	//frames
+	int nframes;
+	FILE* fp;
+	char line[128];
+	char* tok;
+	int ncombos;
+	int sidechunk;
+	int inclchunk;
+	int frameschunk;
+	int incli;
+	int pitchi;
+	int yawi;
+	int rolli;
+	int sidei;
+	int framei;
+	int ci;
+	char combo[DMD_MAX_PATH+1];
+	char frame[32];
+	char side[32];
+	char stage[32];
 
-	//loaddepth = false; 
-
-	int i = NewSpriteList();
+	i = NewSpriteList();
 
 	if(i < 0)
-		return false;
+		return ecfalse;
 
-	SpList* sl = &g_splist[i];
+	sl = &g_splist[i];
 	sl->on = true;
 	*splin = i;
 	
-	char full[WF_MAX_PATH+1];
 	FullPath(relative, full);
 	CorrectSlashes(full);
 	sl->fullpath = full;
 
-	char txtpath[WF_MAX_PATH+1];
 	sprintf(txtpath, "%s_list.txt", full);
 
-	int nsides = 1;
-	ecbool dorots = false;	//rotations
-	ecbool dosides = false;	//sides
-	ecbool doincls = false;	//inclines
-	ecbool doframes = false;	//frames
-	int nframes = 1;
+	nsides = 1;
+	dorots = ecfalse;	//rotations
+	dosides = ecfalse;	//sides
+	doincls = ecfalse;	//inclines
+	doframes = ecfalse;	//frames
+	nframes = 1;
 
-	FILE* fp = fopen(txtpath, "r");
+	fp = fopen(txtpath, "r");
 
 	if(!fp)
-		return false;
-
-	char line[128];
+		return ecfalse;
 
 	do
 	{
 		fgets(line, 100, fp);
 
-		char* tok = strtok(line, " ");
+		tok = strtok(line, " ");
 
 		if(!tok)
 			continue;
@@ -283,7 +308,7 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 			if(!tok)
 				continue;
 
-			doincls = (bool)StrToInt(tok);
+			sscanf(tok, "%hhu", &doincls);
 		}
 		else if(strcmp(tok, "frames") == 0)
 		{
@@ -292,7 +317,7 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 			if(!tok)
 				continue;
 
-			doframes = (bool)StrToInt(tok);
+			sscanf(tok, "%hhu", &doframes);
 
 			tok = strtok(NULL, " ");
 
@@ -308,7 +333,7 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 			if(!tok)
 				continue;
 
-			dosides = (bool)StrToInt(tok);
+			sscanf(tok, "%hhu", &dosides);
 
 			tok = strtok(NULL, " ");
 
@@ -324,23 +349,23 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 			if(!tok)
 				continue;
 
-			dorots = (bool)StrToInt(tok);
+			sscanf(tok, "%hhu", &dorots);
 
 			tok = strtok(NULL, " ");
 
 			if(!dorots || !tok)
 				continue;
 
-			nsides = StrToInt(tok);
+			sscanf(tok, "%hhu", &nsides);
 		}
 	}while(!feof(fp));
 
 	fclose(fp);
 
-	int ncombos = 1;
-	int sidechunk = 1;
-	int inclchunk = 1;
-	int frameschunk = 1;
+	ncombos = 1;
+	sidechunk = 1;
+	inclchunk = 1;
+	frameschunk = 1;
 
 	if(dorots)
 	{
@@ -377,16 +402,19 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 	sl->nsides = nsides;
 	sl->sides = dosides;
 	sl->rotations = dorots;
-	sl->sprites = new uint32_t [ ncombos ];
+	sl->sprites = (unsigned int*)malloc( sizeof(unsigned int) * ncombos );
 
-	int incli = 0;
-	int pitchi = 0;
-	int yawi = 0;
-	int rolli = 0;
-	int sidei = 0;
-	int framei = 0;
+	if(!sl->sprites)
+		OUTOFMEM();
 
-	for(int ci=0; ci<ncombos; ci++)
+	incli = 0;
+	pitchi = 0;
+	yawi = 0;
+	rolli = 0;
+	sidei = 0;
+	framei = 0;
+
+	for(ci=0; ci<ncombos; ci++)
 	{
 		if(dorots)
 		{
@@ -409,10 +437,6 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 			framei = (ci / inclchunk) % nframes;
 		}
 
-		char combo[WF_MAX_PATH+1];
-
-		char frame[32];
-		char side[32];
 		strcpy(frame, "");
 		strcpy(side, "");
 
@@ -451,7 +475,7 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 #endif
 		}
 
-		std::string stage = "";
+		strcpy(stage, "");
 #if 0
 		if(rendstage == RENDSTAGE_TEAM)
 			stage = "_team";
@@ -467,32 +491,30 @@ ecbool LoadSpriteList(const char* relative, uint32_t* splin, ecbool loadteam, ec
 			LoadSprite(combo, &sl->sprites[ci], loadteam, loaddepth);
 	}
 
-	return true;
+	return ectrue;
 }
 
 int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 				  int slicex, int slicey)
 {
 	//int ncombos = 1;
-	int sidechunk = 1;
-	int inclchunk = 1;
-	int frameschunk = 1;
-	int sliceschunk = 1;
+	int sidechunk;
+	int inclchunk;
+	int frameschunk;
+	int sliceschunk;
+	int ci;
 
-	//pitch = roll = 0;
-	//roll=0;
-	//pitch = 1;
+	sidechunk = 1;
+	inclchunk = 1;
+	frameschunk = 1;
+	sliceschunk = 1;
 
 	if(sl->rotations)
 	{
-		//ncombos *= sl->nsides;
-		//ncombos *= sl->nsides;
-		//ncombos *= sl->nsides;
 		sidechunk = sl->nsides * sl->nsides * sl->nsides;
 	}
 	else if(sl->sides)
 	{
-		//ncombos *= sl->nsides;
 		sidechunk = sl->nsides;
 	}
 	
@@ -500,7 +522,6 @@ int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 
 	if(sl->inclines)
 	{
-		//ncombos *= INCLINES;
 		inclchunk = sidechunk * INCLINES;
 	}
 
@@ -508,11 +529,7 @@ int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 
 	if(sl->frames)
 	{
-		//ncombos *= sl->nframes;
 		frameschunk = inclchunk * sl->nframes;
-
-		//if(sl->nframes == 3)
-		//	InfoMess("33","33");
 	}
 	
 	sliceschunk = frameschunk;
@@ -522,7 +539,7 @@ int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 		sliceschunk = frameschunk * sl->nslices * sl->nslices;
 	}
 
-	int ci = 0;
+	ci = 0;
 	
 	if(sl->rotations)
 	{
@@ -548,31 +565,25 @@ int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 		ci += frameschunk * ( sl->nslices * slicey + slicex );
 	}
 
-		//if(strstr(sl->fullpath.c_str(), "lab"))
-		//{
-		//	char m[123];
-		//	sprintf(m, "ci%d y%d f%d", ci, (int)yaw, (int)frame);
-		//	InfoMess(m,m);
-		//}
-
 	return ci;
 }
 
 //TODO size up to power of 2 for mobile etc
 void ParseSprite(const char* relative, Sprite* s)
 {
-	char fullpath[WF_MAX_PATH+1];
-	FullPath(relative, fullpath);
-
-	FILE* fp = fopen(fullpath, "r");
-	if(!fp) return;
-
+	char fullpath[DMD_MAX_PATH+1];
+	FILE* fp;
 	float centerx;
 	float centery;
 	float width;
 	float height;
 	float clipszx, clipszy;
 	float clipminx, clipminy, clipmaxx, clipmaxy;
+
+	FullPath(relative, fullpath);
+
+	fp = fopen(fullpath, "r");
+	if(!fp) return;
 
 	fscanf(fp, "%f %f", &centerx, &centery);
 	fscanf(fp, "%f %f", &width, &height);
@@ -584,153 +595,15 @@ void ParseSprite(const char* relative, Sprite* s)
 	s->offset[2] = s->offset[0] + width;
 	s->offset[3] = s->offset[1] + height;
 
-	//s->crop[0] = clipminx / width;
-	//s->crop[1] = clipminy / height;
-	//s->crop[2] = clipmaxx / width;
-	//s->crop[3] = clipmaxy / height;
-	//s->crop[2] = (clipminx + clipszx) / width;
-	//s->crop[3] = (clipminy + clipszy) / height;
 	s->crop[0] = 0;
 	s->crop[1] = 0;
 	s->crop[2] = clipszx / width;
 	s->crop[3] = clipszy / height;
 
-	//s->cropoff[0] = clipminx - centerx;
-	//s->cropoff[1] = clipminy - centery;
-	//s->cropoff[2] = clipmaxx - centerx;
-	//s->cropoff[3] = clipmaxy - centery;
-	//s->cropoff[2] = clipminx + clipszx - centerx;
-	//s->cropoff[3] = clipminy + clipszy - centery;
 	s->cropoff[0] = -centerx;
 	s->cropoff[1] = -centery;
 	s->cropoff[2] = clipszx - centerx;
 	s->cropoff[3] = clipszy - centery;
 
 	fclose(fp);
-
-#if 0
-	char fullpath[WF_MAX_PATH+1];
-
-	char frame[32];
-	char side[32];
-	strcpy(frame, "");
-	strcpy(side, "");
-
-	if(g_rendertype == RENDER_UNIT || g_rendertype == RENDER_BUILDING)
-		sprintf(frame, "_fr%03d", g_renderframe);
-
-	if(g_rendertype == RENDER_UNIT)
-		sprintf(side, "_si%d", g_rendside);
-
-	std::string incline = "";
-
-	if(g_rendertype == RENDER_TERRTILE || g_rendertype == RENDER_ROAD)
-	{
-		if(g_currincline == INC_0000)	incline = "_inc0000";
-		else if(g_currincline == INC_0001)	incline = "_inc0001";
-		else if(g_currincline == INC_0010)	incline = "_inc0010";
-		else if(g_currincline == INC_0011)	incline = "_inc0011";
-		else if(g_currincline == INC_0100)	incline = "_inc0100";
-		else if(g_currincline == INC_0101)	incline = "_inc0101";
-		else if(g_currincline == INC_0110)	incline = "_inc0110";
-		else if(g_currincline == INC_0111)	incline = "_inc0111";
-		else if(g_currincline == INC_1000)	incline = "_inc1000";
-		else if(g_currincline == INC_1001)	incline = "_inc1001";
-		else if(g_currincline == INC_1010)	incline = "_inc1010";
-		else if(g_currincline == INC_1011)	incline = "_inc1011";
-		else if(g_currincline == INC_1100)	incline = "_inc1100";
-		else if(g_currincline == INC_1101)	incline = "_inc1101";
-		else if(g_currincline == INC_1110)	incline = "_inc1110";
-	}
-
-	std::string stage = "";
-
-	if(rendstage == RENDSTAGE_TEAM)
-		stage = "_team";
-
-	sprintf(fullpath, "%s%s%s%s%s.png", g_renderbasename, side, frame, incline.c_str(), stage.c_str());
-	SavePNG(fullpath, &finalsprite);
-	//sprite.channels = 3;
-	//sprintf(fullpath, "%s_si%d_fr%03d-rgb.png", g_renderbasename, g_rendside, g_renderframe);
-	//SavePNG(fullpath, &sprite);
-
-	sprintf(fullpath, "%s%s%s%s.txt", g_renderbasename, side, frame, incline.c_str());
-	std::ofstream ofs(fullpath, std::ios_base::out);
-	ofs<<finalcenter.x<<" "<<finalcenter.y);
-	ofs<<finalimagew<<" "<<finalimageh);
-	ofs<<finalclipsz.x<<" "<<finalclipsz.y);
-	ofs<<finalclipmin.x<<" "<<finalclipmin.y<<" "<<finalclipmax.x<<" "<<finalclipmax.y;
-#endif
-
-#if 0
-	char infopath[WF_MAX_PATH+1];
-	strcpy(infopath, texpath);
-	StripExt(infopath);
-	strcat(infopath, ".txt");
-
-	std::ifstream infos(infopath);
-
-	if(!infos)
-		return;
-
-	int centeroff[2];
-	int imagesz[2];
-	int clipsz[2];
-
-	infos>>centeroff[0]>>centeroff[1];
-	infos>>imagesz[0]>>imagesz[1];
-	infos>>clipsz[0]>>clipsz[1];
-
-	t->sprite.offset[0] = -centeroff[0];
-	t->sprite.offset[1] = -centeroff[1];
-	t->sprite.offset[2] = t->sprite.offset[0] + imagesz[0];
-	t->sprite.offset[3] = t->sprite.offset[1] + imagesz[1];
-#endif
-}
-
-ecbool PlayAnim(float& frame, int first, int last, ecbool loop, float rate)
-{
-    if(frame < first || frame >= last)
-    {
-        frame = first;
-        return false;
-    }
-
-    frame += rate;
-
-    if(frame > last)
-    {
-        if(loop)
-            frame = first;
-		else
-			frame = last;
-
-        return true;
-    }
-
-    return false;
-}
-
-//Play animation backwards
-ecbool PlayAnimB(float& frame, int first, int last, ecbool loop, float rate)
-{
-    if(frame < first-1 || frame > last)
-    {
-        frame = last;
-        return false;
-    }
-
-    frame -= rate;
-
-    if(frame < first)
-    {
-        if(loop)
-            frame = last;
-		else
-			frame = first;
-
-        return true;
-    }
-
-    return false;
 }
