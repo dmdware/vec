@@ -13,7 +13,20 @@
 
 #include "fixmath.h"
 
+int ceili(const int num, const int denom)
+{
+	if(denom  == 0)
+		return 0;
 
+	int div = num / denom;
+	const int mul = div * denom;
+	const int rem = num - mul;
+
+	if(rem > 0)
+		div += 1;
+
+	return div;
+}
 
 unsigned int ilog2ceil(unsigned int x)
 {

@@ -37,10 +37,12 @@ unsigned __int64 GetTicks()
 {
 	//return time(0);
 #ifdef PLATFORM_WIN
-	//return GetTickCount64();
+	
 	SYSTEMTIME st;
+	FILETIME ft;
+
+	//return GetTickCount64();
 	GetSystemTime (&st);
-	_FILETIME ft;
 	SystemTimeToFileTime(&st, &ft);
 	//LARGE_INTEGER lint;
 	//lint.HighPart = ft.dwHighDateTime;
@@ -60,11 +62,11 @@ unsigned __int64 GetTicks()
 
 void FullPath(const char* filename, char* full)
 {
-	char exepath[WF_MAX_PATH+1];
+	char exepath[DMD_MAX_PATH+1];
 	ExePath(exepath);
 	std::string path = StripFile(exepath);
 
-	//char full[WF_MAX_PATH+1];
+	//char full[DMD_MAX_PATH+1];
 	sprintf(full, "%s", path.c_str());
 
 	char c = full[ strlen(full)-1 ];

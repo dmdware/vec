@@ -1,7 +1,8 @@
 
 
 #include "vector.h"
-#include "ecbool.h"
+#include "bool.h"
+#include "../debug.h"
 
 void Vector_init(Vector *v, int unitsz)
 {

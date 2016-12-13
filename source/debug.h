@@ -70,7 +70,7 @@ void Timer_init(Timer *t);
 
 void StartTimer(int i);
 void StopTimer(int i);
-void DefTimer(int i, int inside, char *name);
+void DefTimer(int i, int inside, const char *name);
 void WriteProfiles(int in, int layer);
 void DefTimers();
 

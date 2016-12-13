@@ -8255,19 +8255,6 @@ inline int isqrt(unsigned int x) {
 #endif	//!SMALL_ISQRT
 
 //deterministic ceil
-inline int ceili(const int num, const int denom)
-{
-	if(denom  == 0)
-		return 0;
-
-	int div = num / denom;
-	const int mul = div * denom;
-	const int rem = num - mul;
-
-	if(rem > 0)
-		div += 1;
-
-	return div;
-}
+int ceili(const int num, const int denom);
 
 #endif

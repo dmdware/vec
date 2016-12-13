@@ -14,6 +14,7 @@
 #include "font.h"
 #include "../window.h"
 #include "icon.h"
+#include "../debug.h"
 
 void Widget_init(Widget* w)
 {
@@ -257,7 +258,7 @@ void Widget_freech(Widget *w)
 	Node *i;
 	Widget *iw;
 
-	i = w->sub.begin();
+	i = w->sub.head;
 	while(i)
 	{
 		iw = (Widget*)i->data;
@@ -268,8 +269,8 @@ void Widget_freech(Widget *w)
 
 void SubCrop(float *src1, float *src2, float *dest)
 {
-	dest[0] = fmax(src1[0], src2[0]);
-	dest[1] = fmax(src1[1], src2[1]);
-	dest[2] = fmin(src1[2], src2[2]);
-	dest[3] = fmin(src1[3], src2[3]);
+	dest[0] = ((src1[0]>src2[0])?src1[0]:src2[0]);
+	dest[1] = ((src1[1]>src2[1])?src1[1]:src2[1]);
+	dest[2] = ((src1[2]<src2[2])?src1[2]:src2[2]);
+	dest[3] = ((src1[3]<src2[3])?src1[3]:src2[3]);
 }
