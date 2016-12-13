@@ -83,7 +83,7 @@ void GUI_draw2(GUI *gui)
 	DrawImage(g_texture[sp->difftexi].texname, 
 		g_mouse.x+sp->offset[0], g_mouse.y+sp->offset[1], 
 		g_mouse.x+sp->offset[2], g_mouse.y+sp->offset[3], 
-		0,0,1,1, crop);
+		0,0,1,1, b->crop);
 	
 	CHECKGLERROR();
 

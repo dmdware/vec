@@ -8,41 +8,11 @@
 #include "../../ustring.h"
 #include "../gui.h"
 
-void Button_init(Button *b)
-{
-	Widget *bw;
-
-	bw = (Widget*)b;
-
-	Widget_init(bw);
-
-	bw->parent = NULL;
-	type = WIDGET_BUTTON;
-	//text = RichText("");
-	font = MAINFONT8;
-	//float length = 0;
-	//for(int i=0; i<strlen(t); i++)
-	//    length += g_font[f].glyph[t[i]].w;
-	//tpos[0] = (left+right)/2.0f - length/2.0f;
-	//tpos[1] = (top+bottom)/2.0f - g_font[f].gheight/2.0f;
-	style = BUST_LINEBASED;
-	over = ecfalse;
-	ldown = ecfalse;
-	CreateTex(tex, "gui/transp.png", ectrue, ecfalse);
-	CreateTex(bgtex, "gui/corrodbutton.png", ectrue, ecfalse);
-	CreateTex(bgovertex, "gui/corrodbuttonover.png", ectrue, ecfalse);
-	reframefunc = NULL;
-	clickfunc = NULL;
-	overfunc = NULL;
-	clickfunc2 = NULL;
-	overfunc2 = NULL;
-	outfunc = NULL;
-	param = -1;
-	clickfunc3 = NULL;
-	//reframe();
-}
-
-Button::Button(Button *b, Widget* parent, const char* name, const char* filepath, const RichText label, const RichText tooltip, int f, int style, void (*reframef)(Widget* w), void (*click)(), void (*click2)(int p), void (*overf)(), void (*overf2)(int p), void (*out)(), int parm, void (*click3)(Widget* w)) : Widget()
+void Button_init(Button *b, Widget* parent, const char* name, const char* filepath, 
+				 const char* label, const char* tooltip, int f, int style,
+				 void (*reframef)(Widget* w), void (*click)(), void (*click2)(int p), 
+				 void (*overf)(), void (*overf2)(int p), void (*out)(), int parm, 
+				 void (*click3)(Widget* w))
 {
 	Widget *bw;
 	int length;
@@ -54,7 +24,7 @@ Button::Button(Button *b, Widget* parent, const char* name, const char* filepath
 	bw->type = WIDGET_BUTTON;
 	strcpy(bw->name, name);
 	b->style = style;
-	pstrset(b->text, tooltip);
+	pstrset(b->tooltip, tooltip);
 	pstrset(b->label, label);
 	b->font = f;
 
@@ -161,34 +131,37 @@ void Button_inev(Button *b, InEv* ie)
 	}
 }
 
-void Button_draw()
+void Button_draw(Button *b)
 {
-	if(style == BUST_CORRODE)
+	Shader *s;
+	float midcolor[] = {0.7f,0.7f,0.7f,0.8f};
+	float lightcolor[] = {0.8f,0.8f,0.8f,0.8f};
+	float darkcolor[] = {0.5f,0.5f,0.5f,0.8f};
+	char i;
+
+	if(b->style == BUST_CORRODE)
 	{
-		if(over)
-			DrawImage(g_texture[bgovertex].texname, pos[0], pos[1], pos[2], pos[3], 0,0,1,1, crop);
+		if(b->over)
+			DrawImage(g_texture[b->bgovertex].texname, b->pos[0], b->pos[1], b->pos[2], b->pos[3], 0,0,1,1, b->crop);
 		else
-			DrawImage(g_texture[bgtex].texname, pos[0], pos[1], pos[2], pos[3], 0,0,1,1, crop);
+			DrawImage(g_texture[b->bgtex].texname, b->pos[0], b->pos[1], b->pos[2], b->pos[3], 0,0,1,1, b->crop);
 
-		DrawImage(g_texture[tex].texname, pos[0], pos[1], pos[2], pos[3], 0,0,1,1, crop);
+		DrawImage(g_texture[b->tex].texname, b->pos[0], b->pos[1], b->pos[2], b->pos[3], 0,0,1,1, b->crop);
 
-		DrawShadowedText(font, tpos[0], tpos[1], &label);
+		DrawShadowedText(b->font, b->tpos[0], b->tpos[1], b->label);
 	}
-	else if(style == BUST_LEFTIMAGE)
+	else if(b->style == BUST_LEFTIMAGE)
 	{
 		EndS();
 
 		UseS(SHADER_COLOR2D);
-		glUniform1f(g_shader[g_curS].slot[SSLOT_WIDTH], (float)g_currw);
-		glUniform1f(g_shader[g_curS].slot[SSLOT_HEIGHT], (float)g_currh);
-
-		float midcolor[] = {0.7f,0.7f,0.7f,0.8f};
-		float lightcolor[] = {0.8f,0.8f,0.8f,0.8f};
-		float darkcolor[] = {0.5f,0.5f,0.5f,0.8f};
+		s = g_sh+g_curS;
+		glUniform1f(s->slot[SSLOT_WIDTH], (float)g_currw);
+		glUniform1f(s->slot[SSLOT_HEIGHT], (float)g_currh);
 
 		if(over)
 		{
-			for(int i=0; i<3; i++)
+			for(i=0; i<3; ++i)
 			{
 				midcolor[i] = 0.8f;
 				lightcolor[i] = 0.9f;
@@ -196,13 +169,13 @@ void Button_draw()
 			}
 		}
 
-		DrawSquare(midcolor[0], midcolor[1], midcolor[2], midcolor[3], pos[0], pos[1], pos[2], pos[3], crop);
+		DrawSquare(midcolor[0], midcolor[1], midcolor[2], midcolor[3], b->pos[0], b->pos[1], b->pos[2], b->pos[3], b->crop);
 
-		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], pos[2], pos[1], pos[2], pos[3]-1, crop);
-		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], pos[0], pos[1], pos[2]-1, pos[1], crop);
+		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], b->pos[2], b->pos[1], b->pos[2], b->pos[3]-1, b->crop);
+		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], b->pos[0], b->pos[1], b->pos[2]-1, b->pos[1], b->crop);
 
-		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], pos[0]+1, pos[3], pos[2], pos[3], crop);
-		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], pos[2], pos[1]+1, pos[2], pos[3], crop);
+		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], b->pos[0]+1, b->pos[3], b->pos[2], b->pos[3], b->crop);
+		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], b->pos[2], b->pos[1]+1, b->pos[2], b->pos[3], b->crop);
 
 		EndS();
 		CHECKGLERROR();
@@ -212,7 +185,7 @@ void Button_draw()
 		float h = pos[3]-pos[1]-2;
 		float minsz = fmin(w, h);
 
-		DrawImage(g_texture[tex].texname, pos[0]+1, pos[1]+1, pos[0]+minsz, pos[1]+minsz, 0,0,1,1, crop);
+		DrawImage(g_texture[tex].texname, b->pos[0]+1, b->pos[1]+1, b->pos[0]+minsz, b->pos[1]+minsz, 0,0,1,1, b->crop);
 
 		float gheight = g_font[font].gheight;
 		float texttop = pos[1] + h/2.0f - gheight/2.0f;
@@ -246,13 +219,13 @@ void Button_draw()
 			}
 		}
 
-		DrawSquare(midcolor[0], midcolor[1], midcolor[2], midcolor[3], pos[0], pos[1], pos[2], pos[3], crop);
+		DrawSquare(midcolor[0], midcolor[1], midcolor[2], midcolor[3], b->pos[0], b->pos[1], b->pos[2], b->pos[3], b->crop);
 
-		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], pos[2], pos[1], pos[2], pos[3]-1, crop);
-		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], pos[0], pos[1], pos[2]-1, pos[1], crop);
+		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], b->pos[2], b->pos[1], b->pos[2], b->pos[3]-1, b->crop);
+		DrawLine(lightcolor[0], lightcolor[1], lightcolor[2], lightcolor[3], b->pos[0], b->pos[1], b->pos[2]-1, b->pos[1], b->crop);
 
-		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], pos[0]+1, pos[3], pos[2], pos[3], crop);
-		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], pos[2], pos[1]+1, pos[2], pos[3], crop);
+		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], b->pos[0]+1, b->pos[3], b->pos[2], b->pos[3], b->crop);
+		DrawLine(darkcolor[0], darkcolor[1], darkcolor[2], darkcolor[3], b->pos[2], b->pos[1]+1, b->pos[2], b->pos[3], b->crop);
 
 		EndS();
 		CHECKGLERROR();
@@ -265,7 +238,7 @@ void Button_draw()
 		//TODO fix resolution change on settings reload on mobile
 
 		//2015/10/27 fixed now button text is cropped
-		//DrawImage(g_texture[tex].texname, pos[0]+1, pos[1]+1, pos[0]+minsz, pos[1]+minsz);
+		//DrawImage(g_texture[tex].texname, b->pos[0]+1, b->pos[1]+1, b->pos[0]+minsz, b->pos[1]+minsz);
 		CenterLabel(this);
 		DrawShadowedTextF(font, tpos[0], tpos[1], crop[0], crop[1], crop[2], crop[3], &label);
 	}
@@ -274,11 +247,10 @@ void Button_draw()
 	//	Log("draw choose texture");
 }
 
-void Button::drawover()
+void Button_drawover(Button *b)
 {
-	if(over)
+	if(b->over)
 	{
-		Player* py = &g_player[g_localP];
 		//DrawShadowedText(font, tpos[0], tpos[1], text.c_str());
 		DrawShadowedText(font, g_mouse.x, g_mouse.y-g_font[font].gheight, &text);
 		//DrawBoxShadText(font, g_mouse.x, g_mouse.y-g_font[font].gheight, &text);
