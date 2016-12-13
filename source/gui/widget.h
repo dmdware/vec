@@ -23,14 +23,16 @@
 
 #define MAX_OPTIONS_SHOWN	7
 
+#define WIDGET_GUI					0
 #define WIDGET_IMAGE				1
+#define WIDGET_EDITBOX				2
 
 struct Widget
 {
 	/* TODO trim members delegate to sub's */
 
 	char type;
-	Widget* parent;
+	struct Widget* parent;
 	float pos[4];
 	float crop[4];
 	
@@ -82,8 +84,10 @@ struct Widget
 	
 		*/
 
-	void (*reframefunc)(Widget* w);
+	void (*reframefunc)(struct Widget* w);
 };
+
+typedef struct Widget Widget;
 
 void Widget_init(Widget* w);
 void Widget_free(Widget *w);
@@ -94,7 +98,7 @@ void Widget_frameupd(Widget *w);
 void Widget_reframe(Widget *w);	//resized or moved
 void Widget_subframe(Widget *w, float* fr)
 {
-	memcpy((void*)fr, (void*)pos, sizeof(float)*4);
+	memcpy((void*)fr, (void*)w->pos, sizeof(float)*4);
 }
 Widget* Widget_get(Widget *w, const char* name);
 void Widget_add(Widget *w, Widget* neww);

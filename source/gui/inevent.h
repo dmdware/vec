@@ -48,7 +48,7 @@ struct InEv
 	int cursor;	//cursor pos in composition
 	int sellen;	//selection length
 	signed char curst;	//cursor state/type eg. drag, resize, normal
-	Widget* interceptor;	//corpd fix
+	struct Widget* interceptor;	//corpd fix
 };
 
 typedef struct InEv InEv;

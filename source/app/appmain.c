@@ -320,6 +320,10 @@ void Init()
 	SDL_version *link_version;
 	int flags;
 	int initted;
+	char full[DMD_MAX_PATH+1];
+
+	FullPath("log.txt", full);
+	g_applog = fopen(full, "wb");
 
 #ifdef PLATFORM_LINUX
 	signal(SIGINT, SignalCallback);

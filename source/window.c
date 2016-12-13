@@ -3,6 +3,9 @@
 
 #include "window.h"
 #include "algo/bool.h"
+#include "gui/widget.h"
+#include "gui/gui.h"
+#include "render/shader.h"
 
 #ifndef MATCHMAKER
 #endif
@@ -11,8 +14,8 @@ ecbool g_quit = ecfalse;
 ecbool g_background = ecfalse;
 ecbool g_fs = ectrue;
 Vec2i g_selres;
-Vector g_ress; /* Vec2i */
-Vector g_bpps; /* char */
+List g_ress; /* Vec2i */
+List g_bpps; /* char */
 double g_instantdrawfps = 0;
 double g_instantupdfps = 0;
 double g_drawfrinterval = 0;
@@ -56,8 +59,8 @@ void EnumDisp()
 		{
 			rp = (Vec2i*)rit->data;
 
-			if(rp->width == mode.w &&
-				rp->height == mode.h)
+			if(rp->x == mode.w &&
+				rp->y == mode.h)
 			{
 				found = ectrue;
 				break;
@@ -67,9 +70,9 @@ void EnumDisp()
 		if(found)
 			continue;
 
-		r.width = mode.w;
-		r.height = mode.h;
-		List_pushback2(&g_ress, &r, sizeof(r));
+		r.x = mode.w;
+		r.y = mode.h;
+		List_pushback2(&g_ress, sizeof(r), &r);
 	}
 }
 
@@ -82,7 +85,7 @@ void Resize(int width, int height)
 
 	glViewport(0, 0, width, height);
 
-	gui = &g_gui;
+	gui = (Widget*)&g_gui;
 
 	g_width = width;
 	g_height = height;
@@ -121,7 +124,7 @@ ecbool DrawNextFrame()
 
 	unsigned __int64 currentTime = GetTicks();
 	float desiredFPMS = 1000.0f/(float)DRAW_FRAME_RATE;
-	int deltaTime = currentTime - lastdrawtick;
+	int deltaTime = (int)(currentTime - lastdrawtick);
 
 	if(deltaTime >= desiredFPMS)
 	{
@@ -159,12 +162,12 @@ void CalcUpdRate()
 
 ecbool UpdNextFrame()
 {
-	static unsigned __int64 lastupdtick = GetTicks();
-	static unsigned __int64 elapsedupdtime = 0;
+	static unsigned __int64 lastupdtick;
+	static unsigned __int64 elapsedupdtime;
 
 	unsigned __int64 currentTime = GetTicks();
 	float desiredFPMS = 1000.0f/(float)SIM_FRAME_RATE;
-	int deltaTime = currentTime - lastupdtick;
+	int deltaTime = (int)(currentTime - lastupdtick);
 
 	if(deltaTime >= desiredFPMS)
 	{
@@ -184,7 +187,7 @@ ecbool InitWindow()
 	SDL_Surface* surf;
 
 #ifndef PLATFORM_MOBILE
-	FullPath("gui/biohazard-64x64.png", path);
+	FullPath("gui/i-64x64.png", path);
 	pixels = LoadPNG(path);
 
 	if(!pixels)
@@ -203,7 +206,8 @@ ecbool InitWindow()
 
 	SDL_SetWindowIcon(g_win, surf);
 
-	delete pixels;
+	LoadedTex_free(pixels);
+	free(pixels);
 #endif
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -230,7 +234,7 @@ ecbool InitWindow()
 
 SDL_bool IsFullScreen(SDL_Window *win)
 {
-	Uint32 flags = SDL_GetWindowFlags(win);
+	unsigned int flags = SDL_GetWindowFlags(win);
 
 	if (flags & SDL_WINDOW_FULLSCREEN) return SDL_TRUE;
 
@@ -243,7 +247,7 @@ int SDL_ToggleFS(SDL_Window *win)
 	{
 		if (SDL_SetWindowFullscreen(win, SDL_FALSE) < 0)
 		{
-			Log("Setting windowed failed : %s\r\n", SDL_GetError());
+			fprintf(g_applog, "Setting windowed failed : %s\r\n", SDL_GetError());
 			return -1;
 		}
 
@@ -252,28 +256,24 @@ int SDL_ToggleFS(SDL_Window *win)
 
 	if (SDL_SetWindowFullscreen(win, SDL_TRUE) < 0)
 	{
-		Log("Setting fullscreen failed : %s\r\n", SDL_GetError());
+		fprintf(g_applog, "Setting fullscreen failed : %s\r\n", SDL_GetError());
 		return -1;
 	}
 
 	return 1; 
 }
 
-int SDL_ToggleFS(SDL_Window *win, int w, int h)
-{
-	Uint32 flags = (SDL_GetWindowFlags(win) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
-	if (SDL_SetWindowFullscreen(win, flags) < 0) return -1; // NOTE: this takes FLAGS as the second param, NOT ectrue/ecfalse!
-	SDL_SetWindowSize(win, w, h);
-	return 0; 
-}
-
 void BreakWin(const char* title)
 {
 	char msg[256];
 	unsigned int flags;
+	Shader *s;
 
 	FreeTextures();
-	ReleaseShaders();
+
+	for(s=g_sh; s<g_sh+SHADERS; ++s)
+		Sh_free(s);
+
 	flags = (SDL_GetWindowFlags(g_win) & ~SDL_WINDOW_FULLSCREEN_DESKTOP);
 	SDL_SetWindowFullscreen(g_win, flags);
 
@@ -330,8 +330,8 @@ ecbool MakeWin(const char* title)
 		title,   
 		startx,    
 		starty,   
-		g_selres.width,    
-		g_selres.height,  
+		g_selres.x,    
+		g_selres.y,  
 		flags       
 		);
 

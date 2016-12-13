@@ -35,8 +35,8 @@ extern double g_updfrinterval;
 extern double g_drawfrinterval;
 
 extern Vec2i g_selres;
-extern Vector g_ress;
-extern Vector g_bpps;
+extern List g_ress;
+extern List g_bpps;
 
 #ifndef MATCHMAKER
 extern Camera g_cam;

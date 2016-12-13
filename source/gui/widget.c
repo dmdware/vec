@@ -30,9 +30,14 @@ void Widget_free(Widget *w)
 {
 	Widget_freech(w);
 	free(w->extra);
-	free(w->value);
 	w->extra = NULL;
-	w->value = NULL;
+
+	switch(w->type)
+	{
+	//case WIDGET_EDITBOX:
+		//EditBox_free((EditBox*)w);
+	//	break;
+	}
 }
 
 void Widget_chcall(Widget *w, Widget* ch, char type, void* data)
@@ -47,7 +52,7 @@ void Widget_hideall(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)iw->data;
+		iw = (Widget*)i->data;
 		Widget_hide(iw);
 	}
 }
@@ -59,7 +64,7 @@ void Widget_frameupd(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)iw->data;
+		iw = (Widget*)i->data;
 		Widget_frameupd(iw);
 	}
 }
@@ -70,11 +75,11 @@ void Widget_reframe(Widget *w)	//resized or moved
 	Widget *iw;
 
 	if(w->reframefunc)
-		w->reframefunc(this);
+		w->reframefunc(w);
 
 	if(w->parent)
 	{
-		SubCrop(w->parent->crop, pos, crop);
+		SubCrop(w->parent->crop, w->pos, w->crop);
 	}
 	else
 	{
@@ -86,7 +91,7 @@ void Widget_reframe(Widget *w)	//resized or moved
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)iw->data;
+		iw = (Widget*)i->data;
 		Widget_reframe(iw);
 	}
 }
@@ -104,7 +109,7 @@ void Widget_draw(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)iw->data;
+		iw = (Widget*)i->data;
 
 		if(iw->hidden)
 			continue;
@@ -127,7 +132,7 @@ void Widget_drawover(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)iw->data;
+		iw = (Widget*)i->data;
 
 		if(iw->hidden)
 			continue;
@@ -148,7 +153,7 @@ void Widget_inev(Widget *w, InEv* ie)
 	/* safe, may shift during call */
 	while(i)
 	{
-		iw = (Widget*)iw->data;
+		iw = (Widget*)i->data;
 		i = i->prev;	/* safe, may shift during call */
 
 		if(iw->hidden)
@@ -174,7 +179,7 @@ void Widget_tofront(Widget *w)
 	if(!w->parent)
 		return;
 
-	parsub = &parent->sub;
+	parsub = &w->parent->sub;
 
 	for(i=parsub->head; i; i=i->next)
 	{
@@ -192,9 +197,11 @@ void Widget_tofront(Widget *w)
 void CenterLabel(Widget *w, float *tpos)
 {
 	Font* f;
+	Button *b;
 	int texwidth;
 
-	f = g_font+w->font;
+	b = (Button*)w;
+	f = g_font+b->font;
 
 	texwidth = TextWidth(w->font, w->label);
 
