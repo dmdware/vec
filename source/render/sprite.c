@@ -34,7 +34,7 @@ void Sprite_free(Spite *s)
 		LoadedTex_free(s->pixels);
 	free(s->pixels);
 	s->pixels = NULL;
-	s->on = false;
+	s->on = ecfalse;
 }
 
 void SpList_init(SpList *sl)
@@ -179,11 +179,11 @@ ecbool FindSprite(unsigned int *spriteidx, const char* relative)
 		if(s->on && strcmp(s->fullpath, fullpath) == 0)
 		{
 			*spriteidx = i;
-			return true;
+			return ectrue;
 		}
 	}
 
-	return false;
+	return ecfalse;
 }
 
 /*
@@ -228,11 +228,11 @@ ecbool LoadSprite(const char* relative, unsigned int* spindex, ecbool loadteam, 
 	sprintf(reldepth, "%s_depth.png", relative);
 	ParseSprite(reltxt, s);
 
-	CreateTex(s->difftexi, reldiff, true, false);
+	CreateTex(s->difftexi, reldiff, ectrue, ecfalse);
 	if(loadteam)
-		CreateTex(s->teamtexi, relteam, true, false);
+		CreateTex(s->teamtexi, relteam, ectrue, ecfalse);
 	if(loaddepth)
-		CreateTex(s->depthtexi, reldepth, true, false);]
+		CreateTex(s->depthtexi, reldepth, ectrue, ecfalse);]
 	
 	FullPath(reldiff, pixfull);
 	s->pixels = LoadTexture(pixfull);
@@ -285,7 +285,7 @@ ecbool LoadSpriteList(const char* relative, unsigned int* splin, ecbool loadteam
 		return ecfalse;
 
 	sl = &g_splist[i];
-	sl->on = true;
+	sl->on = ectrue;
 	*splin = i;
 	
 	FullPath(relative, full);

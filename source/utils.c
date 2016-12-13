@@ -87,21 +87,21 @@ void MakeDir(const char* fulldir)
 
 void ErrMess(const char* title, const char* message)
 {
-	SDL_ShowCursor(true);
+	SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, NULL);
-	SDL_ShowCursor(false);
+	SDL_ShowCursor(ecfalse);
 }
 
 void InfoMess(const char* title, const char* message)
 {
-	SDL_ShowCursor(true);
+	SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, title, message, NULL);
-	SDL_ShowCursor(false);
+	SDL_ShowCursor(ecfalse);
 }
 
 void WarnMess(const char* title, const char* message)
 {
-	SDL_ShowCursor(true);
+	SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, title, message, NULL);
-	SDL_ShowCursor(false);
+	SDL_ShowCursor(ecfalse);
 }

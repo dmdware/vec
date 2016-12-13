@@ -199,6 +199,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\widgets\button.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\widgets\button.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\math\camera.c"
 				>
 			</File>
