@@ -26,6 +26,7 @@
 #define WIDGET_GUI					0
 #define WIDGET_IMAGE				1
 #define WIDGET_EDITBOX				2
+#define WIDGET_BUTTON				3
 
 struct Widget
 {

@@ -23,5 +23,6 @@ void Rich_init_i(unsigned int **rich, short i);
 void Rich_add(unsigned int **ndest, unsigned int *src);
 void pwver(char **ndest, char *src);	//asterisk-mask password string
 void ParseTags(char **ndest, char *src, int *caret);
+void Rich_rawlen(char *in);
 
 #endif

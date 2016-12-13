@@ -5,7 +5,7 @@
 #include "../widget.h"
 #include "button.h"
 #include "../icon.h"
-#include "../../ustring.h"
+#include "../widget.h"
 #include "../gui.h"
 
 void Button_init(Button *b, Widget* parent, const char* name, const char* filepath, 
@@ -24,12 +24,12 @@ void Button_init(Button *b, Widget* parent, const char* name, const char* filepa
 	bw->type = WIDGET_BUTTON;
 	strcpy(bw->name, name);
 	b->style = style;
-	pstrset(b->tooltip, tooltip);
-	pstrset(b->label, label);
+	pstrset(&b->tooltip, tooltip);
+	pstrset(&b->label, label);
 	b->font = f;
 
 	length = 0;
-	length = EndX(text, Rich_rawlen(text), font, 0, 0);
+	length = EndX(b->tooltip, Rich_rawlen(b->tooltip), font, 0, 0);
 	b->over = ecfalse;
 	b->ldown = ecfalse;
 	CreateTex(bw->tex, filepath, ectrue, ecfalse);

@@ -3,7 +3,7 @@
 
 /* only use with dynamic array string */
 
-void pstrset(char **out, char *in)
+void pstrset(char **out, const char *in)
 {
 	int len = strlen(in);
 	
@@ -11,7 +11,7 @@ void pstrset(char **out, char *in)
 	memcpy(*out, in, len+1);
 }
 
-void pstradd(char **out, char *in)
+void pstradd(char **out, const char *in)
 {
 	int addlen = strlen(in);
 	int len = 0;
@@ -22,7 +22,7 @@ void pstradd(char **out, char *in)
 	memcpy(&(*out)[len], in, addlen + 1);
 }
 
-void psubstr(char **out, char *in, int beg, int len)
+void psubstr(char **out, const char *in, int beg, int len)
 {
 	*out = (char*)malloc(len + 1);
 	memcpy(*out, &in[beg], len);
