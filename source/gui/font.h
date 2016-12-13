@@ -21,9 +21,9 @@ typedef struct Glyph Glyph;
 struct Font
 {
 	unsigned int texindex;
-	short width;    //image width
-	short height;   //image height
-	short gheight;  //glyph height
+	float width;    //image width
+	float height;   //image height
+	float gheight;  //glyph height
 	Glyph glyph[CODE_POINTS];
 };
 
@@ -64,7 +64,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, int ln, int caret, ecbool shadow, ecbool multiline);
 int CountLines(char *text, int fnt, float *inframe);
 int GetLineStart(char *text, int fnt, float *inframe, int getline);
-int EndX(char *text, int lastc, int fnt, float *inframe, ecbool multiline);
+int EndX(char *text, int lastg, int fnt, float *inframe, ecbool multiline);
 int MatchGlyph(char *text, int fnt, float *inframe, int matchx, int matchy, ecbool multiline);
 void Highlight(int fnt, float *inframe, float *incrop, char *text, int highlstarti, int highlendi, ecbool multiline);
 void NextLineBreak();

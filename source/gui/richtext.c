@@ -114,7 +114,7 @@ void pwver(char **ndest, char *src)	//asterisk-mask password string
 }
 
 
-void Rich_rawlen(char *in)
+int Rich_len(char *in)
 {
 	unsigned int out;
 	unsigned char *p, *lim;

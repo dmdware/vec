@@ -36,7 +36,8 @@ struct Shader
 typedef struct Shader Shader;
 
 #define SH_ORTHO				0
-#define SHADERS					1
+#define SH_COLOR2D				1
+#define SHADERS					2
 
 extern Shader g_sh[SHADERS];
 extern signed char g_curS;

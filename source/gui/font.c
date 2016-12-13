@@ -1,8 +1,14 @@
 #include "../platform.h"
 #include "font.h"
-#include "../algo/ecbool.h"
+#include "../texture.h"
+#include "../render/shader.h"
+#include "../window.h"
+#include "../utils.h"
+#include "gui.h"
+#include "icon.h"
+#include "richtext.h"
+#include "../algo/bool.h"
 #include "../algo/list.h"
-#include "../richtext.h"
 
 Font g_font[FONTS];
 
@@ -143,7 +149,7 @@ void DrawGlyph()
 	Shader *s;
 	Glyph *g;
 	
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	f = &g_font[g_currfont];
 	k = ToGlyph(&g_rtext[i], NULL);
 
@@ -187,7 +193,7 @@ void HighlGlyph()
 	Shader *s;
 	Glyph *g;
 	
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	f = &g_font[g_currfont];
 	k = ToGlyph(&g_rtext[i], NULL);
 	
@@ -270,7 +276,7 @@ void AdvGlyph()
 void UseFontTex()
 {
 	Shader *s;
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, g_texture[ g_font[g_currfont].texindex ].texname);
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
@@ -279,7 +285,7 @@ void UseFontTex()
 void UseIconTex(int icon)
 {
 	Shader *s;
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, g_texture[ g_icon[icon].tex ].texname);
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
@@ -344,7 +350,7 @@ void LoadFont(int id, char *fontfile)
 {
 	Font *f;
 	Glyph *g;
-	char extfile[128], fullfont[DMD_MAX_PATH+1];
+	char extfile[128], fullfont[EC_MAX_PATH+1];
 	FILE *fp;
 	unsigned int n;
 	short pixel[2], texsize[2], offset[2], origsize[2];
@@ -355,7 +361,7 @@ void LoadFont(int id, char *fontfile)
 	
 	for(i=0; i<CODE_POINTS; ++i)
 	{
-		g = f->glyph+i;
+		g = &f->glyph[i];
 		Glyph_init(g);
 	}
 	
@@ -379,6 +385,8 @@ void LoadFont(int id, char *fontfile)
 		return;
 	}
 
+	fseek(fp, 0, SEEK_END);
+
 	//skip 2 lines
 	do
 	{
@@ -391,7 +399,7 @@ void LoadFont(int id, char *fontfile)
 
 	do
 	{
-		fscanf(fp, "%u %h %h %h %h %h %h %h %h\r\n",
+		fscanf(fp, "g_mv %h %h %h %h %h %h %h %h %h\r\n",
 			   &n,
 			   &pixel[0], &pixel[1],
 			   &texsize[0], &texsize[1],
@@ -477,7 +485,7 @@ void DrawGlyph2(float left, float top, float right, float bottom, float texleft,
 		newleft, newtop,          newtexleft, newtextop
 	};
     
-    s = g_sh+g_curS;
+    s = &g_shader[g_curS];
 
 	glVertexPointer(2, GL_FLOAT, sizeof(float)*4, &vertices[0]);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*4, &vertices[2]);
@@ -526,7 +534,7 @@ void HighlGlyph2(float left, float top, float right, float bottom)
 		newleft, newtop
 	};
     
-    s = g_sh+g_curS;
+    s = &g_shader[g_curS];
 	
 	glVertexPointer(2, GL_FLOAT, 0, &vertices[0]);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -556,7 +564,7 @@ void DrawTxLine(int fnt, float *inframe, float *incrop,  char *text, float *colo
 	unsigned char c;
 	Shader *s;
 	
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	
 	if(color == NULL)
 	{
@@ -580,7 +588,7 @@ void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const 
 	unsigned char c;
 	Shader *s;
 	
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	
 	currcolor[0] = 0;
 	currcolor[1] = 0;
@@ -620,8 +628,8 @@ void Highlight(int fnt, float *inframe, float *incrop, char *text, int highlstar
 	Shader *s;
 	
 	EndS();
-	UseS(SHADER_COLOR2D);
-	s = g_sh+g_curS;
+	UseS(SH_COLOR2D);
+	s = &g_shader[g_curS];
 	glUniform1f(s->slot[SSLOT_WIDTH], (float)g_currw);
 	glUniform1f(s->slot[SSLOT_HEIGHT], (float)g_currh);
 	glUniform4f(s->slot[SSLOT_COLOR], 1, 1, 1, 0.5f);
@@ -666,7 +674,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 	Shader *s;
 	unsigned char c;
  
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	linew = 0;
 	len = RichText_texlen(text);
 	f = &g_font[fnt];
@@ -739,7 +747,7 @@ void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, in
 	unsigned char c;
 	int adv;
 	
-	s = g_sh+g_curS;
+	s = &g_shader[g_curS];
 	
 	glUniform4f(s->slot[SSLOT_COLOR], 0.3f, 0.3f, 0.3f, color ? color[3] : 1);
 	currcolor[0] = 0.3f;
@@ -897,7 +905,7 @@ int GetLineStart(char *text, int fnt, float *inframe, int getline)
 	return i;	//return last glyph anyway
 }
 
-int EndX(char *text, int lastc, int fnt, float *inframe, ecbool multiline)
+int EndX(char *text, int lastg, int fnt, float *inframe, ecbool multiline)
 {
 	int highx, adv;
 	
@@ -906,7 +914,7 @@ int EndX(char *text, int lastc, int fnt, float *inframe, ecbool multiline)
 
 	highx = (int)startx;
 
-	for(i=0; g_rtext[i] && glyphi<lastc; i+=adv)
+	for(i=0; g_rtext[i] && glyphi<lastg; i+=adv)
 	{
 		if(multiline && i == nextlb)
 			NextLineBreak();
@@ -989,5 +997,15 @@ int TextWidth(int fnt, float *inframe, const char *text)
 
 void LoadFonts()
 {
+	LoadFont(FONT_EUROSTILE32, "fonts/eurostile32");
+	LoadFont(FONT_MSUIGOTHIC16, "fonts/msuigothic16");
+	LoadFont(FONT_MSUIGOTHIC10, "fonts/msuigothic10");
+	LoadFont(FONT_SMALLFONTS8, "fonts/smallfonts8");
+	LoadFont(FONT_SMALLFONTS10, "fonts/smallfonts10");
+	LoadFont(FONT_ARIAL10, "fonts/arial10s");
+	LoadFont(FONT_GULIM32, "fonts/gulim32");
+	LoadFont(FONT_EUROSTILE16, "fonts/eurostile16");
+	LoadFont(FONT_CALIBRILIGHT16, "fonts/calibrilight16s-full");
+	//LoadFont(FONT_CALIBRILIGHT16, "fonts/gulim16");
 	LoadFont(FONT_TERMINAL10, "fonts/terminal10");
 }

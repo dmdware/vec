@@ -318,7 +318,7 @@ extern SDL_GLContext g_gx;
 
 #define SPECBUMPSHADOW
 
-#define GLDEBUG
+//#define GLDEBUG
 
 #define CHECKGLERROR() CheckGLError(__FILE__,__LINE__)
 
