@@ -223,6 +223,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\debug.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\debug.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\draw2d.c"
 				>
 			</File>

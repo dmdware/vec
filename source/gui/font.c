@@ -346,16 +346,16 @@ void TextLayer(int offstartx, int offstarty)
 	goffstartx = offstartx;
 }
 
-void LoadFont(int id, char *fontfile)
+void LoadFont(int i, char *fontfile)
 {
 	Font *f;
 	Glyph *g;
-	char extfile[128], fullfont[EC_MAX_PATH+1];
+	char extfile[128], fullfont[DMD_MAX_PATH+1];
 	FILE *fp;
 	unsigned int n;
 	short pixel[2], texsize[2], offset[2], origsize[2];
 	
-	f = &g_font[id];
+	f = &g_font[i];
 	
 	Font_init(f);
 	
@@ -992,7 +992,7 @@ int MatchGlyph(char *text, int fnt, float *inframe, int matchx, int matchy, ecbo
 
 int TextWidth(int fnt, float *inframe, const char *text)
 {
-	return EndX(text, strlen(text), fnt, inframe);
+	return EndX(text, Rich_len(text), fnt, inframe) - inframe[0];
 }
 
 void LoadFonts()

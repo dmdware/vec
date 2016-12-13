@@ -35,11 +35,8 @@ void Button_init(Button *b, Widget* parent, const char* name, const char* filepa
 	bw->ldown = ecfalse;
 	CreateTex(&b->tex, filepath, ectrue, ecfalse);
 
-	if(style == BUST_CORRODE)
-	{
-		CreateTex(&b->bgtex, "gui/corrodbutton.png", ectrue, ecfalse);
-		CreateTex(&b->bgovertex, "gui/corrodbuttonover.png", ectrue, ecfalse);
-	}
+	b->bgtex = 0;
+	b->bgovertex = 0;
 
 	bw->reframefunc = reframef;
 	b->clickfunc = click;
@@ -147,22 +144,21 @@ void Button_draw(Button *b)
 	float texttop;
 	float textleft;
 	Font *f;
+	Texture *tex, *bgtex, *bgovertex;
 
 	bw = (Widget*)b;
 	f = g_font+b->font;
+	tex = g_texture+b->tex;
+	bgovertex = g_texture+b->bgovertex;
+	bgtex = g_texture+b->bgtex;
 
-	if(b->style == BUST_CORRODE)
-	{
-		if(bw->over)
-			DrawImage(g_texture[b->bgovertex].texname, bw->pos[0], bw->pos[1], bw->pos[2], bw->pos[3], 0,0,1,1, bw->crop);
-		else
-			DrawImage(g_texture[b->bgtex].texname, bw->pos[0], bw->pos[1], bw->pos[2], bw->pos[3], 0,0,1,1, bw->crop);
+	w = bw->pos[2]-bw->pos[0]-2;
+	h = bw->pos[3]-bw->pos[1]-2;
+	minsz = ((w<h)?w:h);
 
-		DrawImage(g_texture[b->tex].texname, bw->pos[0], bw->pos[1], bw->pos[2], bw->pos[3], 0,0,1,1, bw->crop);
-		
-		DrawTx(b->font, b->tpos, bw->crop, b->label, NULL, Rich_len(b->label), -1, ectrue, ecfalse);
-	}
-	else if(b->style == BUST_LEFTIMAGE)
+	/* TODO all to font and lines/quads */
+
+	if(b->style == BUST_LEFTIMAGE)
 	{
 		EndS();
 
@@ -193,11 +189,7 @@ void Button_draw(Button *b)
 		CHECKGLERROR();
 		Ortho(g_currw, g_currh, 1, 1, 1, 1);
 
-		w = bw->pos[2]-bw->pos[0]-2;
-		h = bw->pos[3]-bw->pos[1]-2;
-		minsz = fmin(w, h);
-
-		DrawImage(g_texture[tex].texname, bw->pos[0]+1, bw->pos[1]+1, bw->pos[0]+minsz, bw->pos[1]+minsz, 0,0,1,1, bw->crop);
+		DrawImage(tex->texname, bw->pos[0]+1, bw->pos[1]+1, bw->pos[0]+minsz, bw->pos[1]+minsz, 0,0,1,1, bw->crop);
 
 		gheight = f->gheight;
 		texttop = bw->pos[1] + h/2.0f - gheight/2.0f;
@@ -237,29 +229,44 @@ void Button_draw(Button *b)
 		CHECKGLERROR();
 		Ortho(g_currw, g_currh, 1, 1, 1, 1);
 
-		w = pos[2]-pos[0]-2;
-		h = pos[3]-pos[1]-2;
-		minsz = fmin(w, h);
-
 		//TODO fix resolution change on settings reload on mobile
 
-		//2015/10/27 fixed now button text is cropped
-		//DrawImage(g_texture[tex].texname, bw->pos[0]+1, bw->pos[1]+1, bw->pos[0]+minsz, bw->pos[1]+minsz);
 		CenterLabel(b);
 		DrawTx(b->font, b->tpos, bw->crop, b->label, NULL, Rich_len(b->label), -1, ectrue, ecfalse);
 	}
-
-	//if(_stricmp(name.c_str(), "choose texture") == 0)
-	//	Log("draw choose texture");
 }
 
 void Button_drawover(Button *b)
 {
+	float tpos[4];
+	Widget *bw;
+
+	bw = (Widget*)b;
+
 	if(bw->over)
 	{
-		//DrawShadowedText(font, tpos[0], tpos[1], text.c_str());
-		DrawShadowedText(font, g_mouse.x, g_mouse.y-g_font[font].gheight, &text);
-		//DrawBoxShadText(font, g_mouse.x, g_mouse.y-g_font[font].gheight, &text);
+		tpos[0] = (float)g_mouse.x;
+		tpos[1] = (float)g_mouse.y;
+		tpos[2] = tpos[0] + 256;
+		tpos[3] = tpos[1] + 53;
+
+		DrawTx(b->font, tpos, bw->crop, b->tooltip, NULL, Rich_len(b->tooltip), -1, ectrue, ecfalse);
 	}
 }
 
+void CenterLabel(Button *b)
+{
+	Font* f;
+	int texwidth;
+	Widget *bw;
+
+	bw = (Widget*)b;
+	f = g_font+b->font;
+
+	texwidth = TextWidth(b->font, bw->pos, b->label);
+
+	b->tpos[0] = (bw->pos[2]+bw->pos[0])/2 - texwidth/2;
+	b->tpos[1] = (bw->pos[3]+bw->pos[1])/2 - f->gheight/2;
+	b->tpos[2] = bw->pos[2];
+	b->tpos[3] = bw->pos[3];
+}

@@ -112,7 +112,6 @@ void Widget_hideall(Widget *w);
 void Widget_gainfocus(Widget *w);
 void Widget_losefocus(Widget *w);
 
-void CenterLabel(Widget *w, float *tpos);
 void SubCrop(float *src1, float *src2, float *ndest);
 
 #endif

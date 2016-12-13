@@ -194,21 +194,6 @@ void Widget_tofront(Widget *w)
 	}
 }
 
-void CenterLabel(Widget *w, float *tpos)
-{
-	Font* f;
-	Button *b;
-	int texwidth;
-
-	b = (Button*)w;
-	f = g_font+b->font;
-
-	texwidth = TextWidth(w->font, w->label);
-
-	tpos[0] = (w->pos[2]+w->pos[0])/2 - texwidth/2;
-	tpos[1] = (w->pos[3]+w->pos[1])/2 - f->gheight/2;
-}
-
 Widget* Widget_get(Widget *w, const char* name)
 {
 	Node *i;

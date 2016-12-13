@@ -7,9 +7,8 @@
 #include "../widget.h"
 
 /* styles */
-#define BUST_CORRODE		0
-#define BUST_LINEBASED		1
-#define BUST_LEFTIMAGE		2
+#define BUST_LINEBASED		0
+#define BUST_LEFTIMAGE		1
 
 struct Button
 {
@@ -49,5 +48,6 @@ void Button_init(Button *b, Widget* parent,
 void Button_draw(Button *b);
 void Button_drawover(Button *b);
 void Button_inev(Button *b, InEv* ie);
+void CenterLabel(Button *w);
 
 #endif
