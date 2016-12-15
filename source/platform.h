@@ -103,6 +103,7 @@
 #include <stdint.h>
 #endif
 #include <limits.h>
+#include <string.h>
 
 #ifdef PLATFORM_WIN
 #include <jpeglib.h>

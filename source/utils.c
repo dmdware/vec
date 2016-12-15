@@ -60,16 +60,75 @@ unsigned __int64 GetTicks()
 #endif
 }
 
+void StripFile(char* inpath, char* path2)
+{
+	char temp[DMD_MAX_PATH+1], *lastof;
+	strcpy(temp, filepath);
+	CorrectSlashes(temp);
+
+	lastof = strrchr(temp, "/");
+	if(!lastof)
+	{
+		strcpy(path2, inpath);
+		return;
+	}
+
+	++lastoff;
+	memcpy(path2, inpath, (lastoff-temp)+1);
+}
+
+void StripPath(char* inpath, char* path2)
+{
+	char temp[DMD_MAX_PATH+1], *lastof;
+	strcpy(temp, filepath);
+	CorrectSlashes(temp);
+
+	lastof = strrchr(temp, "/");
+	if(!lastof)
+	{
+		strcpy(path2, inpath);
+		return;
+	}
+
+	++lastoff;
+	memcpy(path2, inpath+(lastoff-temp), strlen(lastoff)+1);
+}
+
+void StripExt(char* inpath, char* path2)
+{
+	char *lastof;
+
+	lastof = strrchr(inpath, ".");
+
+	if(!lastof)
+	{
+		strcpy(path2, inpath);
+		return;
+	}
+
+	if(lastoff == inpath)
+	{
+		strcpy(path2, "");
+		return;
+	}
+
+	--lastoff;
+	memcpy(path2, inpath, (lastoff-inpath));
+	path2[(lastoff-inpath)+1] = 0;
+}
+
 void FullPath(const char* filename, char* full)
 {
 	char exepath[DMD_MAX_PATH+1];
+	char path[DMD_MAX_PATH+1];
+	char c;
 	ExePath(exepath);
-	std::string path = StripFile(exepath);
+	StripFile(exepath, path);
 
 	//char full[DMD_MAX_PATH+1];
-	sprintf(full, "%s", path.c_str());
+	strcpy(full, path);
 
-	char c = full[ strlen(full)-1 ];
+	c = full[ strlen(full)-1 ];
 	if(c != '\\' && c != '/')
 		strcat(full, "\\");
 	//strcat(full, "/");

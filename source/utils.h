@@ -15,5 +15,8 @@ void MakeDir(const char* fulldir);
 void ErrMess(const char* title, const char* message);
 void InfoMess(const char* title, const char* message);
 void WarnMess(const char* title, const char* message);
+void StripFile(char* inpath, char* path2);
+void StripPath(char* inpath, char* path2);
+void StripExt(char* inpath, char* path2);
 
 #endif
