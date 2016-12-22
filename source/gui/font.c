@@ -992,7 +992,7 @@ int MatchGlyph(char *text, int fnt, float *inframe, int matchx, int matchy, ecbo
 
 int TextWidth(int fnt, float *inframe, const char *text)
 {
-	return EndX(text, Rich_len(text), fnt, inframe) - inframe[0];
+	return EndX(text, Rich_len(text), fnt, inframe, ecfalse) - inframe[0];
 }
 
 void LoadFonts()

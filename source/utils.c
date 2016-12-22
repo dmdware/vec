@@ -1,6 +1,7 @@
 
 
 #include "utils.h"
+#include "algo/bool.h"
 
 FILE *g_applog = NULL;
 
@@ -60,10 +61,20 @@ unsigned __int64 GetTicks()
 #endif
 }
 
+void CorrectSlashes(char *s)
+{
+	while(*s)
+	{
+		if(*s=='\\')
+			*s='/';
+		++s;
+	}
+}
+
 void StripFile(char* inpath, char* path2)
 {
 	char temp[DMD_MAX_PATH+1], *lastof;
-	strcpy(temp, filepath);
+	strcpy(temp, inpath);
 	CorrectSlashes(temp);
 
 	lastof = strrchr(temp, "/");
@@ -73,14 +84,14 @@ void StripFile(char* inpath, char* path2)
 		return;
 	}
 
-	++lastoff;
-	memcpy(path2, inpath, (lastoff-temp)+1);
+	++lastof;
+	memcpy(path2, inpath, (lastof-temp)+1);
 }
 
 void StripPath(char* inpath, char* path2)
 {
 	char temp[DMD_MAX_PATH+1], *lastof;
-	strcpy(temp, filepath);
+	strcpy(temp, inpath);
 	CorrectSlashes(temp);
 
 	lastof = strrchr(temp, "/");
@@ -90,8 +101,8 @@ void StripPath(char* inpath, char* path2)
 		return;
 	}
 
-	++lastoff;
-	memcpy(path2, inpath+(lastoff-temp), strlen(lastoff)+1);
+	++lastof;
+	memcpy(path2, inpath+(lastof-temp), strlen(lastof)+1);
 }
 
 void StripExt(char* inpath, char* path2)
@@ -106,15 +117,15 @@ void StripExt(char* inpath, char* path2)
 		return;
 	}
 
-	if(lastoff == inpath)
+	if(lastof == inpath)
 	{
 		strcpy(path2, "");
 		return;
 	}
 
-	--lastoff;
-	memcpy(path2, inpath, (lastoff-inpath));
-	path2[(lastoff-inpath)+1] = 0;
+	--lastof;
+	memcpy(path2, inpath, (lastof-inpath));
+	path2[(lastof-inpath)+1] = 0;
 }
 
 void FullPath(const char* filename, char* full)
@@ -148,16 +159,16 @@ void MakeDir(const char* fulldir)
 
 void ErrMess(const char* title, const char* message)
 {
-	SDL_ShowCursor(ectrue);
+	//SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, NULL);
-	SDL_ShowCursor(ecfalse);
+	//SDL_ShowCursor(ecfalse);
 }
 
 void InfoMess(const char* title, const char* message)
 {
-	SDL_ShowCursor(ectrue);
+	//SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, title, message, NULL);
-	SDL_ShowCursor(ecfalse);
+	//SDL_ShowCursor(ecfalse);
 }
 
 void WarnMess(const char* title, const char* message)

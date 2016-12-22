@@ -42,36 +42,35 @@ void LoadedTex_free(LoadedTex *lt)
 
 void Tex_init(Texture *tex)
 {
-	tex->filepath = NULL;
+	tex->fullpath = NULL;
 	tex->loaded = ecfalse;
 }
 
 void Tex_free(Texture *tex)
 {
-	free(&tex->fullpath);
-	tex->filepath = NULL;
+	free(tex->fullpath);
+	tex->fullpath = NULL;
 	tex->loaded = ecfalse;
 }
 
-LoadedTex* LoadJPG(const char *strFileName)
+LoadedTex* LoadJPG(const char *strfile)
 {
 	LoadedTex *pImageData = NULL;
 	struct jpeg_decompress_struct cinfo;
+	struct jpeg_error_mgr jerr;
+	FILE* fp;
 
-	jpeg_error_mgr jerr;
-
-	//pImageData = (Image*)malloc(sizeof(Image));
-	pImageData = new LoadedTex;
+	pImageData = (LoadedTex*)malloc(sizeof(LoadedTex));
 
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_decompress(&cinfo);
 
-	FILE* fp = fopen(strFileName, "rb");
+	fp = fopen(strfile, "rb");
 
 	if (!fp)
 	{
-		delete pImageData;
-		Log("Error opening jpeg %s", strFileName);
+		free(pImageData);
+		Log("Error opening jpeg %s", strfile);
 		return NULL;
 	}
 
@@ -124,11 +123,11 @@ void png_file_read(png_structp png_ptr, png_bytep data, png_size_t length)
 	fread(data, 1, length, loadpngfp);
 }
 
-LoadedTex *LoadPNG(const char *strFileName)
+LoadedTex *LoadPNG(const char *strfile)
 {
 	LoadedTex *pImageData = NULL;
 
-	loadpngfp = fopen(strFileName, "rb");
+	loadpngfp = fopen(strfile, "rb");
 
 	if(!loadpngfp)
 	{
@@ -145,7 +144,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 	int is_png = !png_sig_cmp(header, 0, 8);
 	if (!is_png) 
 	{
-		Log("Not a png file : %s %d,%d,%d,%d,%d,%d,%d,%d", strFileName, 
+		Log("Not a png file : %s %d,%d,%d,%d,%d,%d,%d,%d", strfile, 
 			(int)header[0], (int)header[1], (int)header[2], (int)header[3], 
 			(int)header[4], (int)header[5], (int)header[6], (int)header[7]);
 		fclose(loadpngfp);
@@ -156,7 +155,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr) 
 	{
-		Log("Unable to create png struct : %s", strFileName);
+		Log("Unable to create png struct : %s", strfile);
 		fclose(loadpngfp);
 		return NULL;
 	}
@@ -166,7 +165,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 	if (!info_ptr) 
 	{
 		png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-		Log("Unable to create png info : %s", strFileName);
+		Log("Unable to create png info : %s", strfile);
 		fclose(loadpngfp);
 		return NULL;
 	}
@@ -176,7 +175,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 	if (!end_info) 
 	{
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-		Log("Unable to create png end info : %s", strFileName);
+		Log("Unable to create png end info : %s", strfile);
 		fclose(loadpngfp);
 		return NULL;
 	}
@@ -184,7 +183,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 	//png error stuff, not sure libpng man suggests this.
 	if (setjmp(png_jmpbuf(png_ptr))) 
 	{
-		Log("Error during setjmp : %s", strFileName);
+		Log("Error during setjmp : %s", strfile);
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 		fclose(loadpngfp);
 		return NULL;
@@ -248,7 +247,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 		}
 		break;
 	default:
-		Log("%s color type %d not supported", strFileName, (int)png_get_color_type(png_ptr, info_ptr));
+		Log("%s color type %d not supported", strfile, (int)png_get_color_type(png_ptr, info_ptr));
 
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		delete pImageData;
@@ -269,7 +268,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 	{
 		//clean up memory and close stuff
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		Log("Unable to allocate image_data while loading %s ", strFileName);
+		Log("Unable to allocate image_data while loading %s ", strfile);
 		delete pImageData;
 		fclose(loadpngfp);
 		return NULL;
@@ -283,7 +282,7 @@ LoadedTex *LoadPNG(const char *strFileName)
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 		free(pImageData->data);
 		delete pImageData;
-		Log("Unable to allocate row_pointer while loading %s ", strFileName);
+		Log("Unable to allocate row_pointer while loading %s ", strfile);
 		fclose(loadpngfp);
 		return NULL;
 	}
