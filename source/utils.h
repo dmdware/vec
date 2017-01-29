@@ -20,5 +20,6 @@ void StripPath(char* inpath, char* path2);
 void StripExt(char* inpath, char* path2);
 void CorrectSlashes(char *s);
 void ExePath(char* exepath);
+void MakeRel(const char* full, char* rel);
 
 #endif

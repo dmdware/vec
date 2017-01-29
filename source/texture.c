@@ -17,11 +17,9 @@
 #include "debug.h"
 #include "app/appmain.h"
 
-Texture g_texture[TEXTURES];
-Vector g_texload; /* TextureToLoad */
+Texture g_tex[TEXTURES];
+Vector g_texload; /* TexToLoad */
 
-int g_texwidth;
-int g_texheight;
 int g_lastLTex = -1;
 
 ecbool g_hidetexerr = ecfalse;
@@ -328,7 +326,7 @@ ecbool FindTexture(unsigned int *textureidx, const char* relative)
 
 	for(i=0; i<TEXTURES; ++i)
 	{
-		t = g_texture+i;
+		t = g_tex+i;
 
 		if(t->loaded && strcmp(t->fullpath, corrected) == 0)
 		{
@@ -347,7 +345,7 @@ void FreeTexture(int i)
 	if(i < 0)
 		return;
 
-	t = g_texture+i;
+	t = g_tex+i;
 
 	if(t->loaded)
 	{
@@ -358,14 +356,23 @@ void FreeTexture(int i)
 
 int NewTexture()
 {
-	for(int i=0; i<TEXTURES; i++)
-		if(!g_texture[i].loaded)
-			return i;
-
+	Texture *t;
+	for(t=g_tex; t<g_tex+TEXTURES; ++t)
+	{
+		if(!t->loaded)
+			return (t-g_tex);
+	}
 	return -1;
 }
-//extern int thetex;
-ecbool TextureLoaded(unsigned int texture, const char* relative, ecbool transp, ecbool clamp, ecbool mipmaps, unsigned int* texindex, ecbool reload)
+
+ecbool TexLoaded(unsigned int texture, 
+				 const char* relative, 
+				 ecbool transp, 
+				 ecbool clamp, 
+				 ecbool mipmaps, 
+				 unsigned int* texin,
+				 ecbool reload,
+				 int sizex, int sizey)
 {
 	char corrected[1024];
 	Texture* t;
@@ -375,21 +382,21 @@ ecbool TextureLoaded(unsigned int texture, const char* relative, ecbool transp, 
 
 	if(!reload)
 	{
-		*texindex = NewTexture();
+		*texin = NewTexture();
 
-		if((int)texindex < 0)
+		if((int)texin < 0)
 		{
-			texindex = 0;	// Give a harmless texture index
+			texin = 0;	// Give a harmless texture index
 			return ecfalse;
 		}
 	}
 
-	t = &g_texture[texindex];
+	t = g_tex+*texin;
 	t->loaded = ectrue;
 	t->fullpath = corrected;
 	t->texname = texture;
-	t->width = g_texwidth;
-	t->height = g_texheight;
+	t->width = sizex;
+	t->height = sizey;
 	t->transp = transp;
 	t->clamp = clamp;
 	t->mipmaps = mipmaps;
@@ -403,11 +410,11 @@ void FreeTextures()
 
 	for(i=0; i<TEXTURES; i++)
 	{
-		if(!g_texture[i].loaded)
+		if(!g_tex[i].loaded)
 			continue;
 
-		glDeleteTextures(1, &g_texture[i].texname);
-		g_texture[i].loaded = ecfalse;	// Needed to reload textures. EDIT: not.
+		glDeleteTextures(1, &g_tex[i].texname);
+		g_tex[i].loaded = ecfalse;	// Needed to reload textures. EDIT: not.
 	}
 }
 
@@ -442,25 +449,28 @@ void FindTextureExtension(char *relative)
 
 ecbool Load1Texture()
 {
-	TextureToLoad* t;
+	TexToLoad* t;
 
-	if(g_lastLTex+1 < (int)g_texload.size)
-		SetStatus(g_texload[g_lastLTex+1].relative);
+	if(g_lastLTex+1 < (int)g_texload.total)
+	{
+		t = (TexToLoad*)Vector_get(&g_texload, g_lastLTex+1);
+		SetStatus(t->relative);
+	}
 
 	CHECKGLERROR();
 
 	if(g_lastLTex >= 0)
 	{
-		t = &g_texload[g_lastLTex];
+		t = (TexToLoad*)Vector_get(&g_texload, g_lastLTex);
 		if(t->reload)
-			CreateTex(t->texindex, t->relative, t->clamp, t->mipmaps, t->reload);
+			CreateTex(&t->texin, t->relative, t->clamp, t->mipmaps, t->reload);
 		else
-			CreateTex(*t->ptexindex, t->relative, t->clamp, t->mipmaps, t->reload);
+			CreateTex(t->ptexin, t->relative, t->clamp, t->mipmaps, t->reload);
 	}
 
 	g_lastLTex ++;
 
-	if(g_lastLTex >= (int)g_texload.size())
+	if(g_lastLTex >= (int)g_texload.total)
 	{
 		return ecfalse;	// Done loading all textures
 	}
@@ -468,46 +478,45 @@ ecbool Load1Texture()
 	return ectrue;	// Not finished loading textures
 }
 
-void QueueTex(unsigned int* texindex, const char* relative, ecbool clamp, ecbool mipmaps)
+void QueueTex(unsigned int* texin, const char* relative, ecbool clamp, ecbool mipmaps)
 {
-	TextureToLoad toLoad;
-	toLoad.ptexindex = texindex;
-	strcpy(toLoad.relative, relative);
-	toLoad.clamp = clamp;
-	toLoad.reload = ecfalse;
-	toLoad.mipmaps = mipmaps;
+	TexToLoad toload;
+	toload.ptexin = texin;
+	strcpy(toload.relative, relative);
+	toload.clamp = clamp;
+	toload.reload = ecfalse;
+	toload.mipmaps = mipmaps;
 
-	g_texload.push_back(toLoad);
+	Vector_pushback(&g_texload, &toload);
 }
 
-void RequeueTex(unsigned int texindex, const char* relative, ecbool clamp, ecbool mipmaps)
+void RequeueTex(unsigned int texin, const char* relative, ecbool clamp, ecbool mipmaps)
 {
-	TextureToLoad toLoad;
-	toLoad.texindex = texindex;
-	strcpy(toLoad.relative, relative);
-	toLoad.clamp = clamp;
-	toLoad.reload = ectrue;
-	toLoad.mipmaps = mipmaps;
+	TexToLoad toload;
+	toload.texin = texin;
+	strcpy(toload.relative, relative);
+	toload.clamp = clamp;
+	toload.reload = ectrue;
+	toload.mipmaps = mipmaps;
 
-	g_texload.push_back(toLoad);
+	Vector_pushback(&g_texload, &toload);
 }
 
-void ReloadTextures()
+void ReloadTexs()
 {
-	for(int i=0; i<TEXTURES; i++)
+	Texture* t;
+	char rel[DMD_MAX_PATH+1];
+	for(t=g_tex; t<g_tex+TEXTURES; ++t)
 	{
-		Texture* t = &g_texture[i];
-
 		if(!t->loaded)
 			continue;
 
-		std::string rel;
-		rel = MakeRelative(t->fullpath.c_str());
-		RequeueTex(i, rel.c_str(), t->clamp, t->mipmaps);
+		MakeRel(t->fullpath, rel);
+		RequeueTex((t-g_tex), rel, t->clamp, t->mipmaps);
 	}
 }
 
-LoadedTex* LoadTexture(const char* full)
+LoadedTex* LoadTex(const char* full)
 {
 	if(strstr(full, ".jpg") || strstr(full, ".JPG") || strstr(full, ".jpeg") || strstr(full, ".JPEG") || strstr(full, ".jpe") || strstr(full, ".JPE"))
 	{
@@ -522,13 +531,17 @@ LoadedTex* LoadTexture(const char* full)
 		return LoadTGA(full);
 	}
 
-	Log("Unrecognized texture file extension: %s. Only .jpg .png .tga are accepted.", full);
+	fprintf(g_applog, "Unrecognized texture file extension: %s. Only .jpg .png .tga are accepted. \r\n", full);
 
 	return NULL;
 }
 
 ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps)
 {
+	int internfmt;
+	int textype;
+	ecbool transp;
+
 	if(!pImage)
 		return ecfalse;
 	if(!pImage->data)
@@ -547,22 +560,22 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 
 	CHECKGLERROR();
 	// Assume that the texture is a 24 bit RGB texture (We convert 16-bit ones to 24-bit)
-	int internalFormat = GL_RGB8;
-	int textureType = GL_RGB;
-	ecbool transp = ecfalse;
+	internfmt = GL_RGB8;
+	textype = GL_RGB;
+	transp = ecfalse;
 
 	// If the image is 32-bit (4 channels), then we need to specify GL_RGBA for an alpha
 	if(pImage->channels == 4)
 	{
-		internalFormat = GL_RGBA8;
-		textureType = GL_RGBA;
+		internfmt = GL_RGBA8;
+		textype = GL_RGBA;
 		transp = ectrue;
 	}
 	//grayscale
 	else if(pImage->channels == 1)
 	{
-		internalFormat = GL_ALPHA8;
-		textureType = GL_ALPHA;
+		internfmt = GL_ALPHA8;
+		textype = GL_ALPHA;
 	}
 
 	CHECKGLERROR();
@@ -592,9 +605,9 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
-		//glTexImage2D(GL_TEXTURE_2D, 0, textureType, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+		//glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 		//glGenerateMipmap(GL_TEXTURE_2D);
-		gluBuild2DMipmaps(GL_TEXTURE_2D, textureType, pImage->sizex, pImage->sizey, textureType, GL_UNSIGNED_BYTE, pImage->data);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, textype, pImage->sizex, pImage->sizey, textype, GL_UNSIGNED_BYTE, pImage->data);
 
 		CheckGLError(__FILE__, __LINE__);
 #else
@@ -617,7 +630,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			}
 
-			glTexImage2D(GL_TEXTURE_2D, 0, textureType, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+			glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 
 			CheckGLError(__FILE__, __LINE__);
 		}
@@ -643,9 +656,9 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
-			//glTexImage2D(GL_TEXTURE_2D, 0, textureType, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+			//glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 			//glGenerateMipmap(GL_TEXTURE_2D);
-			gluBuild2DMipmaps(GL_TEXTURE_2D, textureType, pImage->sizex, pImage->sizey, textureType, GL_UNSIGNED_BYTE, pImage->data);
+			gluBuild2DMipmaps(GL_TEXTURE_2D, textype, pImage->sizex, pImage->sizey, textype, GL_UNSIGNED_BYTE, pImage->data);
 
 			CheckGLError(__FILE__, __LINE__);
 		}
@@ -668,7 +681,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, textureType, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+		glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 
 		CheckGLError(__FILE__, __LINE__);
 	}
@@ -716,11 +729,11 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+		glTexImage2D(GL_TEXTURE_2D, 0, internfmt, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 
 		glGenerateMipmap(GL_TEXTURE_2D);  //undeclared identifier in xcode!?
 
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat, pImage->sizex, pImage->sizey, textureType, GL_UNSIGNED_BYTE, pImage->data);  //undeclared identifier in xcode!?
+		//gluBuild2DMipmaps(GL_TEXTURE_2D, internfmt, pImage->sizex, pImage->sizey, textype, GL_UNSIGNED_BYTE, pImage->data);  //undeclared identifier in xcode!?
 
 		CHECKGLERROR();
 	}
@@ -750,7 +763,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+		glTexImage2D(GL_TEXTURE_2D, 0, internfmt, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 
 		CHECKGLERROR();
 	}
@@ -760,45 +773,43 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 	// Option 3: without mipmaps linear
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, textureType, pImage->sizex, pImage->sizey, 0, textureType, GL_UNSIGNED_BYTE, pImage->data);
+	glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
 #endif
 
 	glBindTexture(GL_TEXTURE_2D, -1);
 	return ectrue;
 }
 
-ecbool CreateTex(unsigned int *texindex, const char* relative, ecbool clamp, ecbool mipmaps)
+ecbool CreateTex(unsigned int *texin, const char* relative, ecbool clamp, ecbool mipmaps, ecbool reload)
 {
+	// Define a pointer to a LoadedTex
+	LoadedTex *pImage = NULL;
+	char full[DMD_MAX_PATH+1];
+	unsigned int texname;
+	ecbool transp;
+
 	CHECKGLERROR();
 
 	if(!relative)
 		return ecfalse;
 
 	if(!reload)
-		if(FindTexture(texindex, relative))
+		if(FindTexture(texin, relative))
 			return ectrue;
 
-	// Define a pointer to a LoadedTex
-	LoadedTex *pImage = NULL;
-
-	char full[1024];
 	FullPath(relative, full);
-
-	pImage = LoadTexture(full);
+	pImage = LoadTex(full);
 
 	// Make sure valid image data was given to pImage, otherwise return ecfalse
 	if(pImage == NULL)
 	{
-		Log("Failed to load %s\r\n", relative);
-
+		fprintf(g_applog, "Failed to load %s \r\n", relative);
 
 		if(!reload)
-			texindex = 0;	// Give a harmless texture index
+			texin = 0;	// Give a harmless texture index
 
 		return ecfalse;
 	}
-
-	unsigned int texname;
 
 	if(!CreateTex(pImage, &texname, clamp, mipmaps))
 	{
@@ -806,17 +817,14 @@ ecbool CreateTex(unsigned int *texindex, const char* relative, ecbool clamp, ecb
 		return ecfalse;
 	}
 
-	ecbool transp = ecfalse;
+	transp = ecfalse;
 
 	if(pImage->channels == 4)
 	{
 		transp = ectrue;
 	}
 
-	g_texwidth = pImage->sizex;
-	g_texheight = pImage->sizey;
-
-	TextureLoaded(texname, relative, transp, clamp, mipmaps, texindex, reload);
+	TexLoaded(texname, relative, transp, clamp, mipmaps, texin, reload, pImage->sizex, pImage->sizey);
 
 	if(pImage)
 	{
@@ -835,8 +843,8 @@ void RequeueTextures()
 
 	for(int i=0; i<TEXTURES; i++)
 	{
-		if(g_texture[i].loaded)
-			RequeueTex(i, g_texture[i].fullpath.c_str(), g_texture[i].clamp, g_texture[i].mipmaps);
+		if(g_tex[i].loaded)
+			RequeueTex(i, g_tex[i].fullpath.c_str(), g_tex[i].clamp, g_tex[i].mipmaps);
 	}
 
 	//LoadParticles();

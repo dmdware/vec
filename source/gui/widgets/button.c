@@ -148,9 +148,9 @@ void Button_draw(Button *b)
 
 	bw = (Widget*)b;
 	f = g_font+b->font;
-	tex = g_texture+b->tex;
-	bgovertex = g_texture+b->bgovertex;
-	bgtex = g_texture+b->bgtex;
+	tex = g_tex+b->tex;
+	bgovertex = g_tex+b->bgovertex;
+	bgtex = g_tex+b->bgtex;
 
 	w = bw->pos[2]-bw->pos[0]-2;
 	h = bw->pos[3]-bw->pos[1]-2;

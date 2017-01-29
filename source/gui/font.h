@@ -20,7 +20,7 @@ typedef struct Glyph Glyph;
 
 struct Font
 {
-	unsigned int texindex;
+	unsigned int texin;
 	float width;    //image width
 	float height;   //image height
 	float gheight;  //glyph height

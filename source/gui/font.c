@@ -278,7 +278,7 @@ void UseFontTex()
 	Shader *s;
 	s = &g_shader[g_curS];
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, g_texture[ g_font[g_currfont].texindex ].texname);
+	glBindTexture(GL_TEXTURE_2D, g_tex[ g_font[g_currfont].texin ].texname);
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
 }
 
@@ -287,7 +287,7 @@ void UseIconTex(int icon)
 	Shader *s;
 	s = &g_shader[g_curS];
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, g_texture[ g_icon[icon].tex ].texname);
+	glBindTexture(GL_TEXTURE_2D, g_tex[ g_icon[icon].tex ].texname);
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
 }
 
@@ -368,9 +368,9 @@ void LoadFont(int i, char *fontfile)
 	strcpy(extfile, fontfile);
 	FindTextureExtension(extfile);
 
-	CreateTex(&f->texindex, extfile, ectrue, ecfalse);
-	f->width = g_texture[f->texindex].width;
-	f->height = g_texture[f->texindex].height;
+	CreateTex(&f->texin, extfile, ectrue, ecfalse);
+	f->width = g_tex[f->texin].width;
+	f->height = g_tex[f->texin].height;
 
 	extfile[0] = 0;
 	strcat(extfile, fontfile);

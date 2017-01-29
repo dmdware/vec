@@ -22,7 +22,7 @@ void DefI(int type, char *relative, char *tag)
 
 	strcpy(i->tag, tag);
 	CreateTex(&i->tex, relative, ectrue, ecfalse);
-	t = &g_texture[i->tex];
+	t = &g_tex[i->tex];
 	i->width = t->width;
 	i->height = t->height;
 }

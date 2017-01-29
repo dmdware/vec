@@ -80,7 +80,7 @@ void GUI_draw2(GUI *gui)
 	crop[2] = (float)g_width-1;
 	crop[3] = (float)g_height-1;
 
-	DrawImage(g_texture[sp->difftexi].texname, 
+	DrawImage(g_tex[sp->difftexi].texname, 
 		g_mouse.x+sp->offset[0], g_mouse.y+sp->offset[1], 
 		g_mouse.x+sp->offset[2], g_mouse.y+sp->offset[3], 
 		0,0,1,1, bw->crop);

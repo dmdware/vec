@@ -94,7 +94,7 @@ void StripPath(char* inpath, char* path2)
 	strcpy(temp, inpath);
 	CorrectSlashes(temp);
 
-	lastof = strrchr(temp, "/");
+	lastof = strrchr(temp, '/');
 	if(!lastof)
 	{
 		strcpy(path2, inpath);
@@ -109,7 +109,7 @@ void StripExt(char* inpath, char* path2)
 {
 	char *lastof;
 
-	lastof = strrchr(inpath, ".");
+	lastof = strrchr(inpath, '.');
 
 	if(!lastof)
 	{
@@ -126,6 +126,28 @@ void StripExt(char* inpath, char* path2)
 	--lastof;
 	memcpy(path2, inpath, (lastof-inpath));
 	path2[(lastof-inpath)+1] = 0;
+}
+
+void MakeRel(const char* full, char* rel)
+{
+	char temp[DMD_MAX_PATH+1];
+	char exepath[DMD_MAX_PATH+1];
+	char *pos;
+	strcpy(temp, full);
+	CorrectSlashes(temp);
+
+	ExePath(exepath);
+	CorrectSlashes(exepath);
+
+	pos = strstr(temp, exepath);
+
+	if(!pos)
+	{
+		strcpy(rel, temp);
+		return;
+	}
+
+	memcpy(rel, pos, strlen(pos)+1);
 }
 
 void FullPath(const char* filename, char* full)

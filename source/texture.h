@@ -39,7 +39,7 @@ struct Texture
 typedef struct Texture Texture;
 
 #define TEXTURES	40960
-extern Texture g_texture[TEXTURES];
+extern Texture g_tex[TEXTURES];
 
 #define TGA_RGB		 2		// This tells us it's a normal RGB (really BGR) file
 #define TGA_A		 3		// This tells us it's an ALPHA file
@@ -66,17 +66,17 @@ typedef struct LoadedTex LoadedTex;
 void LoadedTex_init(LoadedTex *lt);
 void LoadedTex_free(LoadedTex *lt);
 
-struct TextureToLoad
+struct TexToLoad
 {
-	unsigned int* ptexindex;
-	unsigned int texindex;
+	unsigned int* ptexin;
+	unsigned int texin;
 	char relative[DMD_MAX_PATH+1];
 	ecbool clamp;
 	ecbool reload;
 	ecbool mipmaps;
 };
 
-typedef struct TextureToLoad TextureToLoad;
+typedef struct TexToLoad TexToLoad;
 
 extern Vector g_texload;
 
@@ -90,16 +90,23 @@ LoadedTex *LoadJPG(const char *fullpath);
 LoadedTex *LoadPNG(const char *fullpath);
 ecbool FindTexture(unsigned int *texture, const char* relative);
 int NewTexture();
-ecbool TextureLoaded(unsigned int texture, const char* relative, ecbool transp, ecbool clamp, ecbool mipmaps, unsigned int *texindex);
+ecbool TexLoaded(unsigned int texture, 
+				 const char* relative, 
+				 ecbool transp, 
+				 ecbool clamp, 
+				 ecbool mipmaps, 
+				 unsigned int* texin,
+				 ecbool reload,
+				 int sizex, int sizey);
 void FindTextureExtension(char *relative);
 void FreeTextures();
 ecbool Load1Texture();
-void QueueTex(unsigned int* texindex, const char* relative, ecbool clamp, ecbool mipmaps);
-void RequeueTex(unsigned int texindex, const char* relative, ecbool clamp, ecbool mipmaps);
-LoadedTex* LoadTexture(const char* full);
+void QueueTex(unsigned int* texin, const char* relative, ecbool clamp, ecbool mipmaps);
+void RequeueTex(unsigned int texin, const char* relative, ecbool clamp, ecbool mipmaps);
+LoadedTex* LoadTex(const char* full);
 ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps);
-ecbool CreateTex(unsigned int *texindex, const char* relative, ecbool clamp, ecbool mipmaps);
-void ReloadTextures();
+ecbool CreateTex(unsigned int *texin, const char* relative, ecbool clamp, ecbool mipmaps, ecbool reload);
+void ReloadTexs();
 void FreeTexture(int i);
 void DiffPath(const char* basepath, char* diffpath);
 void DiffPathPNG(const char* basepath, char* diffpath);

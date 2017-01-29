@@ -235,7 +235,7 @@ ecbool LoadSprite(const char* relative, unsigned int* spindex, ecbool loadteam, 
 		CreateTex(s->depthtexi, reldepth, ectrue, ecfalse);]
 	
 	FullPath(reldiff, pixfull);
-	s->pixels = LoadTexture(pixfull);
+	s->pixels = LoadTex(pixfull);
 
 	if(!s->pixels)
 	{
