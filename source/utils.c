@@ -147,7 +147,7 @@ void MakeRel(const char* full, char* rel)
 		return;
 	}
 
-	memcpy(rel, pos, strlen(pos)+1);
+	memcpy(rel, pos+strlen(exepath), strlen(pos)-strlen(exepath)+1);
 }
 
 void FullPath(const char* filename, char* full)
