@@ -22,4 +22,18 @@ void CorrectSlashes(char *s);
 void ExePath(char* exepath);
 void MakeRel(const char* full, char* rel);
 
+float fmax(const float a, const float b);
+float fmin(const float a, const float b);
+
+int imax(const int x, const int y);
+int imin(const int x, const int y);
+
+#define enmax(a,b) (((a)>(b))?(a):(b))
+#define enmin(a,b) (((a)<(b))?(a):(b))
+
+int iabs(int v);
+int isign(int x);
+float fsign(float x);
+int iceil(const int num, const int denom);
+
 #endif

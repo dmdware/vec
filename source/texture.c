@@ -536,15 +536,15 @@ LoadedTex* LoadTex(const char* full)
 	return NULL;
 }
 
-ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool mipmaps)
+ecbool CreateTex2(LoadedTex* pimage, unsigned int* texname, ecbool clamp, ecbool mipmaps)
 {
 	int internfmt;
 	int textype;
 	ecbool transp;
 
-	if(!pImage)
+	if(!pimage)
 		return ecfalse;
-	if(!pImage->data)
+	if(!pimage->data)
 		return ecfalse;
 
 	// Generate a texture with the associative texture ID stored in the array
@@ -565,14 +565,14 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 	transp = ecfalse;
 
 	// If the image is 32-bit (4 channels), then we need to specify GL_RGBA for an alpha
-	if(pImage->channels == 4)
+	if(pimage->channels == 4)
 	{
 		internfmt = GL_RGBA8;
 		textype = GL_RGBA;
 		transp = ectrue;
 	}
 	//grayscale
-	else if(pImage->channels == 1)
+	else if(pimage->channels == 1)
 	{
 		internfmt = GL_ALPHA8;
 		textype = GL_ALPHA;
@@ -605,9 +605,9 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
-		//glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+		//glTexImage2D(GL_TEXTURE_2D, 0, textype, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 		//glGenerateMipmap(GL_TEXTURE_2D);
-		gluBuild2DMipmaps(GL_TEXTURE_2D, textype, pImage->sizex, pImage->sizey, textype, GL_UNSIGNED_BYTE, pImage->data);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, textype, pimage->sizex, pimage->sizey, textype, GL_UNSIGNED_BYTE, pimage->data);
 
 		CheckGLError(__FILE__, __LINE__);
 #else
@@ -630,7 +630,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			}
 
-			glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+			glTexImage2D(GL_TEXTURE_2D, 0, textype, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 
 			CheckGLError(__FILE__, __LINE__);
 		}
@@ -656,9 +656,9 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 4);
-			//glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+			//glTexImage2D(GL_TEXTURE_2D, 0, textype, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 			//glGenerateMipmap(GL_TEXTURE_2D);
-			gluBuild2DMipmaps(GL_TEXTURE_2D, textype, pImage->sizex, pImage->sizey, textype, GL_UNSIGNED_BYTE, pImage->data);
+			gluBuild2DMipmaps(GL_TEXTURE_2D, textype, pimage->sizex, pimage->sizey, textype, GL_UNSIGNED_BYTE, pimage->data);
 
 			CheckGLError(__FILE__, __LINE__);
 		}
@@ -681,7 +681,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+		glTexImage2D(GL_TEXTURE_2D, 0, textype, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 
 		CheckGLError(__FILE__, __LINE__);
 	}
@@ -729,11 +729,11 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, internfmt, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+		glTexImage2D(GL_TEXTURE_2D, 0, internfmt, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 
 		glGenerateMipmap(GL_TEXTURE_2D);  //undeclared identifier in xcode!?
 
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, internfmt, pImage->sizex, pImage->sizey, textype, GL_UNSIGNED_BYTE, pImage->data);  //undeclared identifier in xcode!?
+		//gluBuild2DMipmaps(GL_TEXTURE_2D, internfmt, pimage->sizex, pimage->sizey, textype, GL_UNSIGNED_BYTE, pimage->data);  //undeclared identifier in xcode!?
 
 		CHECKGLERROR();
 	}
@@ -763,7 +763,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, internfmt, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+		glTexImage2D(GL_TEXTURE_2D, 0, internfmt, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 
 		CHECKGLERROR();
 	}
@@ -773,7 +773,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 	// Option 3: without mipmaps linear
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, textype, pImage->sizex, pImage->sizey, 0, textype, GL_UNSIGNED_BYTE, pImage->data);
+	glTexImage2D(GL_TEXTURE_2D, 0, textype, pimage->sizex, pimage->sizey, 0, textype, GL_UNSIGNED_BYTE, pimage->data);
 #endif
 
 	glBindTexture(GL_TEXTURE_2D, -1);
@@ -783,7 +783,7 @@ ecbool CreateTex2(LoadedTex* pImage, unsigned int* texname, ecbool clamp, ecbool
 ecbool CreateTex(unsigned int *texin, const char* relative, ecbool clamp, ecbool mipmaps, ecbool reload)
 {
 	// Define a pointer to a LoadedTex
-	LoadedTex *pImage = NULL;
+	LoadedTex *pimage = NULL;
 	char full[DMD_MAX_PATH+1];
 	unsigned int texname;
 	ecbool transp;
@@ -798,10 +798,10 @@ ecbool CreateTex(unsigned int *texin, const char* relative, ecbool clamp, ecbool
 			return ectrue;
 
 	FullPath(relative, full);
-	pImage = LoadTex(full);
+	pimage = LoadTex(full);
 
-	// Make sure valid image data was given to pImage, otherwise return ecfalse
-	if(pImage == NULL)
+	// Make sure valid image data was given to pimage, otherwise return ecfalse
+	if(pimage == NULL)
 	{
 		fprintf(g_applog, "Failed to load %s \r\n", relative);
 
@@ -811,40 +811,43 @@ ecbool CreateTex(unsigned int *texin, const char* relative, ecbool clamp, ecbool
 		return ecfalse;
 	}
 
-	if(!CreateTex(pImage, &texname, clamp, mipmaps))
+	if(!CreateTex2(pimage, &texname, clamp, mipmaps))
 	{
-		delete pImage;								// Free the image structure
+		LoadedTex_free(pimage);
+		free(pimage);								// Free the image structure
 		return ecfalse;
 	}
 
 	transp = ecfalse;
 
-	if(pImage->channels == 4)
+	if(pimage->channels == 4)
 	{
 		transp = ectrue;
 	}
 
-	TexLoaded(texname, relative, transp, clamp, mipmaps, texin, reload, pImage->sizex, pImage->sizey);
+	TexLoaded(texname, relative, transp, clamp, mipmaps, texin, reload, pimage->sizex, pimage->sizey);
 
-	if(pImage)
+	if(pimage)
 	{
-		delete pImage;								// Free the image structure
-
-		Log(relative);
+		LoadedTex_free(pimage);
+		free(pimage);								// Free the image structure
+		fprintf(g_applog, "%s \r\n", relative);
 	}
 
 	// Return a success
 	return ectrue;
 }
 
-void RequeueTextures()
+void RequeueTexs()
 {
+	Texture* t;
+
 	FreeTextures();
 
-	for(int i=0; i<TEXTURES; i++)
+	for(t=g_tex; t<g_tex+TEXTURES; ++t)
 	{
-		if(g_tex[i].loaded)
-			RequeueTex(i, g_tex[i].fullpath.c_str(), g_tex[i].clamp, g_tex[i].mipmaps);
+		if(t->loaded)
+			RequeueTex((t-g_tex), t->fullpath, t->clamp, t->mipmaps);
 	}
 
 	//LoadParticles();
@@ -904,10 +907,13 @@ void AllocTex(LoadedTex* empty, int width, int height, int channels)
 
 void Blit(LoadedTex* src, LoadedTex* dest, Vec2i pos)
 {
+	int x, y;
+	int srcpx, destpx;
+
 	if(src == NULL || src->data == NULL)
 		return;
 
-	for(int x=0; x<src->sizex; x++)
+	for(x=0; x<src->sizex; ++x)
 	{
 		if(x+pos.x < 0)
 			continue;
@@ -915,7 +921,7 @@ void Blit(LoadedTex* src, LoadedTex* dest, Vec2i pos)
 		if(x+pos.x >= dest->sizex)
 			continue;
 
-		for(int y=0; y<src->sizey; y++)
+		for(y=0; y<src->sizey; ++y)
 		{
 			if(y+pos.y < 0)
 				continue;
@@ -923,19 +929,19 @@ void Blit(LoadedTex* src, LoadedTex* dest, Vec2i pos)
 			if(y+pos.y >= dest->sizey)
 				continue;
 
-			int srcpixel = x*src->channels + y*src->channels*src->sizex;
-			int destpixel = (x+pos.x)*dest->channels + (y+pos.y)*dest->channels*dest->sizex;
+			srcpx = x*src->channels + y*src->channels*src->sizex;
+			destpx = (x+pos.x)*dest->channels + (y+pos.y)*dest->channels*dest->sizex;
 
-			dest->data[destpixel + 0] = src->data[srcpixel + 0];
-			dest->data[destpixel + 1] = src->data[srcpixel + 1];
-			dest->data[destpixel + 2] = src->data[srcpixel + 2];
+			dest->data[destpx + 0] = src->data[srcpx + 0];
+			dest->data[destpx + 1] = src->data[srcpx + 1];
+			dest->data[destpx + 2] = src->data[srcpx + 2];
 
 			if(dest->channels > 3)
 			{
 				if(src->channels <= 3)
-					dest->data[destpixel + 3] = 255;
+					dest->data[destpx + 3] = 255;
 				else
-					dest->data[destpixel + 3] = src->data[srcpixel + 3];
+					dest->data[destpx + 3] = src->data[srcpx + 3];
 			}
 		}
 	}
@@ -946,37 +952,39 @@ static Vector my_buffer; /* JOCTET */
 
 void my_init_destination(j_compress_ptr cinfo)
 {
-	my_buffer.resize(BLOCK_SIZE);
 	Vector_init(&my_buffer, sizeof(JOCTET));
-	cinfo->dest->next_output_byte = &my_buffer[0];
-	cinfo->dest->free_in_buffer = my_buffer.size();
+	Vector_resize(&my_buffer, BLOCK_SIZE);
+	cinfo->dest->next_output_byte = &my_buffer.items[0];
+	cinfo->dest->free_in_buffer = my_buffer.total;
 }
 
 boolean my_empty_output_buffer(j_compress_ptr cinfo)
 {
-	size_t oldsize = my_buffer.size();
-	my_buffer.resize(oldsize + BLOCK_SIZE);
-	cinfo->dest->next_output_byte = &my_buffer[oldsize];
-	cinfo->dest->free_in_buffer = my_buffer.size() - oldsize;
+	size_t oldsize = my_buffer.total;
+	Vector_resize(&my_buffer, oldsize + BLOCK_SIZE);
+	cinfo->dest->next_output_byte = &my_buffer.items[oldsize];
+	cinfo->dest->free_in_buffer = my_buffer.total - oldsize;
 	return ectrue;
 }
 
 void my_term_destination(j_compress_ptr cinfo)
 {
-	my_buffer.resize(my_buffer.size() - cinfo->dest->free_in_buffer);
+	Vector_resize(&my_buffer, my_buffer.total - cinfo->dest->free_in_buffer);
 }
 
 
-void SaveJPEG(const char* fullpath, LoadedTex* image, float quality)
+void SaveJPG(const char* fullpath, LoadedTex* image, float quality)
 {
 	FILE *outfile;
+	struct jpeg_compress_struct cinfo;
+	struct jpeg_error_mgr       jerr;
+	JSAMPROW row_pointer;
+	int row_stride = image->sizex * 3;
+
 	if ((outfile = fopen(fullpath, "wb")) == NULL)
 	{
 		return;
 	}
-
-	struct jpeg_compress_struct cinfo;
-	struct jpeg_error_mgr       jerr;
 
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_compress(&cinfo);
@@ -1004,8 +1012,7 @@ void SaveJPEG(const char* fullpath, LoadedTex* image, float quality)
 	jpeg_set_quality (&cinfo, (int)(100*quality), (boolean)TRUE);
 	jpeg_start_compress(&cinfo, (boolean)TRUE);
 
-	JSAMPROW row_pointer;
-	int row_stride = image->sizex * 3;
+	row_stride = image->sizex * 3;
 
 	while (cinfo.next_scanline < cinfo.image_height)
 	{
@@ -1015,7 +1022,7 @@ void SaveJPEG(const char* fullpath, LoadedTex* image, float quality)
 
 	jpeg_finish_compress(&cinfo);
 
-	fwrite(&my_buffer[0], my_buffer.size(), 1, outfile);
+	fwrite(&my_buffer.items[0], my_buffer.total, 1, outfile);
 	fclose(outfile);
 
 	jpeg_destroy_compress(&cinfo);
@@ -1042,26 +1049,33 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 			   LoadedTex* lt,
 			   png_colorp palette)
 {
+	int *closest;
+	int mentions[PNG_MAX_PALETTE_LENGTH];
+	int x, y;
+	int nearpi;
+	int neard ;
+	int pi=0;
+	int d; 
+	int avga[PNG_MAX_PALETTE_LENGTH];
+
 	*npal = 0;
 
 	//1	
-	int* closest = new int [lt->sizex * lt->sizey];
-	int mentions[PNG_MAX_PALETTE_LENGTH];
+	closest = (int*)malloc( sizeof(int) * lt->sizex * lt->sizey );
 	memset(closest, 0, lt->sizex * lt->sizey * sizeof(int));
 	memset(mentions, 0, PNG_MAX_PALETTE_LENGTH * sizeof(int));
 
-	for(int x=0; x<lt->sizex; ++x)
+	for(x=0; x<lt->sizex; ++x)
 	{
 		//tryout:
-		for(int y=0; y<lt->sizey; ++y)
+		for(y=0; y<lt->sizey; ++y)
 		{
-			int nearpi = -1;
-			int neard = -1;
+			nearpi = -1;
+			neard = -1;
 
-
-			for(int pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
+			for(pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
 			{
-				int d = iabs((int)(palette[pi].red-lt->data[lt->channels*(x+y*lt->sizex)+0])) * 
+				d = iabs((int)(palette[pi].red-lt->data[lt->channels*(x+y*lt->sizex)+0])) * 
 					iabs((int)(palette[pi].green-lt->data[lt->channels*(x+y*lt->sizex)+1])) * 
 					iabs((int)(palette[pi].blue-lt->data[lt->channels*(x+y*lt->sizex)+2]));
 
@@ -1079,9 +1093,9 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 				}
 			}
 
-			for(int pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
+			for(pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
 			{
-				int d = iabs((int)(palette[pi].red-lt->data[lt->channels*(x+y*lt->sizex)+0])) * 
+				d = iabs((int)(palette[pi].red-lt->data[lt->channels*(x+y*lt->sizex)+0])) * 
 					iabs((int)(palette[pi].green-lt->data[lt->channels*(x+y*lt->sizex)+1])) * 
 					iabs((int)(palette[pi].blue-lt->data[lt->channels*(x+y*lt->sizex)+2]));
 
@@ -1118,15 +1132,15 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 	memset(closest, 0, lt->sizex * lt->sizey * sizeof(int));
 	memset(mentions, 0, PNG_MAX_PALETTE_LENGTH * sizeof(int));
 
-	for(int x=0; x<lt->sizex; ++x)
+	for(x=0; x<lt->sizex; ++x)
 	{
-		for(int y=0; y<lt->sizey; ++y)
+		for(y=0; y<lt->sizey; ++y)
 		{
-			int nearpi = -1;
-			int neard = -1;
-			for(int pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
+			nearpi = -1;
+			neard = -1;
+			for(pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
 			{
-				int d = iabs((int)(palette[pi].red-lt->data[lt->channels*(x+y*lt->sizex)+0])) * 
+				d = iabs((int)(palette[pi].red-lt->data[lt->channels*(x+y*lt->sizex)+0])) * 
 					iabs((int)(palette[pi].green-lt->data[lt->channels*(x+y*lt->sizex)+1])) * 
 					iabs((int)(palette[pi].blue-lt->data[lt->channels*(x+y*lt->sizex)+2]));
 
@@ -1145,14 +1159,13 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 		}
 	}
 
-	int avga[PNG_MAX_PALETTE_LENGTH];
 	memset(avga, 0, sizeof(int)*PNG_MAX_PALETTE_LENGTH);
 
-	for(int x=0; x<lt->sizex; ++x)
+	for(x=0; x<lt->sizex; ++x)
 	{
-		for(int y=0; y<lt->sizey; ++y)
+		for(y=0; y<lt->sizey; ++y)
 		{
-			int nearpi = closest[(x+y*lt->sizex)];
+			nearpi = closest[(x+y*lt->sizex)];
 			avga[nearpi] += lt->data[(x+y*lt->sizex)*lt->channels] *2000/255;
 		}
 	}
@@ -1163,7 +1176,7 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 	for(int pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
 		Trans[pi] = imax(0, imin(255, avga[pi]));
 
-	delete [] closest;
+	free(closest);
 
 	*npal = PNG_MAX_PALETTE_LENGTH;
 }

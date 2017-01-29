@@ -184,7 +184,7 @@ void ExePath(char* exepath)
 	char szTmp[32];
 	//char buffer[WF_MAX_PATH+1];
 	sprintf(szTmp, "/proc/%d/exe", getpid());
-	int32_t bytes = std::min((int32_t)readlink(szTmp, exepath, WF_MAX_PATH+1), WF_MAX_PATH);
+	int bytes = std::min((int)readlink(szTmp, exepath, WF_MAX_PATH+1), WF_MAX_PATH);
 	if(bytes >= 0)
 		exepath[bytes] = '\0';
 	//std::string strexepath = StripFile(std::string(buffer));
@@ -247,4 +247,60 @@ void WarnMess(const char* title, const char* message)
 	SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, title, message, NULL);
 	SDL_ShowCursor(ecfalse);
+}
+
+float fmax(const float a, const float b)
+{
+	return (((a)>(b))?(a):(b));
+}
+
+float fmin(const float a, const float b)
+{
+	return (((a)<(b))?(a):(b));
+}
+
+int imax(const int x, const int y)
+{
+	// https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax
+	return x ^ ((x ^ y) & -(x < y)); // max(x, y)
+}
+
+int imin(const int x, const int y)
+{
+	// https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax
+	return y ^ ((x ^ y) & -(x < y)); // min(x, y)
+}
+
+int iabs(int v)
+{
+	// https://graphics.stanford.edu/~seander/bithacks.html
+	int const mask = v >> ( (sizeof(int) * CHAR_BIT) - 1 );
+	return (v + mask) ^ mask;
+}
+
+int isign(int x)
+{
+	//https://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign
+	return +1 | (x >> (sizeof(int) * CHAR_BIT - 1));
+}
+
+float fsign(float x)
+{
+	return x / fabs(x);
+}
+
+//deterministic ceil
+int iceil(const int num, const int denom)
+{
+	if(denom  == 0)
+		return 0;
+
+	int div = num / denom;
+	const int mul = div * denom;
+	const int rem = num - mul;
+
+	if(rem > 0)
+		div += 1;
+
+	return div;
 }
