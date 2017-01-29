@@ -284,7 +284,7 @@ int isign(int x)
 	return +1 | (x >> (sizeof(int) * CHAR_BIT - 1));
 }
 
-float fsign(float x)
+double fsign(double x)
 {
 	return x / fabs(x);
 }
@@ -292,12 +292,14 @@ float fsign(float x)
 //deterministic ceil
 int iceil(const int num, const int denom)
 {
+	int div, mul, rem;
+
 	if(denom  == 0)
 		return 0;
 
-	int div = num / denom;
-	const int mul = div * denom;
-	const int rem = num - mul;
+	div = num / denom;
+	mul = div * denom;
+	rem = num - mul;
 
 	if(rem > 0)
 		div += 1;

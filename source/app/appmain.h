@@ -1,7 +1,7 @@
 ﻿#ifndef APPMAIN_H
 #define APPMAIN_H
 
-#define VERSION				0
+#define APPVERSION				0
 
 #define CONFIGFILE			"config.ini"
 #define TITLE				"T"

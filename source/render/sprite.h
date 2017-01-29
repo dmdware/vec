@@ -37,7 +37,7 @@ void Sprite_init(Sprite *s);
 void Sprite_free(Sprite *s);
 
 #define SPRITES	40
-extern Sprite g_sprite[SPRITES];
+extern Sprite g_sp[SPRITES];
 
 struct SpList
 {
@@ -49,7 +49,7 @@ struct SpList
 	ecbool frames;
 	int nframes;
 	int nslices;
-	char fullpath;
+	char* fullpath;
 
 	int nsp;
 	unsigned int* sprites;
@@ -64,32 +64,34 @@ void SpList_free(SpList *sl);
 #define SPRITELISTS	4
 extern SpList g_splist[SPRITELISTS];
 
-struct SpriteToLoad
+struct SpToLoad
 {
 	char* relative;
-	unsigned int* spindex;
+	unsigned int* spin;
 	ecbool loadteam;
 	ecbool loaddepth;
 };
 
-typedef struct SpriteToLoad SpriteToLoad;
+typedef struct SpToLoad SpToLoad;
 
-void SpLoad_init(SpriteToLoad *stl);
-void SpLoad_free(SpriteToLoad *stl);
+void SpLoad_init(SpToLoad *stl);
+void SpLoad_free(SpToLoad *stl);
 
-extern Vector g_spriteload;
+extern Vector g_spload;
 
 extern int g_lastLSp;
 
-ecbool Load1Sprite();
-void FreeSprites();
-ecbool LoadSprite(const char* relative, unsigned int* spindex, ecbool loadteam, ecbool loaddepth);
-void QueueSprite(const char* relative, unsigned int* spindex, ecbool loadteam, ecbool loaddepth);
-void ParseSprite(const char* relative, Sprite* s);
-int SpriteRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
+ecbool Load1Sp();
+void FreeSps();
+ecbool LoadSp(const char* relative, unsigned int* spin, ecbool loadteam, ecbool loaddepth);
+void QueueSp(const char* relative, unsigned int* spin, ecbool loadteam, ecbool loaddepth);
+void ParseSp(const char* relative, Sprite* s);
+int SpRef(SpList* sl, int frame, int incline, int pitch, int yaw, int roll,
 				  int slicex, int slicey);
-ecbool LoadSpriteList(const char* relative, unsigned int* splin, ecbool loadteam, ecbool loaddepth, ecbool queue);
-int NewSpriteList();
-int NewSprite();
+ecbool LoadSpList(const char* relative, unsigned int* splin, ecbool loadteam, ecbool loaddepth, ecbool queue);
+int NewSpList();
+int NewSp();
+
+#define INCLINES	15
 
 #endif

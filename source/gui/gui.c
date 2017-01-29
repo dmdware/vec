@@ -73,7 +73,7 @@ void GUI_draw2(GUI *gui)
 	}
 
 	spi = g_cursor[g_curst];
-	sp = &g_sprite[spi];
+	sp = &g_sp[spi];
 
 	crop[0] = 0;
 	crop[1] = 0;

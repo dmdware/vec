@@ -70,7 +70,7 @@ struct TexToLoad
 {
 	unsigned int* ptexin;
 	unsigned int texin;
-	char relative[DMD_MAX_PATH+1];
+	char relative[DMD_MAX_PATH+1];	//TODO char*
 	ecbool clamp;
 	ecbool reload;
 	ecbool mipmaps;
@@ -115,8 +115,8 @@ void NormPath(const char* basepath, char* normpath);
 void OwnPath(const char* basepath, char* ownpath);
 void AllocTex(LoadedTex* empty, int width, int height, int channels);
 void Blit(LoadedTex* src, LoadedTex* dest, Vec2i pos);
-void SaveJPG(const char* fullpath, LoadedTex* image, float quality);
-int SavePNG(const char* fullpath, LoadedTex* image);
+ecbool SaveJPG(const char* fullpath, LoadedTex* image, float quality);
+ecbool SavePNG(const char* fullpath, LoadedTex* image);
 void FlipImage(LoadedTex* image);
 ecbool SaveRAW(const char* fullpath, LoadedTex* image);
 void Resample(LoadedTex* original, LoadedTex* empty, Vec2i newdim);

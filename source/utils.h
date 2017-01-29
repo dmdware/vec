@@ -33,7 +33,7 @@ int imin(const int x, const int y);
 
 int iabs(int v);
 int isign(int x);
-float fsign(float x);
+double fsign(double x);
 int iceil(const int num, const int denom);
 
 #endif

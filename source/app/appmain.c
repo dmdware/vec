@@ -50,7 +50,7 @@ void UpdReload()
 	g_lastLMd = -1;
 	Widget_free(gui);
 	FreeModels();
-	FreeSprites();
+	FreeSps();
 	FreeTextures();
 	BreakWin(TITLE);
 	MakeWin(TITLE);
@@ -376,7 +376,7 @@ void Init()
 	Mix_AllocateChannels(SOUND_CHANNELS);
 
 	if(!g_applog)
-		OpenLog("log.txt", VERSION);
+		OpenLog("log.txt", APPVERSION);
 
 	srand((unsigned int)GetTicks());
 
@@ -689,7 +689,7 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 #endif
 
 	if(!g_applog)
-		OpenLog("log.txt", VERSION);
+		OpenLog("log.txt", APPVERSION);
 
 	Log(pchDebugText);
 

@@ -901,7 +901,7 @@ void AllocTex(LoadedTex* empty, int width, int height, int channels)
 
 	if(!empty->data)
 	{
-		OutOfMem(__FILE__, __LINE__);
+		OUTOFMEM();
 	}
 }
 
@@ -973,7 +973,7 @@ void my_term_destination(j_compress_ptr cinfo)
 }
 
 
-void SaveJPG(const char* fullpath, LoadedTex* image, float quality)
+ecbool SaveJPG(const char* fullpath, LoadedTex* image, float quality)
 {
 	FILE *outfile;
 	struct jpeg_compress_struct cinfo;
@@ -983,7 +983,7 @@ void SaveJPG(const char* fullpath, LoadedTex* image, float quality)
 
 	if ((outfile = fopen(fullpath, "wb")) == NULL)
 	{
-		return;
+		return ecfalse;
 	}
 
 	cinfo.err = jpeg_std_error(&jerr);
@@ -1028,6 +1028,8 @@ void SaveJPG(const char* fullpath, LoadedTex* image, float quality)
 	jpeg_destroy_compress(&cinfo);
 
 	Vector_free(&my_buffer);
+
+	return ectrue;
 }
 
 static FILE* savepngfp = NULL;
@@ -1170,10 +1172,10 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 		}
 	}
 
-	for(int pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
+	for(pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
 		avga[pi] /= imax(1, 2000 * mentions[pi] / 255);
 
-	for(int pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
+	for(pi=0; pi<PNG_MAX_PALETTE_LENGTH; ++pi)
 		Trans[pi] = imax(0, imin(255, avga[pi]));
 
 	free(closest);
@@ -1181,17 +1183,27 @@ void Palletize(png_color_16 Colors[PNG_MAX_PALETTE_LENGTH],
 	*npal = PNG_MAX_PALETTE_LENGTH;
 }
 
-int SavePNG(const char* fullpath, LoadedTex* image)
+ecbool SavePNG(const char* fullpath, LoadedTex* image)
 {
 	//FILE *fp;
 	png_structp png_ptr;
 	png_infop info_ptr;
 	//png_colorp palette;
+	int color_type;
+	int bit_depth;
+	png_colorp palette;	
+	png_color_16 Colors[PNG_MAX_PALETTE_LENGTH];
+	png_byte Trans[PNG_MAX_PALETTE_LENGTH];
+	int npal;
+	png_bytep* row_pointers;
+	int y;
+	png_text text_ptr[1];
+	char srcstr[123];
 
 	/* Open the file */
 	savepngfp = fopen(fullpath, "wb");
 	if (savepngfp == NULL)
-		return (ERROR);
+		return ecfalse;
 
 	/* Create and initialize the png_struct with the desired error handler
 	* functions.  If you want to use the default stderr and longjump method,
@@ -1205,7 +1217,7 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 	if (png_ptr == NULL)
 	{
 		fclose(savepngfp);
-		return (ERROR);
+		return ecfalse;
 	}
 
 	/* Allocate/initialize the image information data.  REQUIRED */
@@ -1214,10 +1226,10 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 	{
 		fclose(savepngfp);
 		png_destroy_write_struct(&png_ptr,  NULL);
-		return (ERROR);
+		return ecfalse;
 	}
 
-	int color_type = PNG_COLOR_TYPE_RGB;
+	color_type = PNG_COLOR_TYPE_RGB;
 
 	if(image->channels == 4)
 		color_type = PNG_COLOR_TYPE_RGBA;
@@ -1229,7 +1241,7 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 		color_type = PNG_COLOR_TYPE_PALETTE;
 	}
 
-	int bit_depth = 8;
+	bit_depth = 8;
 
 	if(g_savebitdepth == 2 ||
 		g_savebitdepth == 4 ||
@@ -1253,12 +1265,12 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 		/* If we get here, we had a problem writing the file */
 		fclose(savepngfp);
 		png_destroy_write_struct(&png_ptr, &info_ptr);
-		return (ERROR);
+		return ecfalse;
 	}
 
 	if(g_usepalette)
 	{
-		png_colorp palette = (png_colorp)png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH * sizeof(png_color));//4
+		palette = (png_colorp)png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH * sizeof(png_color));//4
 		if (!palette) {
 			ErrMess("PNG error", "Error allocating palette");
 			OUTOFMEM();
@@ -1267,9 +1279,7 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 			return ecfalse;
 		}
 
-		png_color_16 Colors[PNG_MAX_PALETTE_LENGTH];
-		png_byte Trans[PNG_MAX_PALETTE_LENGTH];
-		int npal = 0;
+		npal = 0;
 
 		Palletize(Colors, Trans, &npal, image, palette);
 		//BGColor[0].index = 0;
@@ -1284,20 +1294,17 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 	//png_init_io(png_ptr, savepngfp);
 	png_set_write_fn(png_ptr, NULL, png_file_write, png_file_flush);
 
-	png_bytep* row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * image->sizey);
+	row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * image->sizey);
 
 	if(!row_pointers)
 	{
-		OutOfMem(__FILE__, __LINE__);
-		return NULL;
+		OUTOFMEM();
+		return ecfalse;
 	}
 
-	for (int y=0; y<image->sizey; y++)
+	for (y=0; y<image->sizey; y++)
 		row_pointers[y] = (png_byte*)&image->data[y*image->sizex*image->channels];
 
-	png_text text_ptr[1];
-
-	char srcstr[123];
 	sprintf(srcstr, "Rendered using %s Version %d", TITLE, APPVERSION);
 #ifdef USESTEAM
 	strcat(srcstr, " Authorized Steam Build");
@@ -1357,22 +1364,25 @@ int SavePNG(const char* fullpath, LoadedTex* image)
 	fclose(savepngfp);
 
 	/* That's it */
-	return (1);
+	return ectrue;
 }
 
 void FlipImage(LoadedTex* image)
 {
 	int x;
 	int y2;
+	int y;
 	byte temp[4];
 	int stride = image->sizex * image->channels;
+	unsigned char *pLine;
+	unsigned char *pLine2;
 
-	for(int y=0; y<image->sizey/2; y++)
+	for(y=0; y<image->sizey/2; ++y)
 	{
 		y2 = image->sizey - y - 1;
 
-		unsigned char *pLine = &(image->data[stride * y]);
-		unsigned char *pLine2 = &(image->data[stride * y2]);
+		pLine = &(image->data[stride * y]);
+		pLine2 = &(image->data[stride * y2]);
 
 		for(x = 0; x < image->sizex * image->channels; x += image->channels)
 		{
@@ -1410,6 +1420,11 @@ ecbool SaveRAW(const char* fullpath, LoadedTex* image)
 
 void StreamRaw(FILE* fp, unsigned int* texname, Vec2i fullsz, Vec2i srcpos, Vec2i srcsz, Vec2i destsz)
 {
+	int stridex;
+	int stridey;
+	int i, x, y;
+	LoadedTex newtex;
+
 	if(srcpos.x < 0)
 		srcpos.x = 0;
 	if(srcpos.y < 0)
@@ -1419,45 +1434,55 @@ void StreamRaw(FILE* fp, unsigned int* texname, Vec2i fullsz, Vec2i srcpos, Vec2
 	if(srcpos.y + srcsz.y > fullsz.y)
 		srcsz.y = fullsz.y - srcpos.y;
 
-	int stridex = srcsz.x / destsz.x * 3;
-	int stridey = srcsz.y / destsz.y * 3 * fullsz.x;
+	stridex = srcsz.x / destsz.x * 3;
+	stridey = srcsz.y / destsz.y * 3 * fullsz.x;
 
-	LoadedTex newtex;
 	AllocTex(&newtex, destsz.x, destsz.y, 3);
-
-	int i = 0;
-
-	for(int y=srcpos.y; srcpos.y < srcpos.y+srcsz.y; y+=stridey)
-		for(int x=srcpos.x; srcpos.x < srcpos.x+srcsz.x; x+=stridex)
+	i = 0;
+	for(y=srcpos.y; srcpos.y < srcpos.y+srcsz.y; y+=stridey)
+	{
+		for(x=srcpos.x; srcpos.x < srcpos.x+srcsz.x; x+=stridex)
 		{
 			fseek(fp, y * 3 * fullsz.x + x * 3, SEEK_SET);
 			fread(&newtex.data[i], 3, 1, fp);
 			i+=3;
 		}
+	}
 
-		newtex.destroy();
+	LoadedTex_free(&newtex);
 }
 
 void Extract(LoadedTex* original, LoadedTex* empty, int x1, int y1, int x2, int y2)
 {
+	int x, y;
+	int i1, i2;
+	int c;
+
 	AllocTex(empty, x2-x1, y2-y1, original->channels);
 
-	for(int x=x1; x<x2; x++)
-		for(int y=y1; y<y2; y++)
+	for(x=x1; x<x2; ++x)
+	{
+		for(y=y1; y<y2; ++y)
 		{
-			int i1 = (x + y * original->sizex) * original->channels;
-			int i2 = ((x-x1) + (y-y1) * empty->sizex) * empty->channels;
+			i1 = (x + y * original->sizex) * original->channels;
+			i2 = ((x-x1) + (y-y1) * empty->sizex) * empty->channels;
 
-			for(int c=0; c<original->channels; c++)
+			for(c=0; c<original->channels; ++c)
 				empty->data[i2] = original->data[i1];
 		}
+	}
 }
 
+//TODO deterministic
 void Resample(LoadedTex* original, LoadedTex* empty, Vec2i newdim)
 {
+	double scaleW;
+	double scaleH;
+	int cy, cx;
+	int pixel, nearest;
+
 	if(original == NULL || original->data == NULL || original->sizex <= 0 || original->sizey <= 0)
 	{
-
 		empty->data = NULL;
 
 		empty->sizex = 0;
@@ -1471,22 +1496,22 @@ void Resample(LoadedTex* original, LoadedTex* empty, Vec2i newdim)
 
 	AllocTex(empty, newdim.x, newdim.y, original->channels);
 
-	double scaleW =  (double)newdim.x / (double)original->sizex;
-	double scaleH = (double)newdim.y / (double)original->sizey;
+	scaleW =  (double)newdim.x / (double)original->sizex;
+	scaleH = (double)newdim.y / (double)original->sizey;
 
-	for(int cy = 0; cy < newdim.y; cy++)
+	for(cy = 0; cy < newdim.y; cy++)
 	{
-		for(int cx = 0; cx < newdim.x; cx++)
+		for(cx = 0; cx < newdim.x; cx++)
 		{
-			int pixel = cy * (newdim.x * original->channels) + cx*original->channels;
-			int nearestMatch =  (int)(cy / scaleH) * original->sizex * original->channels + (int)(cx / scaleW) * original->channels;
+			pixel = cy * (newdim.x * original->channels) + cx*original->channels;
+			nearest =  (int)(cy / scaleH) * original->sizex * original->channels + (int)(cx / scaleW) * original->channels;
 
-			empty->data[pixel    ] =  original->data[nearestMatch    ];
-			empty->data[pixel + 1] =  original->data[nearestMatch + 1];
-			empty->data[pixel + 2] =  original->data[nearestMatch + 2];
+			empty->data[pixel    ] =  original->data[nearest    ];
+			empty->data[pixel + 1] =  original->data[nearest + 1];
+			empty->data[pixel + 2] =  original->data[nearest + 2];
 
 			if(original->channels > 3)
-				empty->data[pixel + 3] =  original->data[nearestMatch + 3];
+				empty->data[pixel + 3] =  original->data[nearest + 3];
 		}
 	}
 }
