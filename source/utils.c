@@ -77,7 +77,7 @@ void StripFile(char* inpath, char* path2)
 	strcpy(temp, inpath);
 	CorrectSlashes(temp);
 
-	lastof = strrchr(temp, "/");
+	lastof = strrchr(temp, '/');
 	if(!lastof)
 	{
 		strcpy(path2, inpath);
@@ -146,6 +146,55 @@ void FullPath(const char* filename, char* full)
 
 	strcat(full, filename);
 	CorrectSlashes(full);
+}
+
+void ExePath(char* exepath)
+{
+#ifndef PLATFORM_IOS
+#if 0
+#ifdef PLATFORM_WIN
+	//char buffer[WF_MAX_PATH+1];
+	GetModuleFileName(NULL, exepath, WF_MAX_PATH+1);
+	//std::string::size_type pos = std::string( buffer ).find_last_of( "\\/" );
+	//std::string strexepath = std::string( buffer ).substr( 0, pos);
+	//strcpy(exepath, strexepath.c_str());
+#else
+	char szTmp[32];
+	//char buffer[WF_MAX_PATH+1];
+	sprintf(szTmp, "/proc/%d/exe", getpid());
+	int32_t bytes = std::min((int32_t)readlink(szTmp, exepath, WF_MAX_PATH+1), WF_MAX_PATH);
+	if(bytes >= 0)
+		exepath[bytes] = '\0';
+	//std::string strexepath = StripFile(std::string(buffer));
+	//strcpy(exepath, strexepath.c_str());
+#endif
+#else
+	char *base_path = SDL_GetBasePath();
+#if 0
+	if (base_path) {
+        data_path = SDL_strdup(base_path);
+        SDL_free(base_path);
+    } else {
+        data_path = SDL_strdup("./");
+    }
+#endif
+	if(base_path)
+	{
+		strcpy(exepath, base_path);
+		SDL_free(base_path);
+	}
+#endif
+#endif
+	
+#ifdef PLATFORM_IOS
+	char *base_path = SDL_GetBasePath();
+	if(base_path)
+	{
+		strcpy(exepath, base_path);
+		SDL_free(base_path);
+	}
+	strcat(exepath, "testfolder/");
+#endif
 }
 
 void MakeDir(const char* fulldir)

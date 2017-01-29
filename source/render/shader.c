@@ -6,7 +6,6 @@
 #include "shader.h"
 #include "../platform.h"
 #include "../window.h"
-#include "../sim/player.h"
 #include "../debug.h"
 #include "../utils.h"
 

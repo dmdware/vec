@@ -1,5 +1,5 @@
-#ifndef USTR_H
-#define USTR_H
+#ifndef STR_H
+#define STR_H
 
 #include "platform.h"
 

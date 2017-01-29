@@ -18,5 +18,7 @@ void WarnMess(const char* title, const char* message);
 void StripFile(char* inpath, char* path2);
 void StripPath(char* inpath, char* path2);
 void StripExt(char* inpath, char* path2);
+void CorrectSlashes(char *s);
+void ExePath(char* exepath);
 
 #endif
