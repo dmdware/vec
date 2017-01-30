@@ -379,6 +379,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\viewlayer.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\viewlayer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\widget.c"
 				>
 			</File>

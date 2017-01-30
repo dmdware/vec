@@ -27,6 +27,7 @@
 #define WIDGET_IMAGE				1
 #define WIDGET_EDITBOX				2
 #define WIDGET_BUTTON				3
+#define WIDGET_VIEWLAYER			4
 
 struct Widget
 {
@@ -113,5 +114,6 @@ void Widget_gainfocus(Widget *w);
 void Widget_losefocus(Widget *w);
 
 void SubCrop(float *src1, float *src2, float *ndest);
+void Resize_Fullscreen(Widget *w);
 
 #endif

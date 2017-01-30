@@ -13,6 +13,7 @@
 #include "../render/shader.h"
 #include "../texture.h"
 #include "../app/appmain.h"
+#include "viewlayer.h"
 
 GUI g_gui;
 
@@ -51,7 +52,6 @@ void GUI_draw2(GUI *gui)
 {
 	unsigned int spi;
 	Sprite* sp;
-	float crop[4];
 	Widget *bw;
 
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -118,23 +118,19 @@ void GUI_inev2(GUI *gui, InEv* ie)
 	}
 }
 
-void SetStatus(const char* status, ecbool logthis)
+void SetStatus(const char* status)
 {
-	Widget *gui, *loading, *stat;
+	Widget *gui, *loading;
+	Text *stat;
 
 	gui = (Widget*)&g_gui;
 
-	if(logthis)
-	{
-		Log(status);
-	}
-
-	loading = (ViewLayer*)Widget_get(gui, "loading");
+	loading = Widget_get(gui, "loading");
 
 	if(!loading)
 		return;
 
-	stat = Widget_get(loading, "status");
+	stat = (Text*)Widget_get(loading, "status");
 
 	if(!stat)
 		return;
