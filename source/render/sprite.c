@@ -14,11 +14,31 @@
 #include "../utils.h"
 #include "../texture.h"
 #include "../gui/gui.h"
+#include "../debug.h"
 
 Vector g_spload; /* SpToLoad */
 int g_lastLSp = -1;
 Sprite g_sp[SPRITES];
 SpList g_splist[SPRITELISTS];
+
+const char* INCLINENAME[] =
+{
+	"0000",
+	"0001",
+	"0010",
+	"0011",
+	"0100",
+	"0101",
+	"0110",
+	"0111",
+	"1000",
+	"1001",
+	"1010",
+	"1011",
+	"1100",
+	"1101",
+	"1110"
+};
 
 void Sprite_init(Sprite *s)
 {
@@ -284,6 +304,7 @@ ecbool LoadSpList(const char* relative, unsigned int* splin, ecbool loadteam, ec
 	char frame[32];
 	char side[32];
 	char stage[32];
+	char incline[32] = "";
 
 	i = NewSpList();
 
@@ -469,7 +490,6 @@ ecbool LoadSpList(const char* relative, unsigned int* splin, ecbool loadteam, ec
 			sprintf(side, "_y%dp%dr%d", yawi, pitchi, rolli);
 
 		//std::string incline = "";
-		char incline[32] = "";
 
 		//TODO use INCLINENAME
 		if(doincls)
@@ -503,7 +523,7 @@ ecbool LoadSpList(const char* relative, unsigned int* splin, ecbool loadteam, ec
 			stage = "_depth";
 #endif
 
-		sprintf(combo, "%s%s%s%s%s", relative, side, frame, incline, stage.c_str());
+		sprintf(combo, "%s%s%s%s%s", relative, side, frame, incline, stage);
 
 		if(queue)
 			QueueSp(combo, &sl->sprites[ci], loadteam, loaddepth);

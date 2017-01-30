@@ -12,12 +12,14 @@
 Shader g_sh[SHADERS];
 signed char g_curS = 0;
 
-const char *SHTEXT [SHADERS][2]
+const char *SHTEXT [SHADERS][4]
 =
 {
 	/* SHADER_ORTHO */
 	{
-""\		
+"SH_ORTHO v",
+"SH_ORTHO f",
+""
 "#version 120"\
 ""\
 "attribute vec4 position;"\
@@ -57,9 +59,9 @@ const char *SHTEXT [SHADERS][2]
 
 void Sh_init(Shader* s)
 {
-	s->program = NULL;
-	s->vertshader = NULL;
-	s->fragshader = NULL;
+	s->program = 0;
+	s->vertshader = 0;
+	s->fragshader = 0;
 }
 
 void Sh_free(Shader* s)
@@ -68,35 +70,35 @@ void Sh_free(Shader* s)
 	{
 		glDetachShader(s->program, s->vertshader);
 		glDeleteShader(s->vertshader);
-		s->vertshader = NULL;
+		s->vertshader = 0;
 	}
 
 	if(s->fragshader)
 	{
 		glDetachShader(s->program, s->fragshader);
 		glDeleteShader(s->fragshader);
-		s->fragshader = NULL;
+		s->fragshader = 0;
 	}
 
 	if(s->program)
 	{
 		glDeleteProgram(s->program);
-		s->program = NULL;
+		s->program = 0;
 	}
 }
 
-GLint Sh_gu(Shader* s, const char* strVariable)
+GLint Sh_gu(Shader* s, const char* strvar)
 {
 	if(!s->program)
 		return -1;
-	return glGetUniformLocation(s->program, strVariable);
+	return glGetUniformLocation(s->program, strvar);
 }
 
-GLint Sh_ga(Shader* s, const char* strVariable)
+GLint Sh_ga(Shader* s, const char* strvar)
 {
 	if(!s->program)
 		return -1;
-	return glGetAttribLocation(s->program, strVariable);
+	return glGetAttribLocation(s->program, strvar);
 }
 
 void Sh_mu(Shader* s, int slot, const char* variable)
@@ -112,7 +114,7 @@ void Sh_ma(Shader* s, int slot, const char* variable)
 void GLVer(int* major, int* minor)
 {
 	/* for all versions */
-	char* var;
+	char* ver;
 
 	char vermaj[6];
 	char vermin[6];
@@ -146,8 +148,8 @@ void GLVer(int* major, int* minor)
 		}
 	}
 
-	*major = StrToInt(vermaj);
-	*minor = StrToInt(vermin);
+	sscanf(vermaj, "%d", major);
+	sscanf(vermin, "%d", minor);
 
 	ver = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 }
@@ -220,20 +222,25 @@ void InitGLSL()
 	}
 #endif
 
-	LoadSh(SH_ORTHO, "shaders/ortho.vert", "shaders/ortho.frag", ectrue, ecfalse);
+	LoadSh(SH_ORTHO, SHTEXT[SH_ORTHO][0], SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][3], 
+		ectrue, ecfalse);
 
 quit:
 	g_quit = ectrue;
 }
 
-void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ecbool hasnorm)
+void LoadSh(int shader, 
+			const char* namev,
+			const char* namef,
+			const char* strv, 
+			const char* strf, 
+			ecbool hastexc, 
+			ecbool hasnorm)
 {
 	Shader* s;
-	char *strv, *strf;
-	char vfull[DMD_MAX_PATH+1];
-	char ffull[DMD_MAX_PATH+1];
 	GLint loglen;
 	GLchar* log;
+	GLint status;
 
 	s = g_sh+shader;
 
@@ -245,28 +252,10 @@ void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ec
 	s->vertshader = glCreateShader(GL_VERTEX_SHADER);
 	s->fragshader = glCreateShader(GL_FRAGMENT_SHADER);
 
-	FullPath(filev, vfull);
-	FullPath(filef, ffull);
-
-	strv = NULL;
-	strf = NULL;
-
-	LoadTextFile(&strv, vfull);
-	LoadTextFile(&strf, ffull);
-
-	if(!strv)
-		OUTOFMEM();
-
-	if(!strf)
-		OUTOFMEM();
-
-	glShaderSource(s->vertshader, 1, szVShader, NULL);
-	glShaderSource(s->fragshader, 1, szFShader, NULL);
+	glShaderSource(s->vertshader, 1, &strv, NULL);
+	glShaderSource(s->fragshader, 1, &strf, NULL);
 
 	glCompileShader(s->vertshader);
-
-	free(strv);
-	free(strf);
 
 	glGetShaderiv(s->vertshader, GL_INFO_LOG_LENGTH, &loglen);
 	if(loglen > 0)
@@ -279,8 +268,8 @@ void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ec
 			return;
 		}
 
-		glGetShaderInfofprintf(g_applog, s->vertshader, loglen, &loglen, log);
-		fprintf(g_applog, "Shader %s compile log: %s\r\n", filev, log);
+		glGetShaderInfoLog(s->vertshader, loglen, &loglen, log);
+		fprintf(g_applog, "Shader %s compile log: %s\r\n", namev, log);
 		free(log);
 	}
 
@@ -296,8 +285,8 @@ void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ec
 			return;
 		}
 
-		glGetShaderInfofprintf(g_applog, s->fragshader, loglen, &loglen, log);
-		fprintf(g_applog, "Shader %s compile log: %s\r\n", filef, log);
+		glGetShaderInfoLog(s->fragshader, loglen, &loglen, log);
+		fprintf(g_applog, "Shader %s compile log: %s\r\n", namef, log);
 		free(log);
 	}
 
@@ -306,18 +295,17 @@ void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ec
 	glAttachShader(s->program, s->fragshader);
 	glLinkProgram(s->program);
 
-	fprintf(g_applog, "Program %s / %s :", filev, filef);
+	fprintf(g_applog, "Program %s / %s :", namev, namef);
 
 	glGetProgramiv(s->program, GL_INFO_LOG_LENGTH, &loglen);
 	if (loglen > 0)
 	{
 		log = (GLchar*)malloc(loglen);
-		glGetProgramInfofprintf(g_applog, s->program, loglen, &loglen, log);
+		glGetProgramInfoLog(s->program, loglen, &loglen, log);
 		fprintf(g_applog, "Program link log: %s\r\n", log);
 		free(log);
 	}
 
-	GLint status;
 	glGetProgramiv(s->program, GL_LINK_STATUS, &status);
 	if (status == 0)
 	{

@@ -45,18 +45,24 @@ extern signed char g_curS;
 void Sh_init(Shader* s);
 void Sh_free(Shader* s);
 
-GLint Sh_gu(const char* strVariable);
-GLint Sh_ga(const char* strVariable);
+GLint Sh_gu(Shader *s, const char* strvar);
+GLint Sh_ga(Shader *s, const char* strvar);
 
-void Sh_mu(int slot, const char* variable);
-void Sh_ma(int slot, const char* variable);
+void Sh_mu(Shader *s, int slot, const char* variable);
+void Sh_ma(Shader *s, int slot, const char* variable);
 
 void UseS(int shader);
 void EndS();
 void InitGLSL();
-void LoadSh(int shader, const char* filev, const char* filef, ecbool hastexc, ecbool hasnorm);
+void LoadSh(int shader, 
+			const char* namev,
+			const char* namef,
+			const char* strv, 
+			const char* strf, 
+			ecbool hastexc, 
+			ecbool hasnorm);
 
-const char *SHTEXT [SHADERS][2];
+extern const char *SHTEXT [SHADERS][4];
 
 #endif
 
