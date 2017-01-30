@@ -1,6 +1,6 @@
 
 
-#include "ecbool.h"
+#include "bool.h"
 #include "list.h"
 
 void List_init(List *l)
@@ -96,7 +96,7 @@ void List_unlink(List *l, Node *link)
 	--l->size;
 }
 
-void List_linkback(List *l, Node *link);
+void List_linkback(List *l, Node *link)
 {
 	link->next = NULL;
 	link->prev = l->tail;

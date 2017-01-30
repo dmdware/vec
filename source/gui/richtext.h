@@ -21,4 +21,16 @@ void pwver(char **ndest, char *src);	//asterisk-mask password string
 void ParseTags(char **ndest, char *src, int *caret);
 int Rich_len(char *in);
 
+#define UTF8_IGNORE_ERROR		0x01
+#define UTF8_SKIP_BOM			0x02
+
+int		utf8_to_wchar(const char *in, int insize, unsigned int *out,
+		    int outsize, int flags);
+int		wchar_to_utf8(const unsigned int *in, int insize, char *out,
+		    int outsize, int flags);
+
+//TODO absorb
+char *FromGlyph(const unsigned int in, int *adv);
+unsigned int ToGlyph(const char *in, int *index);
+
 #endif

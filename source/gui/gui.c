@@ -12,6 +12,7 @@
 #include "gui.h"
 #include "../render/shader.h"
 #include "../texture.h"
+#include "../app/appmain.h"
 
 GUI g_gui;
 
@@ -51,6 +52,7 @@ void GUI_draw2(GUI *gui)
 	unsigned int spi;
 	Sprite* sp;
 	float crop[4];
+	Widget *bw;
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
@@ -68,17 +70,19 @@ void GUI_draw2(GUI *gui)
 	if(g_appmode == APPMODE_PLAY &&
 		g_keys[SDL_SCANCODE_TAB])
 	{
-		Lobby_DrawPyL();
-		Lobby_DrawState();
+//		Lobby_DrawPyL();
+//		Lobby_DrawState();
 	}
 
 	spi = g_cursor[g_curst];
 	sp = &g_sp[spi];
 
-	crop[0] = 0;
-	crop[1] = 0;
-	crop[2] = (float)g_width-1;
-	crop[3] = (float)g_height-1;
+	bw = (Widget*)gui;
+
+	bw->crop[0] = 0;
+	bw->crop[1] = 0;
+	bw->crop[2] = (float)g_width-1;
+	bw->crop[3] = (float)g_height-1;
 
 	DrawImage(g_tex[sp->difftexi].texname, 
 		g_mouse.x+sp->offset[0], g_mouse.y+sp->offset[1], 

@@ -13,6 +13,7 @@
 #define INEV_H
 
 #include "../platform.h"
+#include "../algo/bool.h"
 
 #define INEV_MOUSEMOVE		0
 #define INEV_MOUSEDOWN		1

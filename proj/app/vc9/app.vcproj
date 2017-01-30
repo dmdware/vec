@@ -343,14 +343,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\sys\utf8.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\sys\utf8.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\utils.c"
 				>
 			</File>
