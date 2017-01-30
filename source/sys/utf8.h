@@ -38,5 +38,8 @@ int		wchar_to_utf8(const unsigned int *in, int insize, char *out,
 		    int outsize, int flags);
 
 //__END_DECLS
+//TODO absorb
+char *FromGlyph(const unsigned int in, int *adv);
+unsigned int ToGlyph(const char *in, int *index);
 
 #endif /*!_UTF8_H_ */

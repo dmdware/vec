@@ -17,10 +17,6 @@
 
 //NOTE: color,font blocks may never be added because that complicates copying,psubstr,rawstr,parsetags too much
 
-void Rich_substr(unsigned int **ndest, unsigned int *src, int start, int length);	//icons counted as 1 chars, control blocks 0, attached to beginning of text they influence and repeated for following text blocks
-void Rich_copy(unsigned int **ndest, unsigned int *src);
-void Rich_init_i(unsigned int **rich, short i);
-void Rich_add(unsigned int **ndest, unsigned int *src);
 void pwver(char **ndest, char *src);	//asterisk-mask password string
 void ParseTags(char **ndest, char *src, int *caret);
 int Rich_len(char *in);

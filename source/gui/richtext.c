@@ -3,48 +3,6 @@
 #include "../utils.h"
 #include "../sys/utf8.h"
 
-void Rich_copy(unsigned int **ndest, unsigned int *src)
-{
-	int len;
-	len = UTF32Len(src) + 1;
-	*ndest = (unsigned int*)malloc(sizeof(unsigned int)  *len);
-	memcpy(*ndest, src, sizeof(unsigned int)  *len);
-}
-
-void Rich_init_i(unsigned int **rich, short i)
-{
-	*rich = (unsigned int*)malloc(sizeof(unsigned int)  *2);
-	(*rich)[0] = RICH_ICON_START + i;
-	(*rich)[1] = 0;
-}
-
-void Rich_substr(unsigned int **ndest, unsigned int *src, int start, int length)
-{
-	*ndest = (unsigned int*)malloc(sizeof(unsigned int*)  *(length+1));
-	memcpy(*ndest, &src[start], length+1);
-	
-	//TODO blocks control fonts,colors
-}
-
-void Rich_add(unsigned int **ndest, unsigned int *src)
-{
-	int len1, len2;
-	len1 = UTF32Len(*ndest);
-	len2 = UTF32Len(src);
-	*ndest = (unsigned int*)realloc(*ndest, sizeof(unsigned int)  *(len1 + len2 + 1));
-	memcpy(&(*ndest)[len1], src, len2 + 1);
-}
-
-//icons counted as 1 chars, control blocks 0, attached to beginning of text they influence and repeated for following text blocks
-void Rich_substr(unsigned int **ndest, unsigned int *src, int start, int length)
-{
-	int i;
-	*ndest = (unsigned int*)malloc(sizeof(unsigned int)  *(length + 1));
-	for(i=start; i<start+length; ++i)
-		(*ndest)[i-start] = src[i];
-	(*ndest)[i-start] = 0;
-}
-
 void ParseTags(char **ndest, char *src, int *caret)
 {
 	short icon;
@@ -103,10 +61,7 @@ void ParseTags(char **ndest, char *src, int *caret)
 void pwver(char **ndest, char *src)	//asterisk-mask password string
 {
 	int len;
-	unsigned int *utf32;
-	utf32 = ToUTF32(src);
-	len = UTF32Len(utf32);
-	free(utf32);
+	len = Rich_len(src);
 	*ndest = (char*)malloc(len+1);
 	(*ndest)[len] = 0;
 	for(--len; len>=0; --len)
@@ -120,6 +75,11 @@ int Rich_len(char *in)
 	unsigned char *p, *lim;
 	unsigned int *wlim, high;
 	int n, total, i, n_bits;
+	int insize;
+	int outsize;
+
+	insize = strlen(in);
+	outsize = insize;
 
 	if (in == NULL)
 		return (0);
@@ -127,7 +87,7 @@ int Rich_len(char *in)
 	total = 0;
 	p = (unsigned char *)in;
 	lim = p + insize;
-	wlim = out + outsize;
+	//wlim = out + outsize;
 
 	for (; p < lim; p += n) {
 		if (__utf8_forbitten(*p) != 0 &&
