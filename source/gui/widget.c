@@ -263,6 +263,7 @@ void Widget_freech(Widget *w)
 	{
 		iw = (Widget*)i->data;
 		free(iw);
+		i = i->next;
 	}
 	List_free(&w->sub);
 }
