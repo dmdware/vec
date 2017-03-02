@@ -15,7 +15,7 @@ signed char g_curS = 0;
 const char *SHTEXT [SHADERS][4]
 =
 {
-	/* SHADER_ORTHO */
+	/* SH_ORTHO */
 	{
 "SH_ORTHO v",
 "SH_ORTHO f",

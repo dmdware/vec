@@ -14,6 +14,7 @@
 #include "../texture.h"
 #include "../app/appmain.h"
 #include "viewlayer.h"
+#include "widgets/text.h"
 
 GUI g_gui;
 
@@ -156,14 +157,14 @@ void CenterMouse()
 	g_mouse.x = g_width/2;
 	g_mouse.y = g_height/2;
 	
-	SDL_WarpMouseInWindow(g_window, g_mouse.x, g_mouse.y);
+	SDL_WarpMouseInWindow(g_win, g_mouse.x, g_mouse.y);
 }
 
 void Ortho(int width, int height, float r, float g, float b, float a)
 {
 	Shader* s;
 	CHECKGLERROR();
-	UseS(SHADER_ORTHO);
+	UseS(SH_ORTHO);
 	s = g_sh+g_curS;
 	glUniform1f(s->slot[SSLOT_WIDTH], (float)width);
 	glUniform1f(s->slot[SSLOT_HEIGHT], (float)height);

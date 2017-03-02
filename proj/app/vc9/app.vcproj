@@ -335,6 +335,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\widgets\text.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\widgets\text.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\texture.c"
 				>
 			</File>

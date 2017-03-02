@@ -69,7 +69,7 @@ void BreakLine()
 	
 	++line;
 	x = goffstartx;
-	y += f->gheight;
+	y += (short)f->gheight;
 }
 
 void PrepLineBreak()
@@ -111,7 +111,7 @@ void PrepLineBreak()
 			iconi = k - RICH_ICON_START;
 			icon = &g_icon[iconi];
 			hscale = f->gheight / (float)icon->h;
-			x0 += (float)icon->w * hscale;
+			x0 += (short)((float)icon->w * hscale);
 		}
 
 		if(x0 > w+gstartx)
@@ -149,7 +149,7 @@ void DrawGlyph()
 	Shader *s;
 	Glyph *g;
 	
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	f = &g_font[g_currfont];
 	k = ToGlyph(&g_rtext[i], NULL);
 
@@ -158,13 +158,13 @@ void DrawGlyph()
 	{
 		iconi = k - RICH_ICON_START;
 		icon = &g_icon[iconi];
-		hscale = f->gheight / (float)icon->height;
+		hscale = f->gheight / (float)icon->h;
 
 		UseIconTex(iconi);
 		glUniform4f(s->slot[SSLOT_COLOR], 1, 1, 1, 1);
 
 		left = x;
-		right = (short)( left + (float)icon->width * hscale );
+		right = (short)( left + (float)icon->w * hscale );
 		top = y;
 		bottom = top + (short)f->gheight;
 		DrawGlyph2((float)left, (float)top, (float)right, (float)bottom, 0, 0, 1, 1);
@@ -193,7 +193,7 @@ void HighlGlyph()
 	Shader *s;
 	Glyph *g;
 	
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	f = &g_font[g_currfont];
 	k = ToGlyph(&g_rtext[i], NULL);
 	
@@ -202,12 +202,12 @@ void HighlGlyph()
 	{
 		iconi = k - RICH_ICON_START;
 		icon = &g_icon[iconi];
-		hscale = f->gheight / (float)icon->height;
+		hscale = f->gheight / (float)icon->h;
 
 		UseIconTex(iconi);
 
 		left = x;
-		right = (short)( left + (float)icon->width * hscale );
+		right = (short)( left + (float)icon->w * hscale );
 		top = y;
 		bottom = top + (short)f->gheight;
 		HighlGlyph2((float)left, (float)top, (float)right, (float)bottom);
@@ -259,13 +259,12 @@ void AdvGlyph()
 		iconi = k - RICH_ICON_START;
 		icon = &g_icon[iconi];
 		hscale = f->gheight / (float)icon->h;
-		x += (float)icon->w * hscale;
+		x += (short)((float)icon->w * hscale);
 		
 		++glyphi;
 	}
 	else if(k <= RICH_GLYPH_END)
 	{
-		k = p->text.glyphs[glyphi];
 		g = &f->glyph[k];
 		x += g->origsize[0];
 
@@ -276,7 +275,7 @@ void AdvGlyph()
 void UseFontTex()
 {
 	Shader *s;
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, g_tex[ g_font[g_currfont].texin ].texname);
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
@@ -285,7 +284,7 @@ void UseFontTex()
 void UseIconTex(int icon)
 {
 	Shader *s;
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, g_tex[ g_icon[icon].tex ].texname);
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
@@ -368,7 +367,7 @@ void LoadFont(int i, char *fontfile)
 	strcpy(extfile, fontfile);
 	FindTextureExtension(extfile);
 
-	CreateTex(&f->texin, extfile, ectrue, ecfalse);
+	CreateTex(&f->texin, extfile, ectrue, ecfalse, ecfalse);
 	f->width = g_tex[f->texin].width;
 	f->height = g_tex[f->texin].height;
 
@@ -380,7 +379,7 @@ void LoadFont(int i, char *fontfile)
 	fp = fopen(fullfont, "rb");
 	if(!fp)
 	{
-		fprintf(g_applog, "Error loading font %s\r\n", font);
+		fprintf(g_applog, "Error loading font %s\r\n", fontfile);
 		fprintf(g_applog, "Full path: %s", fullfont);
 		return;
 	}
@@ -485,7 +484,7 @@ void DrawGlyph2(float left, float top, float right, float bottom, float texleft,
 		newleft, newtop,          newtexleft, newtextop
 	};
     
-    s = &g_shader[g_curS];
+    s = &g_sh[g_curS];
 
 	glVertexPointer(2, GL_FLOAT, sizeof(float)*4, &vertices[0]);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*4, &vertices[2]);
@@ -534,7 +533,7 @@ void HighlGlyph2(float left, float top, float right, float bottom)
 		newleft, newtop
 	};
     
-    s = &g_shader[g_curS];
+    s = &g_sh[g_curS];
 	
 	glVertexPointer(2, GL_FLOAT, 0, &vertices[0]);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -564,7 +563,7 @@ void DrawTxLine(int fnt, float *inframe, float *incrop,  char *text, float *colo
 	unsigned char c;
 	Shader *s;
 	
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	
 	if(color == NULL)
 	{
@@ -588,7 +587,7 @@ void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const 
 	unsigned char c;
 	Shader *s;
 	
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	
 	currcolor[0] = 0;
 	currcolor[1] = 0;
@@ -629,7 +628,7 @@ void Highlight(int fnt, float *inframe, float *incrop, char *text, int highlstar
 	
 	EndS();
 	UseS(SH_COLOR2D);
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	glUniform1f(s->slot[SSLOT_WIDTH], (float)g_currw);
 	glUniform1f(s->slot[SSLOT_HEIGHT], (float)g_currh);
 	glUniform4f(s->slot[SSLOT_COLOR], 1, 1, 1, 0.5f);
@@ -674,7 +673,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 	Shader *s;
 	unsigned char c;
  
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	linew = 0;
 	len = RichText_texlen(text);
 	f = &g_font[fnt];
@@ -747,7 +746,7 @@ void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, in
 	unsigned char c;
 	int adv;
 	
-	s = &g_shader[g_curS];
+	s = &g_sh[g_curS];
 	
 	glUniform4f(s->slot[SSLOT_COLOR], 0.3f, 0.3f, 0.3f, color ? color[3] : 1);
 	currcolor[0] = 0.3f;

@@ -28,6 +28,7 @@
 #define WIDGET_EDITBOX				2
 #define WIDGET_BUTTON				3
 #define WIDGET_VIEWLAYER			4
+#define WIDGET_TEXT					5
 
 struct Widget
 {
