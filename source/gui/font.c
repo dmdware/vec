@@ -368,8 +368,8 @@ void LoadFont(int i, char *fontfile)
 	FindTextureExtension(extfile);
 
 	CreateTex(&f->texin, extfile, ectrue, ecfalse, ecfalse);
-	f->width = g_tex[f->texin].width;
-	f->height = g_tex[f->texin].height;
+	f->width = (float)g_tex[f->texin].width;
+	f->height = (float)g_tex[f->texin].height;
 
 	extfile[0] = 0;
 	strcat(extfile, fontfile);
@@ -472,22 +472,35 @@ void DrawGlyph2(float left, float top, float right, float bottom, float texleft,
 		newbottom = crop[3];
 	}
 
-	vertices =
-	{
-		//posx, posy    texx, texy
-		newleft, newtop,          newtexleft, newtextop,
-		newright, newtop,         newtexright, newtextop,
-		newright, newbottom,      newtexright, newtexbottom,
-
-		newright, newbottom,      newtexright, newtexbottom,
-		newleft, newbottom,       newtexleft, newtexbottom,
-		newleft, newtop,          newtexleft, newtextop
-	};
+	vertices[0] = newleft;
+	vertices[1] = newtop;
+	vertices[2] = newtexleft;
+	vertices[3] = newtextop;
+	vertices[4] = newright;
+	vertices[5] = newtop;
+	vertices[6] = newtexright;
+	vertices[7] = newtextop;
+	vertices[8] = newright;
+	vertices[9] = newbottom;
+	vertices[10] = newtexright;
+	vertices[11] = newtexbottom;
+	vertices[12] = newright;
+	vertices[13] = newbottom;
+	vertices[14] = newtexright;
+	vertices[15] = newtexbottom;
+	vertices[16] = newleft;
+	vertices[17] = newbottom;
+	vertices[18] = newtexleft;
+	vertices[19] = newtexbottom;
+	vertices[20] = newleft;
+	vertices[21] = newtop;
+	vertices[22] = newtexleft;
+	vertices[23] = newtextop;
     
     s = &g_sh[g_curS];
 
-	glVertexPointer(2, GL_FLOAT, sizeof(float)*4, &vertices[0]);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*4, &vertices[2]);
+	glVertexPointer(2, GL_FLOAT, sizeof(float)*4, vertices);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*4, vertices+2);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
@@ -521,25 +534,26 @@ void HighlGlyph2(float left, float top, float right, float bottom)
 	else if(newbottom > crop[3])
 		newbottom = crop[3];
 
-	vertices =
-	{
-		//posx, posy
-		newleft, newtop,
-		newright, newtop,
-		newright, newbottom,
-
-		newright, newbottom,
-		newleft, newbottom,
-		newleft, newtop
-	};
+	vertices[0] = newleft;
+	vertices[1] = newtop;
+	vertices[2] = newright;
+	vertices[3] = newtop;
+	vertices[4] = newright;
+	vertices[5] = newbottom;
+	vertices[6] = newright;
+	vertices[7] = newbottom;
+	vertices[8] = newleft;
+	vertices[9] = newbottom;
+	vertices[10] = newleft;
+	vertices[11] = newtop;
     
     s = &g_sh[g_curS];
 	
-	glVertexPointer(2, GL_FLOAT, 0, &vertices[0]);
+	glVertexPointer(2, GL_FLOAT, 0, vertices);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void SubDrawTextLine(int caret)
+void SubDrawTxLine(int caret)
 {
 	int adv;
 	
@@ -576,10 +590,10 @@ void DrawTxLine(int fnt, float *inframe, float *incrop,  char *text, float *colo
 		for(c=0; c<4; c++) currcolor[c] = color[c];
 	}
 
-	StartText(text, fnt, 0, inframe[0], inframe, incrop);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, incrop);
 	UseFontTex();
-	TextLayer(inframe[0], inframe[1]);
-	DrawLine(caret);
+	TextLayer((int)inframe[0], (int)inframe[1]);
+	SubDrawTxLine(caret);
 }
 
 void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const float *color, int caret)
@@ -600,11 +614,11 @@ void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const 
 	UseFontTex();
 	TextLayer(inframe[0]+1, inframe[1]);
 
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 	TextLayer(inframe[0], inframe[1]+1);
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 	TextLayer(inframe[0]+1, inframe[1]+1);
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 
 	if(color == NULL)
 	{
@@ -618,13 +632,14 @@ void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const 
 	}
 
 	TextLayer(inframe[0], inframe[1]);
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 	glUniform4f(s->slot[SSLOT_COLOR], 1, 1, 1, 1);
 }
 
 void Highlight(int fnt, float *inframe, float *incrop, char *text, int highlstarti, int highlendi, ecbool multiline)
 {
 	Shader *s;
+	int adv;
 	
 	EndS();
 	UseS(SH_COLOR2D);
@@ -691,12 +706,12 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 		{
 			iconi = k - RICH_ICON_START;
 			icon = &g_icon[iconi];
-			hscale = f->gheight / (float)icon->height;
-			linew += (float)icon->width * hscale;
+			hscale = f->gheight / (float)icon->h;
+			linew += (float)icon->w * hscale;
 		}
 	}
 
-	startx -= linew/2;
+	gstartx -= linew/2;
 
 	a = 1;
 	if(color != NULL)
@@ -708,14 +723,14 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 	currcolor[3] = color != NULL ? color[3] : 1;
 	glUniform4f(s->slot[SSLOT_COLOR], currcolor[0], currcolor[1], currcolor[2], currcolor[3]);
 
-	StartText(text, fnt, 0, inframe[0]);
+	StartText(text, fnt, 0, inframe[0], inframe, incrop);
 	UseFontTex();
 	TextLayer(inframe[0]+1, inframe[1]);
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 	TextLayer(inframe[0], inframe[1]+1);
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 	TextLayer(inframe[0]+1, inframe[1]+1);
-	SubDrawTextLine(caret);
+	SubDrawTxLine(caret);
 
 	if(color == NULL)
 	{
@@ -861,7 +876,7 @@ int CountLines(char *text, int fnt, float *inframe)
 	int adv;
 	
 	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(startx, starty);
+	TextLayer(inframe[0], inframe[1]);
 
 	for(i=0; g_rtext[i]; i+=adv)
 	{
@@ -882,7 +897,7 @@ int GetLineStart(char *text, int fnt, float *inframe, int getline)
 	int adv;
 	
 	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(startx, starty);
+	TextLayer(inframe[0], inframe[1]);
 
 	for(i=0; g_rtext[i]; i+=adv)
 	{
@@ -909,7 +924,7 @@ int EndX(char *text, int lastg, int fnt, float *inframe, ecbool multiline)
 	int highx, adv;
 	
 	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(startx, starty);
+	TextLayer(inframe[0], inframe[1]);
 
 	highx = (int)startx;
 

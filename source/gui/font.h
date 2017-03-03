@@ -58,7 +58,7 @@ void UseFontTex();
 void UseIconTex(int icon);
 void DrawGlyph2(float left, float top, float right, float bottom, float texleft, float textop, float texright, float texbottom);
 void HighlGlyph2(float left, float top, float right, float bottom);
-void SubDrawTextLine(int caret);
+void SubDrawTxLine(int caret);
 void DrawTxLine(int fnt, float *inframe, float *incrop, char *text, float *color, int caret);
 void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, float *color, int caret);
 void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, int ln, int caret, ecbool shadow, ecbool multiline);
