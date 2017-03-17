@@ -12,6 +12,9 @@
 #ifndef APPGUI_H
 #define APPGUI_H
 
+#include "../../platform.h"
+#include "../widget.h"
+
 struct ViewLayer;
 struct Widget;
 

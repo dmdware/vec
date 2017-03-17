@@ -2,32 +2,48 @@
 
 
 #include "appmain.h"
+#include "../gui/layouts/appgui.h"
 #include "../utils.h"
 #include "../math/vec3f.h"
 #include "../window.h"
+#include "../gui/widget.h"
+#include "../gui/gui.h"
+#include "../sim/simdef.h"
+#include "../sim/player.h"
+#include "../sound/sound.h"
+#include "../net/net.h"
 
 char g_appmode = APPMODE_LOGO;
 char g_viewmode = VIEWMODE_FIRST;
+char g_restage = 0;
+
+
+#ifdef PLATFORM_WIN
+HINSTANCE g_hinst = NULL;
+#endif
+
+void LoadSysRes()
+{
+}
 
 void UpdLoad()
 {
 	Widget *gui, *menu;
-	Node* it;
 
 	gui = (Widget*)&g_gui;
 
 	switch(g_restage)
 	{
 	case 0:
-		if(!Load1Model()) g_restage++;
+/*		if(!Load1Model()) */ g_restage++;
 		break;
 	case 1:
 		if(!Load1Texture())
 		{
-			List_free(&g_modload);
-			List_free(&g_texload);
+	//		List_free(&g_modload);
+			Vector_free(&g_texload);
 
-			g_lastLMd = -1;
+//			g_lastLMd = -1;
 			g_lastLTex = -1;
 
 			g_appmode = APPMODE_MENU;
@@ -47,9 +63,9 @@ void UpdReload()
 
 	g_restage = 0;
 	g_lastLTex = -1;
-	g_lastLMd = -1;
+//	g_lastLMd = -1;
 	Widget_free(gui);
-	FreeModels();
+//	FreeModels();
 	FreeSps();
 	FreeTextures();
 	BreakWin(TITLE);
@@ -80,24 +96,34 @@ void UpdSim()
 
 void Update()
 {
-	if(g_sock)
-		UpdNet();
+//	if(g_sock)
+//		UpdNet();
 
-	if(g_appmode == APPMODE_LOGO)
+	switch(g_appmode)
+	{
+	case APPMODE_LOGO:
 		UpdLogo();
-	/* else if(g_appmode == APPMODE_INTRO)
-		UpdateIntro(); */
-	else if(g_appmode == APPMODE_LOADING)
+		break;
+//	case APPMODE_INTRO:
+//		UpdIntro();
+//		break;
+	case APPMODE_LOADING:
 		UpdLoad();
-	else if(g_appmode == APPMODE_RELOADING)
+		break;
+	case APPMODE_RELOADING:
 		UpdReload();
-	else if(g_appmode == APPMODE_PLAY)
+		break;
+	case APPMODE_PLAY:
 		UpdSim();
-	else if(g_appmode == APPMODE_EDITOR)
-		UpdEd();
+		break;
+	case APPMODE_EDITOR:
+//		UpdEd();
+		break;
+	}
 }
 
-void DrawScene(Matrix proj, Matrix viewmat, Matrix modelmat, Matrix modelviewinv, float mvLightPos[3], float lightDir[3])
+void DrawScene(float* proj, float* viewmat, float* modelmat, float* modelviewinv, 
+			   float mvLightPos[3], float lightDir[3])
 {
 }
 
@@ -108,6 +134,7 @@ void DrawSceneDepth()
 void MakeFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* renderfb, unsigned int* renderdepthtex, int w, int h)
 {
 	/* OpenGL 1.4 way */
+	GLenum DrawBuffers[2];
 
 	glGenTextures(1, rendertex);
 	glBindTexture(GL_TEXTURE_2D, *rendertex);
@@ -130,7 +157,8 @@ void MakeFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* rend
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, *renderdepthtex, 0);
 
-	GLenum DrawBuffers[2] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+	DrawBuffers[0] = GL_COLOR_ATTACHMENT0;
+	DrawBuffers[1] = GL_DEPTH_ATTACHMENT;
 	glDrawBuffers(1, DrawBuffers);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -165,12 +193,10 @@ void Draw()
 
 void LoadCfg()
 {
-	EnumDisp();
 	Node *rit; /* Vec2i */
 	Vec2i *rp;
 	int w, h;
-	float scale;
-	char cfgfull[SFH_MAX_PATH+1];
+	char cfgfull[DMD_MAX_PATH+1];
 	char line[128];
 	char key[128];
 	char act[128];
@@ -178,6 +204,8 @@ void LoadCfg()
 	float valuef;
 	int valuei;
 	ecbool valueb;
+
+	EnumDisp();
 
 	if(g_ress.size)
 	{
@@ -203,7 +231,7 @@ void LoadCfg()
 			if(rp->y > g_selres.y &&
 				rp->x > rp->y)
 			{
-				g_selres = *rit;
+				g_selres = *(Vec2i*)rit->data;
 			}
 		}
 		/* already of acceptable height? */
@@ -214,16 +242,16 @@ void LoadCfg()
 			if(rp->x < g_selres.y &&
 				rp->x > rp->y)
 			{
-				g_selres = *rit;
+				g_selres = *(Vec2i*)rit->data;
 			}
 
 			break;
 		}
 	}
 
-	SwitchLang(LANG_ENG);
+	//SwitchLang(LANG_ENG);
 
-	FullWritePath(CONFIGFILE, cfgfull);
+	FullWrite(CONFIGFILE, cfgfull);
 
 	fp = fopen(cfgfull, "r");
 
@@ -235,7 +263,7 @@ void LoadCfg()
 		strcpy(key, "");
 		strcpy(act, "");
 
-		getline(fp, line);
+		fgets(line, 127, fp);
 
 		if(strlen(line) > 127)
 			continue;
@@ -244,16 +272,16 @@ void LoadCfg()
 
 		sscanf(line, "%s %s", key, act);
 
-		valuef = StrToFloat(act);
-		valuei = StrToInt(act);
-		valueb = valuei ? ectrue : ecfalse;
+		sscanf(act, "%f", &valuef);
+		sscanf(act, "%d", &valuei);
+		sscanf(act, "%hhu", &valueb);
 
 		if(strcmp(key, "fullscreen") == 0)					g_fs = valueb;
-		else if(strcmp(key, "client_width") == 0)			g_width = g_selres.width = g_origwidth = valuei;
-		else if(strcmp(key, "client_height") == 0)			g_height = g_selres.height = g_origheight = valuei;
+		else if(strcmp(key, "client_width") == 0)			g_width = g_selres.x = valuei;
+		else if(strcmp(key, "client_height") == 0)			g_height = g_selres.y = valuei;
 		else if(strcmp(key, "screen_bpp") == 0)				g_bpp = valuei;
-		else if(strcmp(key, "volume") == 0)					SetVol(valuei);
-		else if(strcmp(key, "language") == 0)				SwitchLang(GetLang(act));
+//		else if(strcmp(key, "volume") == 0)					SetVol(valuei);
+//		else if(strcmp(key, "language") == 0)				SwitchLang(GetLang(act));
 	}
 
 	fclose(fp);
@@ -261,46 +289,44 @@ void LoadCfg()
 
 void LoadName()
 {
-	char cfgfull[SFH_MAX_PATH+1];
+	char cfgfull[DMD_MAX_PATH+1];
 	FILE *fp;
-	char line[128];
 
-	FullWritePath("name.txt", cfgfull);
-
+	FullWrite("name.txt", cfgfull);
 	fp = fopen(cfgfull, "r");
 
 	if(!fp)
 	{
-		GenName(g_name);
+		//GenName(g_name);
+		sprintf(g_name, "User%d", (int)(rand()%1000));
 		return;
 	}
 
-	getline(fp, line);
-	strcpy(g_name, line);
+	fgets(g_name, MAXNAME, fp);
 	fclose(fp);
 }
 
 void WriteConfig()
 {
-	char cfgfull[SFH_MAX_PATH+1];
+	char cfgfull[DMD_MAX_PATH+1];
 	FILE* fp = fopen(cfgfull, "w");
-	FullWritePath(CONFIGFILE, cfgfull);
+	FullWrite(CONFIGFILE, cfgfull);
 	if(!fp)
 		return;
 	fprintf(fp, "fullscreen %d \r\n\r\n", g_fs ? 1 : 0);
-	fprintf(fp, "client_width %d \r\n\r\n", g_selres.width);
-	fprintf(fp, "client_height %d \r\n\r\n", g_selres.height);
+	fprintf(fp, "client_width %d \r\n\r\n", g_selres.x);
+	fprintf(fp, "client_height %d \r\n\r\n", g_selres.y);
 	fprintf(fp, "screen_bpp %d \r\n\r\n", g_bpp);
-	fprintf(fp, "volume %d \r\n\r\n", g_volume);
-	fprintf(fp, "language %s\r\n\r\n", g_lang);
+	//fprintf(fp, "volume %d \r\n\r\n", g_volume);
+	//fprintf(fp, "language %s\r\n\r\n", g_lang);
 	fclose(fp);
 }
 
 void WriteName()
 {
-	char cfgfull[SFH_MAX_PATH+1];
+	char cfgfull[DMD_MAX_PATH+1];
 	FILE* fp = fopen(cfgfull, "w");
-	FullWritePath("name.txt", cfgfull);
+	FullWrite("name.txt", cfgfull);
 	if(!fp)
 		return;
 	fprintf(fp, "%s", g_name);
@@ -341,7 +367,7 @@ void Init()
 		ErrMess("Error", msg);
 	}
 
-	link_version=Mix_Linked_Version();
+	link_version=(SDL_version*)Mix_Linked_Version();
 	SDL_MIXER_VERSION(&compile_version);
 	printf("compiled with SDL_mixer version: %d.%d.%d\n",
 		compile_version.major,
@@ -373,7 +399,7 @@ void Init()
 		ErrMess("Error", msg);
 	}
 
-	Mix_AllocateChannels(SOUND_CHANNELS);
+	Mix_AllocateChannels(SNCHANS);
 
 	if(!g_applog)
 		OpenLog("log.txt", APPVERSION);
@@ -383,47 +409,47 @@ void Init()
 	/* TODO c-style inits, not constructors */
 	LoadCfg();
 	LoadName();
-	MapKeys();
+//	MapKeys();
 }
 
 void Deinit()
 {
-	Node *cit;
+//	Node *cit;
 	GUI* gui;
 	unsigned __int64 start;
 
-	EndSess();
-	FreeMap();
+//	EndSess();
+//	FreeMap();
 
 	gui = &g_gui;
 	Widget_freech((Widget*)gui);
 
 	BreakWin(TITLE);
 
-	for(cit=g_cn.head; cit; cit=cit->next)
-	{
-		Disconnect((NetConn*)cit->data);
-	}
+//	for(cit=g_cn.head; cit; cit=cit->next)
+//	{
+//		Disconnect((NetConn*)cit->data);
+//	}
 
 	start = GetTicks();
 	/* After quit, wait to send out quit packet to make sure host/clients recieve it. */
 	while (GetTicks() - start < QUIT_DELAY)
 	{
-		if(NetQuit())
-			break;
-		if(g_sock)
-			UpdNet();
+//		if(NetQuit())
+//			break;
+//		if(g_sock)
+//			UpdNet();
 	}
 
-	if(g_sock)
-	{
-		SDLNet_UDP_Close(g_sock);
-		g_sock = NULL;
-	}
+//	if(g_sock)
+//	{
+//		SDLNet_UDP_Close(g_sock);
+//		g_sock = NULL;
+//	}
 
-	List_free(&g_cn);
+//	List_free(&g_cn);
 
-	FreeSounds();
+//	FreeSounds();
 	Mix_CloseAudio();
 	Mix_Quit();
 	SDLNet_Quit();
@@ -494,7 +520,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 		case SDL_TEXTINPUT:
 			/* UTF8 */
 			ie.type = INEV_TEXTIN;
-			ie.text = e->text.text;
+			strcpy(ie.text, e->text.text);
 
 			CHECKGLERROR();
 			Widget_inev(gui, &ie);
@@ -514,7 +540,6 @@ int HandleEvent(void *userdata, SDL_Event *e)
 			{
 			case SDL_BUTTON_LEFT:
 				g_mousekeys[MOUSE_LEFT] = ectrue;
-				g_moved = ecfalse;
 
 				ie.type = INEV_MOUSEDOWN;
 				ie.key = MOUSE_LEFT;
@@ -611,8 +636,6 @@ int HandleEvent(void *userdata, SDL_Event *e)
 
 			if(MousePosition())
 			{
-				g_moved = ectrue;
-
 				ie.type = INEV_MOUSEMOVE;
 				ie.x = g_mouse.x;
 				ie.y = g_mouse.y;
@@ -633,18 +656,16 @@ int HandleEvent(void *userdata, SDL_Event *e)
 
 void EventLoop()
 {
+	SDL_Event e;
 	CHECKGLERROR();
 	while (!g_quit)
 	{
 		CHECKGLERROR();
-		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
 			HandleEvent(NULL, &e);
 		}
 		CHECKGLERROR();
-
-		StopTimer(TIMER_EVENT);
 
 		if(g_quit)
 			break;
@@ -770,7 +791,7 @@ ecbool RunOptions(const char* cmdline)
 {
 	if(strcmp(cmdline, "") == 0)
 	{
-		strcpy(g_startmap, "");
+//		strcpy(g_startmap, "");
 
 		return ecfalse;
 	}
@@ -796,6 +817,8 @@ ecbool RunOptions(const char* cmdline)
 		}
 		*/
 	}
+
+	return ecfalse;
 }
 
 #ifdef PLATFORM_WIN
@@ -805,7 +828,7 @@ int main(int argc, char* argv[])
 #endif
 {
 #ifdef PLATFORM_WIN
-	g_hInstance = hInstance;
+	g_hinst = hInstance;
 #endif
 
 #ifdef PLATFORM_WIN

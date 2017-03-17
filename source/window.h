@@ -53,7 +53,7 @@ extern ecbool g_mousekeys[5];
 extern float g_zoom;
 extern int g_curst;	/* cursor state */
 extern int g_kbfocus;	/* keyboad focus counter */
-
+extern ecbool g_mouseout;
 #endif
 
 void CalcDrawRate();

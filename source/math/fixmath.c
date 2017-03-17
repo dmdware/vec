@@ -15,12 +15,16 @@
 
 int ceili(const int num, const int denom)
 {
+	int div;
+	int mul;
+	int rem;
+
 	if(denom  == 0)
 		return 0;
 
-	int div = num / denom;
-	const int mul = div * denom;
-	const int rem = num - mul;
+	div = num / denom;
+	mul = div * denom;
+	rem = num - mul;
 
 	if(rem > 0)
 		div += 1;
@@ -67,7 +71,7 @@ unsigned int ilog2floor(unsigned int x)
 
 unsigned short isqrt(unsigned int a) {
 	unsigned int rem = 0;
-	int root = 0;
+	unsigned int root = 0;
 	int i;
 
 	for (i = 0; i < 16; i++) {
@@ -153,7 +157,8 @@ const unsigned short squares[] = {
 	63504, 64009, 64516, 65025
 };
 
-inline int isqrt2(unsigned short x) {
+int isqrt2(unsigned short x) 
+{
 	const unsigned short *p = squares;
 
 	if (p[128] <= x) p += 128;

@@ -526,10 +526,6 @@ LoadedTex* LoadTex(const char* full)
 	{
 		return LoadPNG(full);
 	}
-	else if(strstr(full, ".tga") || strstr(full, ".TGA"))
-	{
-		return LoadTGA(full);
-	}
 
 	fprintf(g_applog, "Unrecognized texture file extension: %s. Only .jpg .png .tga are accepted. \r\n", full);
 

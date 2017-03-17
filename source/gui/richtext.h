@@ -2,7 +2,6 @@
 #define RICHTEXT_H
 
 #include "../platform.h"
-#include "../str.h"
 #include "font.h"
 
 //types of blocks
@@ -19,7 +18,7 @@
 
 void pwver(char **ndest, char *src);	//asterisk-mask password string
 void ParseTags(char **ndest, char *src, int *caret);
-int Rich_len(char *in);
+int Rich_len(const char *in);
 
 #define UTF8_IGNORE_ERROR		0x01
 #define UTF8_SKIP_BOM			0x02
@@ -32,5 +31,13 @@ int		wchar_to_utf8(const unsigned int *in, int insize, char *out,
 //TODO absorb
 char *FromGlyph(const unsigned int in, int *adv);
 unsigned int ToGlyph(const char *in, int *index);
+
+void pstrset(char **out, const char *in);
+void pstradd(char **out, const char *in);
+void psubstr(char **out, const char *in, int beg, int len);
+void delprev(char **s, int *caret);
+void delnext(char **s, int *caret);
+int prevlen(char *s, int caret);
+int nextlen(char *s, int caret);
 
 #endif

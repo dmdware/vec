@@ -99,10 +99,6 @@ void Widget_drawover(Widget *w);
 void Widget_inev(Widget *w, InEv* ie);
 void Widget_frameupd(Widget *w);
 void Widget_reframe(Widget *w);	//resized or moved
-void Widget_subframe(Widget *w, float* fr)
-{
-	memcpy((void*)fr, (void*)w->pos, sizeof(float)*4);
-}
 Widget* Widget_get(Widget *w, const char* name);
 void Widget_add(Widget *w, Widget* neww);
 void Widget_hide(Widget *w);

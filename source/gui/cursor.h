@@ -13,6 +13,7 @@
 #define CURSOR_H
 
 #include "../render/sprite.h"
+#include "../algo/bool.h"
 
 //cursor states
 #define CU_NONE		0	//cursor off?
@@ -31,6 +32,5 @@
 #define CU_STATES	13
 
 extern unsigned int g_cursor[CU_STATES];
-
 
 #endif

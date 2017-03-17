@@ -290,7 +290,7 @@ void UseIconTex(int icon)
 	glUniform1i(s->slot[SSLOT_TEXTURE0], 0);
 }
 
-void StartText(char *text, int fnt, int ln, int realstartx, float *inframe, float *incrop)
+void StartText(const char *text, int fnt, int ln, int realstartx, float *inframe, float *incrop)
 {
 	frame[0] = inframe[0];
 	frame[1] = inframe[1];
@@ -301,7 +301,7 @@ void StartText(char *text, int fnt, int ln, int realstartx, float *inframe, floa
 	crop[2] = incrop[2];
 	crop[3] = incrop[3];
 	g_currfont = fnt;
-	g_rtext = text;
+	g_rtext = (char*)text;
 	w = (int)(frame[2]-frame[0]);
 	h = (int)(frame[3]-frame[1]);
 	startline = ln;
@@ -420,7 +420,7 @@ void LoadFont(int i, char *fontfile)
 		g->texcoord[3] = (float)(g->pixel[1]+g->texsize[1]) / f->height;
 	}while(!feof(fp));
 
-	f->gheight = f->glyph['A'].origsize[1] + 1;
+	f->gheight = (float)f->glyph['A'].origsize[1] + 1;
 	
 	fclose(fp);
 	fprintf(g_applog, "%s.fnt\r\n", fontfile);
@@ -609,15 +609,15 @@ void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const 
 	currcolor[3] = color != NULL ? color[3] : 1;
 	glUniform4f(s->slot[SSLOT_COLOR], currcolor[0], currcolor[1], currcolor[2], currcolor[3]);
 
-	StartText(text, fnt, 0, inframe[0], inframe, incrop);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, incrop);
 
 	UseFontTex();
-	TextLayer(inframe[0]+1, inframe[1]);
+	TextLayer((int)inframe[0]+1, (int)inframe[1]);
 
 	SubDrawTxLine(caret);
-	TextLayer(inframe[0], inframe[1]+1);
+	TextLayer((int)inframe[0], (int)inframe[1]+1);
 	SubDrawTxLine(caret);
-	TextLayer(inframe[0]+1, inframe[1]+1);
+	TextLayer((int)inframe[0]+1, (int)inframe[1]+1);
 	SubDrawTxLine(caret);
 
 	if(color == NULL)
@@ -631,7 +631,7 @@ void DrawShadowedText(int fnt, float *inframe, float *incrop, char *text, const 
 		for(c=0; c<4; c++) currcolor[c] = color[c];
 	}
 
-	TextLayer(inframe[0], inframe[1]);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 	SubDrawTxLine(caret);
 	glUniform4f(s->slot[SSLOT_COLOR], 1, 1, 1, 1);
 }
@@ -653,8 +653,8 @@ void Highlight(int fnt, float *inframe, float *incrop, char *text, int highlstar
 	currcolor[2] = 1;
 	currcolor[3] = 0.5f;
 
-	StartText(text, fnt, 0, inframe[0], inframe, incrop);
-	TextLayer(inframe[0], inframe[1]);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, incrop);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 
 	for(i=0; i<highlstarti; i+=adv)
 	{
@@ -690,7 +690,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
  
 	s = &g_sh[g_curS];
 	linew = 0;
-	len = RichText_texlen(text);
+	len = Rich_len(text);
 	f = &g_font[fnt];
 	
 	for(i=0; text[i]; i+=adv)
@@ -711,7 +711,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 		}
 	}
 
-	gstartx -= linew/2;
+	gstartx -= (short)linew/2;
 
 	a = 1;
 	if(color != NULL)
@@ -723,13 +723,13 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 	currcolor[3] = color != NULL ? color[3] : 1;
 	glUniform4f(s->slot[SSLOT_COLOR], currcolor[0], currcolor[1], currcolor[2], currcolor[3]);
 
-	StartText(text, fnt, 0, inframe[0], inframe, incrop);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, incrop);
 	UseFontTex();
-	TextLayer(inframe[0]+1, inframe[1]);
+	TextLayer((int)inframe[0]+1, (int)inframe[1]);
 	SubDrawTxLine(caret);
-	TextLayer(inframe[0], inframe[1]+1);
+	TextLayer((int)inframe[0], (int)inframe[1]+1);
 	SubDrawTxLine(caret);
-	TextLayer(inframe[0]+1, inframe[1]+1);
+	TextLayer((int)inframe[0]+1, (int)inframe[1]+1);
 	SubDrawTxLine(caret);
 
 	if(color == NULL)
@@ -743,7 +743,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 		for(c=0; c<4; c++) currcolor[c] = color[c];
 	}
 
-	TextLayer(inframe[0], inframe[1]);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 	for(; g_rtext[i]; i+=adv)
 	{
 		DrawGlyph();
@@ -769,12 +769,12 @@ void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, in
 	currcolor[2] = 0.3f;
 	currcolor[3] = color != NULL ? color[3] : 1;
 
-	StartText(text, fnt, ln, inframe[0], inframe, incrop);
+	StartText(text, fnt, ln, (int)inframe[0], inframe, incrop);
 	UseFontTex();
 	
 	if(shadow)
 	{
-		TextLayer(inframe[0]+1, inframe[1]);
+		TextLayer((int)inframe[0]+1, (int)inframe[1]);
 		if(caret == 0)
 			DrawCaret();
 		for(; g_rtext[i]; i+=adv)
@@ -795,7 +795,7 @@ void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, in
 		if(caret == i)
 			DrawCaret();
 		
-		TextLayer(inframe[0], inframe[1]+1);
+		TextLayer((int)inframe[0], (int)inframe[1]+1);
 		if(caret == 0)
 			DrawCaret();
 		for(; g_rtext[i]; i+=adv)
@@ -816,7 +816,7 @@ void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, in
 		if(caret == i)
 			DrawCaret();
 		
-		TextLayer(inframe[0]+1, inframe[1]+1);
+		TextLayer((int)inframe[0]+1, (int)inframe[1]+1);
 		if(caret == 0)
 			DrawCaret();
 		for(; g_rtext[i]; i+=adv)
@@ -849,7 +849,7 @@ void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, in
 		for(c=0; c<4; c++) currcolor[c] = color[c];
 	}
 
-	TextLayer(inframe[0], inframe[1]);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 	if(caret == 0)
 		DrawCaret();
 	for(; g_rtext[i]; i+=adv)
@@ -875,8 +875,8 @@ int CountLines(char *text, int fnt, float *inframe)
 {
 	int adv;
 	
-	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(inframe[0], inframe[1]);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, inframe);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 
 	for(i=0; g_rtext[i]; i+=adv)
 	{
@@ -896,8 +896,8 @@ int GetLineStart(char *text, int fnt, float *inframe, int getline)
 {
 	int adv;
 	
-	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(inframe[0], inframe[1]);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, inframe);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 
 	for(i=0; g_rtext[i]; i+=adv)
 	{
@@ -919,14 +919,14 @@ int GetLineStart(char *text, int fnt, float *inframe, int getline)
 	return i;	//return last glyph anyway
 }
 
-int EndX(char *text, int lastg, int fnt, float *inframe, ecbool multiline)
+int EndX(const char *text, int lastg, int fnt, float *inframe, ecbool multiline)
 {
 	int highx, adv;
 	
-	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(inframe[0], inframe[1]);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, inframe);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 
-	highx = (int)startx;
+	highx = (int)gstartx;
 
 	for(i=0; g_rtext[i] && glyphi<lastg; i+=adv)
 	{
@@ -954,12 +954,13 @@ int MatchGlyph(char *text, int fnt, float *inframe, int matchx, int matchy, ecbo
 	lastclose = 0;
 	f = &g_font[fnt];
 
-	StartText(text, fnt, 0, inframe[0], inframe, inframe);
-	TextLayer(inframe[0], inframe[1]);
+	StartText(text, fnt, 0, (int)inframe[0], inframe, inframe);
+	TextLayer((int)inframe[0], (int)inframe[1]);
 
 	if(x >= matchx ||
 	   y >= matchy ||
-	   size <= 0)
+	   //size <= 0
+	   !g_rtext[i])
 		return lastclose;
 
 	lastx = x;
@@ -1006,7 +1007,7 @@ int MatchGlyph(char *text, int fnt, float *inframe, int matchx, int matchy, ecbo
 
 int TextWidth(int fnt, float *inframe, const char *text)
 {
-	return EndX(text, Rich_len(text), fnt, inframe, ecfalse) - inframe[0];
+	return EndX(text, Rich_len(text), fnt, inframe, ecfalse) - (int)inframe[0];
 }
 
 void LoadFonts()

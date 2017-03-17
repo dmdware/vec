@@ -22,4 +22,8 @@ extern char g_appmode;
 #define VIEWMODES			2
 extern char g_viewmode;
 
+#ifdef PLATFORM_WIN
+extern HINSTANCE g_hinst;
+#endif
+
 #endif

@@ -271,6 +271,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui\widgets\image.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui\widgets\image.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui\inevent.c"
 				>
 			</File>
@@ -287,11 +295,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\net\net.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\net\net.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\platform.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\platform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\sim\player.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\sim\player.h"
 				>
 			</File>
 			<File
@@ -319,19 +343,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\sim\simdef.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\sim\simdef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\sound\sound.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\sound\sound.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\render\sprite.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\render\sprite.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\str.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\str.h"
 				>
 			</File>
 			<File

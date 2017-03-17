@@ -85,7 +85,6 @@ extern int g_lastLTex;
 void Tex_init(Texture *tex);
 void Tex_free(Texture *tex);
 
-LoadedTex *LoadTGA(const char *fullpath);
 LoadedTex *LoadJPG(const char *fullpath);
 LoadedTex *LoadPNG(const char *fullpath);
 ecbool FindTexture(unsigned int *texture, const char* relative);

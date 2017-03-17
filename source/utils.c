@@ -5,6 +5,28 @@
 
 FILE *g_applog = NULL;
 
+
+void OpenLog(const char* file, int ver)
+{
+	char full[DMD_MAX_PATH+1];
+	time_t     now = time(0);
+	struct tm  tstruct;
+	char       buf[80];
+	tstruct = *localtime(&now);
+
+	if(g_applog)
+		return;
+
+	FullWrite(file, full);
+	g_applog = fopen(full, "w");
+
+	if(!g_applog)
+		return;
+
+	strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+	fprintf(g_applog, "%s Version %d \r\n\r\n", buf, ver);
+}
+
 /* get a power of 2 number that is big enough to hold 'lowerbound' but does not exceed 2048 */
 int Max2Pow(int lowerbound)
 {
@@ -148,6 +170,37 @@ void MakeRel(const char* full, char* rel)
 	}
 
 	memcpy(rel, pos+strlen(exepath), strlen(pos)-strlen(exepath)+1);
+}
+
+void FullWrite(const char* filename, char* full)
+{
+#ifdef PLATFORM_IOS
+	/*
+	 char exepath[SPE_MAX_PATH+1];
+	 GetModuleFileName(NULL, exepath, SPE_MAX_PATH);
+	 string path = StripFile(exepath);
+	 
+	 //char full[SPE_MAX_PATH+1];
+	 sprintf(full, "%s", path.c_str());
+	 
+	 char c = full[ strlen(full)-1 ];
+	 if(c != '\\' && c != '/')
+	 strcat(full, "\\");
+	 
+	 strcat(full, filename);*/
+	
+	//NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/"];
+	//NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+	//NSString *path = [paths objectAtIndex:0];
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *path = [paths objectAtIndex:0];
+	sprintf(full, "%s/%s", [path cStringUsingEncoding:NSUTF8StringEncoding], filename);
+	
+	//NSLog(@"full write %s", full);
+#else
+	
+	FullPath(filename, full);
+#endif
 }
 
 void FullPath(const char* filename, char* full)

@@ -275,11 +275,3 @@ void SubCrop(float *src1, float *src2, float *dest)
 	dest[2] = ((src1[2]<src2[2])?src1[2]:src2[2]);
 	dest[3] = ((src1[3]<src2[3])?src1[3]:src2[3]);
 }
-
-void Resize_Fullscreen(Widget *w)
-{
-	w->pos[0] = 0;
-	w->pos[1] = 0;
-	w->pos[2] = (float)g_width;
-	w->pos[3] = (float)g_height;
-}

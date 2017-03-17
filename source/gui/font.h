@@ -64,7 +64,7 @@ void DrawCenterShadText(int fnt, float *inframe, float *incrop, char *text, floa
 void DrawTx(int fnt, float *inframe, float *incrop, char *text, float *color, int ln, int caret, ecbool shadow, ecbool multiline);
 int CountLines(char *text, int fnt, float *inframe);
 int GetLineStart(char *text, int fnt, float *inframe, int getline);
-int EndX(char *text, int lastg, int fnt, float *inframe, ecbool multiline);
+int EndX(const char *text, int lastg, int fnt, float *inframe, ecbool multiline);
 int MatchGlyph(char *text, int fnt, float *inframe, int matchx, int matchy, ecbool multiline);
 void Highlight(int fnt, float *inframe, float *incrop, char *text, int highlstarti, int highlendi, ecbool multiline);
 void NextLineBreak();

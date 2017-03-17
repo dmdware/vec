@@ -33,7 +33,7 @@ void Button_init(Button *b, Widget* parent, const char* name, const char* filepa
 	length = EndX(b->tooltip, Rich_len(b->tooltip), b->font, bw->pos, ecfalse);
 	bw->over = ecfalse;
 	bw->ldown = ecfalse;
-	CreateTex(&b->tex, filepath, ectrue, ecfalse);
+	CreateTex(&b->tex, filepath, ectrue, ecfalse, ecfalse);
 
 	b->bgtex = 0;
 	b->bgovertex = 0;
