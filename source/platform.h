@@ -107,7 +107,7 @@
 
 #ifdef PLATFORM_WIN
 #include "jpeg/jpeglib.h"
-#include <png.h>
+#include "png/png.h"
 //#include <zip.h>
 #endif
 
@@ -272,7 +272,7 @@
 #pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "glaux.lib")
 //#pragma comment(lib, "libjpeg.lib")
-#pragma comment(lib, "libpng15.lib")
+//#pragma comment(lib, "libpng15.lib")
 //#pragma comment(lib, "zlib.lib")
 //#pragma comment(lib, "zipstatic.lib")
 #ifdef USESTEAM
