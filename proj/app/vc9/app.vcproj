@@ -874,6 +874,22 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="glew"
+				>
+				<File
+					RelativePath="..\..\..\source\glew\glew.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\glew\GL\glew.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\glew\GL\wglew.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

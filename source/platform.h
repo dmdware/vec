@@ -150,7 +150,7 @@
 
 #ifndef MATCHMAKER
 #ifdef PLATFORM_WIN
-#include <GL/glew.h>
+#include "glew/GL/glew.h"
 #endif
 #endif
 
@@ -215,7 +215,7 @@
 #endif
 
 #ifdef PLATFORM_WIN
-#include <GL/wglew.h>
+#include "glew/GL/wglew.h"
 #include <SDL.h>
 #ifndef MATCHMAKER
 #include <SDL_opengl.h>
@@ -265,7 +265,7 @@
 //#pragma comment(lib, "assimp.lib")
 //#pragma comment(lib, "assimp-vc110-mt.lib")
 #pragma comment(lib, "assimp-vc90-mt.lib")
-#pragma comment(lib, "glew32.lib")
+//#pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "winmm.lib")
