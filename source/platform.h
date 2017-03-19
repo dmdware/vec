@@ -253,6 +253,8 @@
 //#include <assimp/DefaultLogger.h>
 #endif
 
+#include "libtommath/tommath.h"
+
 #ifdef PLATFORM_WIN
 #pragma comment(lib, "SDL2.lib")
 #pragma comment(lib, "SDL2main.lib")
