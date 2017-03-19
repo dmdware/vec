@@ -1438,27 +1438,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\freetype\bdf\bdf.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\source\freetype\cff\cff.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\freetype\freetype.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\ft2build.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\source\freetype\base\ftbase.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\base\ftbase.h"
 					>
 				</File>
 				<File
@@ -1502,19 +1486,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\freetype\ftglyph.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\source\freetype\base\ftgxval.c"
 					>
 				</File>
 				<File
 					RelativePath="..\..\..\source\freetype\gzip\ftgzip.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\config\ftheader.h"
 					>
 				</File>
 				<File
@@ -1566,23 +1542,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\freetype\ftwinfnt.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\source\freetype\base\ftxf86.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\freetype\internal\internal.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\source\freetype\pcf\pcf.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\pcf\pcf.h"
 					>
 				</File>
 				<File
@@ -1602,10 +1566,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\freetype\psnames\psmodule.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\source\freetype\raster\raster.c"
 					>
 				</File>
@@ -1615,30 +1575,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\freetype\smooth\smooth.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\type42\t42drivr.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\type42\t42drivr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\type42\t42objs.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\type42\t42objs.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\type42\t42parse.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\type42\t42parse.h"
 					>
 				</File>
 				<File
@@ -1659,10 +1595,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\freetype\winfonts\winfnt.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\source\freetype\winfonts\winfnt.h"
 					>
 				</File>
 			</Filter>

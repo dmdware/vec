@@ -778,6 +778,7 @@
    *   FreeType~2 API which returns individual and ranged glyph advances.
    */
 #define FT_ADVANCES_H  "../ftadvanc.h"
+#define FT_ADVANCES_H2  "../../ftadvanc.h"
 
 
   /* */

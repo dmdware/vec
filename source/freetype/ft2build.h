@@ -32,6 +32,7 @@
 #define __FT2_BUILD_GENERIC_H__
 
 #define FT2_BUILD_LIBRARY
+//#define FT_CONFIG_OPTION_SYSTEM_ZLIB
 
 #include "config/ftheader.h"
 
