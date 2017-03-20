@@ -31,7 +31,7 @@
 #include "../../SDL_timer.h"
 #include "../../SDL_audio.h"
 #include "../SDL_audio_c.h"
-#include "../../SDL_winmm.h"
+#include "SDL_winmm.h"
 
 #ifndef WAVE_FORMAT_IEEE_FLOAT
 #define WAVE_FORMAT_IEEE_FLOAT 0x0003

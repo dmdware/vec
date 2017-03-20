@@ -31,7 +31,7 @@
 
 /* This file contains portable string manipulation functions for SDL */
 
-#include "SDL_stdinc.h"
+#include "../SDL_stdinc.h"
 
 
 #define SDL_isupperhex(X)   (((X) >= 'A') && ((X) <= 'F'))

@@ -25,7 +25,7 @@
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "SDL_thread.h"
+#include "../../SDL_thread.h"
 #include "../SDL_thread_c.h"
 
 static DWORD thread_local_storage = TLS_OUT_OF_INDEXES;

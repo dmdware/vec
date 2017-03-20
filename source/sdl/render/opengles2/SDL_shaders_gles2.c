@@ -22,8 +22,8 @@
 
 #if SDL_VIDEO_RENDER_OGL_ES2 && !SDL_RENDER_DISABLED
 
-#include "../SDL_video.h"
-#include "SDL_opengles2.h"
+#include "../../SDL_video.h"
+#include "../../SDL_opengles2.h"
 #include "SDL_shaders_gles2.h"
 #include "SDL_stdinc.h"
 

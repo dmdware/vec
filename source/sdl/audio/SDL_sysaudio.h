@@ -23,8 +23,8 @@
 #ifndef _SDL_sysaudio_h
 #define _SDL_sysaudio_h
 
-#include "SDL_mutex.h"
-#include "SDL_thread.h"
+#include "../SDL_mutex.h"
+#include "../SDL_thread.h"
 
 /* !!! FIXME: These are wordy and unlocalized... */
 #define DEFAULT_OUTPUT_DEVNAME "System audio output device"

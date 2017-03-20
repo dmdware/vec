@@ -24,15 +24,15 @@
 
 #include "SDL_windowsvideo.h"
 #include "SDL_windowsshape.h"
-#include "SDL_system.h"
-#include "SDL_syswm.h"
-#include "SDL_timer.h"
+#include "../../SDL_system.h"
+#include "../../SDL_syswm.h"
+#include "../../SDL_timer.h"
 #include "SDL_vkeys.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_touch_c.h"
 #include "../../events/scancodes_windows.h"
-#include "../SDL_assert.h"
-#include "../SDL_hints.h"
+#include "../../SDL_assert.h"
+#include "../../SDL_hints.h"
 
 /* Dropfile support */
 #include <shellapi.h>
