@@ -2,6 +2,8 @@
 
 #include "bool.h"
 #include "list.h"
+#include "../gui/widget.h"
+#include "../utils.h"
 
 void List_init(List *l)
 {
@@ -59,7 +61,11 @@ void List_pushback2(List *l, int size, void *data)
 	
 	++l->size;
 	
-	memcpy(link->data, data, size);
+	memcpy(&link->data[0], data, size);
+
+	if(size == sizeof(Widget*))
+	fprintf(g_applog, "add list %s\r\n", (char*)((Widget*)&(link->data[0]))->name);
+	fflush(g_applog);
 }
 
 void List_erase(List *l, Node *link)

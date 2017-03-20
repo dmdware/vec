@@ -50,8 +50,8 @@ void UpdLoad()
 
 			g_appmode = APPMODE_MENU;
 			Widget_hide(gui);
-			menu = Widget_get(gui, "menu");
-			Widget_show(menu);
+//			menu = Widget_get(gui, "menu");
+	//		Widget_show(menu);
 		}
 		break;
 	}
@@ -412,6 +412,8 @@ void Init()
 
 	srand((unsigned int)GetTicks());
 
+	Vector_init(&g_texload, sizeof(TexToLoad));
+
 	/* TODO c-style inits, not constructors */
 	LoadCfg();
 	LoadName();
@@ -428,7 +430,7 @@ void Deinit()
 //	FreeMap();
 
 	gui = &g_gui;
-	Widget_freech((Widget*)gui);
+	Widget_free(gui);
 
 	BreakWin(TITLE);
 
@@ -834,7 +836,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 int main(int argc, char* argv[])
 #endif
 {
-    SDL_SetMainReady();
+  //  SDL_SetMainReady();
 
 #ifdef PLATFORM_WIN
 	g_hinst = hInstance;

@@ -25,11 +25,14 @@ void Widget_init(Widget* w)
 	w->reframefunc = NULL;
 	w->hidden = ecfalse;
 	w->extra = NULL;
+
+	List_init(&w->sub);
 }
 
 void Widget_free(Widget *w)
 {
 	Widget_freech(w);
+	List_free(&w->sub);
 	free(w->extra);
 	w->extra = NULL;
 
@@ -216,6 +219,9 @@ void Widget_add(Widget *w, Widget *neww)
 		OUTOFMEM();
 
 	List_pushback2(&w->sub, sizeof(Widget*), &neww);
+
+	fprintf(g_applog, "add %s\r\n", neww->name);
+	fflush(g_applog);
 }
 
 void Widget_gainfocus(Widget *w)
@@ -258,11 +264,16 @@ void Widget_freech(Widget *w)
 	Node *i;
 	Widget *iw;
 
+	fprintf(g_applog, "free %s\r\n", w->name);
+	fflush(g_applog);
+
 	i = w->sub.head;
 	while(i)
 	{
-		iw = (Widget*)i->data;
+		iw = (Widget*)&i->data[0];
+		Widget_free(iw);
 		free(iw);
+		iw = NULL;
 		i = i->next;
 	}
 	List_free(&w->sub);
