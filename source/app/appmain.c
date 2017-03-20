@@ -663,6 +663,7 @@ int HandleEvent(void *userdata, SDL_Event *e)
 void EventLoop()
 {
 	SDL_Event e;
+
 	CHECKGLERROR();
 	while (!g_quit)
 	{
@@ -840,7 +841,7 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef PLATFORM_WIN
-	RunOptions(lpCmdLine);
+	//RunOptions(lpCmdLine);
 #else
 	char cmdline[DMD_MAX_PATH+124];
 	cmdline[0] = 0;

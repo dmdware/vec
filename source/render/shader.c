@@ -19,41 +19,41 @@ const char *SHTEXT [SHADERS][4]
 	{
 "SH_ORTHO v",
 "SH_ORTHO f",
-""
-"#version 120"\
-""\
-"attribute vec4 position;"\
-""\
-"uniform float width;"\
-"uniform float height;"\
-""\
-"attribute vec2 texCoordIn0;"\
-"varying vec2 texCoordOut0;"\
-""\
-"void main(void)"\
-"{"\
-"	gl_Position = vec4(gl_Vertex.x * 2.0 / width - 1.0,"\
-"		gl_Vertex.y * -2.0 / height + 1.0,"\
-"		gl_Vertex.z, "\
-"		1.0);"\
-"                    "\
-"	gl_TexCoord[0] = gl_MultiTexCoord0;"\
-"}"\
-"",
+"\r\n"
+"#version 120\r\n"\
+"\r\n"\
+"attribute vec4 position;\r\n"\
+"\r\n"\
+"uniform float width;\r\n"\
+"uniform float height;\r\n"\
+"\r\n"\
+"attribute vec2 texCoordIn0;\r\n"\
+"varying vec2 texCoordOut0;\r\n"\
+"\r\n"\
+"void main(void)\r\n"\
+"{\r\n"\
+"	gl_Position = vec4(gl_Vertex.x * 2.0 / width - 1.0,\r\n"\
+"		gl_Vertex.y * -2.0 / height + 1.0,\r\n"\
+"		gl_Vertex.z, \r\n"\
+"		1.0);\r\n"\
+"                    \r\n"\
+"	gl_TexCoord[0] = gl_MultiTexCoord0;\r\n"\
+"}\r\n"\
+"\r\n",
 
-""\
-"#version 120"\
-""\
-"uniform vec4 color;"\
-""\
-"varying vec2 texCoordOut0;"\
-"uniform sampler2D texture0;"\
-""\
-"void main(void)"\
-"{"\
-"	gl_FragColor = color * texture2D(texture0, gl_TexCoord[0].xy);"\
-"}"\
-""
+"\r\n"\
+"#version 120\r\n"\
+"\r\n"\
+"uniform vec4 color;\r\n"\
+"\r\n"\
+"varying vec2 texCoordOut0;\r\n"\
+"uniform sampler2D texture0;\r\n"\
+"\r\n"\
+"void main(void)\r\n"\
+"{\r\n"\
+"	gl_FragColor = color * texture2D(texture0, gl_TexCoord[0].xy);\r\n"\
+"}\r\n"\
+"\r\n"
 	}
 };
 
@@ -222,8 +222,10 @@ void InitGLSL()
 	}
 #endif
 
-	LoadSh(SH_ORTHO, SHTEXT[SH_ORTHO][0], SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][3], 
+	LoadSh(SH_ORTHO, SHTEXT[SH_ORTHO][0], SHTEXT[SH_ORTHO][1], SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][3], 
 		ectrue, ecfalse);
+
+	return;
 
 quit:
 	g_quit = ectrue;

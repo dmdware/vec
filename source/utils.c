@@ -283,6 +283,8 @@ void MakeDir(const char* fulldir)
 
 void ErrMess(const char* title, const char* message)
 {
+	fprintf(g_applog, "%s: %s\r\n", title, message);
+	fflush(g_applog);
 	//SDL_ShowCursor(ectrue);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, NULL);
 	//SDL_ShowCursor(ecfalse);
