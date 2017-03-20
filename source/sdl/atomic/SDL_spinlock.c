@@ -24,9 +24,9 @@
 #include "../core/windows/SDL_windows.h"
 #endif
 
-#include "SDL_atomic.h"
-#include "SDL_mutex.h"
-#include "SDL_timer.h"
+#include "../SDL_atomic.h"
+#include "../SDL_mutex.h"
+#include "../SDL_timer.h"
 
 #if !defined(HAVE_GCC_ATOMICS) && defined(__SOLARIS__)
 #include <atomic.h>

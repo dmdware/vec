@@ -35,11 +35,11 @@
 #if defined(_MSC_VER) && (_MSC_VER >= 1500) && (defined(_M_IX86) || defined(_M_X64))
 #include <intrin.h>
 #ifndef _WIN64
-#define __MMX__
-#define __3dNOW__
+//#define __MMX__	//vc9 xp problem
+//#define __3dNOW__	//vc9 xp problem
 #endif
-#define __SSE__
-#define __SSE2__
+//#define __SSE__	//vc9 xp problem
+//#define __SSE2__	//vc9 xp problem
 #elif defined(__MINGW64_VERSION_MAJOR)
 #include <intrin.h>
 #else

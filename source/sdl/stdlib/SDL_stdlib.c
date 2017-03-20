@@ -27,7 +27,7 @@
 
 /* This file contains portable stdlib functions for SDL */
 
-#include "SDL_stdinc.h"
+#include "../SDL_stdinc.h"
 #include "../libm/math_libm.h"
 
 
@@ -315,7 +315,8 @@ void * memcpy ( void * destination, const void * source, size_t num )
 }
 #endif /* _MSC_VER == 1600 && defined(_WIN64) && !defined(_DEBUG) */
 
-#ifdef _M_IX86
+//#ifdef _M_IX86	//vc9 xp problems
+#if 0000
 
 /* Float to long */
 void

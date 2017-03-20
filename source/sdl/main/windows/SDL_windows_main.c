@@ -3,7 +3,7 @@
 
     The WinMain function -- calls your program's main() function
 */
-#include "SDL_config.h"
+#include "../../SDL_config.h"
 
 #ifdef __WIN32__
 
@@ -11,11 +11,11 @@
 #include "../../core/windows/SDL_windows.h"
 
 /* Include the SDL main definition header */
-#include "SDL.h"
-#include "SDL_main.h"
+#include "../../SDL.h"
+#include "../../SDL_main.h"
 
-#ifdef main
-#  undef main
+#ifdef mainnot
+#  undef mainnot
 #endif /* main */
 
 static void
@@ -116,6 +116,8 @@ OutOfMemory(void)
 # endif
 #endif
 
+#if 000
+
 /* WinMain, main, and wmain eventually call into here. */
 static int
 main_utf8(int argc, char *argv[])
@@ -201,6 +203,8 @@ WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 {
     return main_getcmdline();
 }
+
+#endif	/* 0000 */
 
 #endif /* __WIN32__ */
 

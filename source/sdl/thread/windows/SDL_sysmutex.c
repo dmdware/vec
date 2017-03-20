@@ -26,7 +26,7 @@
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "SDL_mutex.h"
+#include "../../SDL_mutex.h"
 
 
 struct SDL_mutex

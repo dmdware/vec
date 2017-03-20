@@ -25,7 +25,7 @@
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "SDL_power.h"
+#include "../../SDL_power.h"
 
 SDL_bool
 SDL_GetPowerInfo_Windows(SDL_PowerState * state, int *seconds, int *percent)

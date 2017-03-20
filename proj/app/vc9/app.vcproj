@@ -115,7 +115,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -133,7 +133,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="libc.lib"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -1682,6 +1682,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\source\sdl\libm\s_sin.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\libm\s_tan.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\sdl\events\scancodes_windows.h"
 					>
 				</File>
@@ -1807,6 +1815,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\sdl\video\SDL_blit_copy.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\video\SDL_blit_N.c"
 					>
 				</File>
 				<File

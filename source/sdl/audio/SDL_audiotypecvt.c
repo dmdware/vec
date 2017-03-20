@@ -21,7 +21,7 @@
 */
 
 #include "../SDL_internal.h"
-#include "SDL_audio.h"
+#include "../SDL_audio.h"
 #include "SDL_audio_c.h"
 
 #ifndef DEBUG_CONVERT

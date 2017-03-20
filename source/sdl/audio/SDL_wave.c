@@ -22,7 +22,7 @@
 
 /* Microsoft WAVE file loading routines */
 
-#include "SDL_audio.h"
+#include "../SDL_audio.h"
 #include "SDL_wave.h"
 
 

@@ -20,7 +20,7 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_rect.h"
+#include "../SDL_rect.h"
 #include "SDL_rect_c.h"
 
 

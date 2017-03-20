@@ -277,6 +277,11 @@
 //#pragma comment(lib, "libpng15.lib")
 //#pragma comment(lib, "zlib.lib")
 //#pragma comment(lib, "zipstatic.lib")
+//#pragma comment(lib, "msvcrt.lib")
+#pragma comment(lib, "msimg32.lib")
+#pragma comment(lib, "version.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "imm32.lib")
 #ifdef USESTEAM
 #pragma comment(lib, "sdkencryptedappticket.lib")
 #pragma comment(lib, "steaapi.lib")

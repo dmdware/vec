@@ -26,7 +26,7 @@
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "SDL_thread.h"
+#include "../../SDL_thread.h"
 
 struct SDL_semaphore
 {

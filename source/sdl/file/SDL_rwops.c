@@ -31,8 +31,8 @@
    data sources.  It can easily be extended to files, memory, etc.
 */
 
-#include "SDL_endian.h"
-#include "SDL_rwops.h"
+#include "../SDL_endian.h"
+#include "../SDL_rwops.h"
 
 #ifdef __APPLE__
 #include "cocoa/SDL_rwopsbundlesupport.h"

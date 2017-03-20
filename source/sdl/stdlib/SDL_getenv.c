@@ -29,7 +29,7 @@
 #include "../core/windows/SDL_windows.h"
 #endif
 
-#include "SDL_stdinc.h"
+#include "../SDL_stdinc.h"
 
 #if defined(__WIN32__) && (!defined(HAVE_SETENV) || !defined(HAVE_GETENV))
 /* Note this isn't thread-safe! */
