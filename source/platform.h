@@ -216,12 +216,12 @@
 
 #ifdef PLATFORM_WIN
 #include "glew/GL/wglew.h"
-#include <SDL.h>
+#include "sdl/SDL.h"
 #ifndef MATCHMAKER
-#include <SDL_opengl.h>
+#include "sdl/SDL_opengl.h"
 #include <SDL_mixer.h>
 //#include <SDL_ttf.h>
-#include <SDL_syswm.h>
+#include "sdl/SDL_syswm.h"
 #endif
 #include <SDL_net.h>
 #endif
@@ -256,8 +256,8 @@
 #include "libtommath/tommath.h"
 
 #ifdef PLATFORM_WIN
-#pragma comment(lib, "SDL2.lib")
-#pragma comment(lib, "SDL2main.lib")
+//#pragma comment(lib, "SDL2.lib")
+//#pragma comment(lib, "SDL2main.lib")
 #pragma comment(lib, "SDL2_mixer.lib")
 #pragma comment(lib, "SDL2_net.lib")
 //#pragma comment(lib, "SDL.lib")
