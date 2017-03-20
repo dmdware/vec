@@ -56,7 +56,7 @@ void Widget_hideall(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 		Widget_hide(iw);
 	}
 }
@@ -68,7 +68,7 @@ void Widget_frameupd(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 		Widget_frameupd(iw);
 	}
 }
@@ -95,7 +95,7 @@ void Widget_reframe(Widget *w)	//resized or moved
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 		Widget_reframe(iw);
 	}
 }
@@ -113,7 +113,7 @@ void Widget_draw(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 
 		if(iw->hidden)
 			continue;
@@ -136,7 +136,7 @@ void Widget_drawover(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 
 		if(iw->hidden)
 			continue;
@@ -157,7 +157,7 @@ void Widget_inev(Widget *w, InEv* ie)
 	/* safe, may shift during call */
 	while(i)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 		i = i->prev;	/* safe, may shift during call */
 
 		if(iw->hidden)
@@ -187,7 +187,7 @@ void Widget_tofront(Widget *w)
 
 	for(i=parsub->head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 
 		if(iw == w)
 		{
@@ -205,7 +205,7 @@ Widget* Widget_get(Widget *w, const char* name)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 		if(!strcmp(iw->name, name))
 			return iw;
 	}
@@ -237,7 +237,7 @@ void Widget_losefocus(Widget *w)
 
 	for(i=w->sub.head; i; i=i->next)
 	{
-		iw = (Widget*)i->data;
+		iw = *(Widget**)&i->data[0];
 		Widget_losefocus(iw);
 	}
 }
@@ -264,13 +264,10 @@ void Widget_freech(Widget *w)
 	Node *i;
 	Widget *iw;
 
-	fprintf(g_applog, "free %s\r\n", w->name);
-	fflush(g_applog);
-
 	i = w->sub.head;
 	while(i)
 	{
-		iw = (Widget*)&i->data[0];
+		iw = *(Widget**)&i->data[0];
 		Widget_free(iw);
 		free(iw);
 		iw = NULL;
