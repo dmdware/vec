@@ -1012,6 +1012,7 @@ int TextWidth(int fnt, float *inframe, const char *text)
 
 void LoadFonts()
 {
+#if 0
 	LoadFont(FONT_EUROSTILE32, "fonts/eurostile32");
 	LoadFont(FONT_MSUIGOTHIC16, "fonts/msuigothic16");
 	LoadFont(FONT_MSUIGOTHIC10, "fonts/msuigothic10");
@@ -1021,6 +1022,7 @@ void LoadFonts()
 	LoadFont(FONT_GULIM32, "fonts/gulim32");
 	LoadFont(FONT_EUROSTILE16, "fonts/eurostile16");
 	LoadFont(FONT_CALIBRILIGHT16, "fonts/calibrilight16s-full");
+#endif
 	//LoadFont(FONT_CALIBRILIGHT16, "fonts/gulim16");
 	LoadFont(FONT_TERMINAL10, "fonts/terminal10");
 }

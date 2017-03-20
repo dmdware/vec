@@ -37,8 +37,8 @@
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command="C:\proj\bw\testfolder\$(TargetName).exe"
-				WorkingDirectory="C:\proj\bw\testfolder"
+				Command="C:\proj2\f42\dev\testfolder\$(TargetName).exe"
+				WorkingDirectory="C:\proj2\f42\dev\testfolder\"
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="3"

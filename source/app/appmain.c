@@ -24,6 +24,8 @@ HINSTANCE g_hinst = NULL;
 
 void LoadSysRes()
 {
+	InitGLSL();
+	LoadFonts();
 }
 
 void UpdLoad()
@@ -780,7 +782,7 @@ void Main()
 
 	MakeWin(TITLE);
 
-	SDL_ShowCursor(ecfalse);
+	//SDL_ShowCursor(ecfalse);
 	LoadSysRes();
 	QueueSimRes();
 	FillGUI();
@@ -788,7 +790,7 @@ void Main()
 	EventLoop();
 
 	Deinit();
-	SDL_ShowCursor(ectrue);
+	//SDL_ShowCursor(ectrue);
 }
 
 ecbool RunOptions(const char* cmdline)
@@ -831,6 +833,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 int main(int argc, char* argv[])
 #endif
 {
+    SDL_SetMainReady();
+
 #ifdef PLATFORM_WIN
 	g_hinst = hInstance;
 #endif

@@ -186,7 +186,8 @@ ecbool InitWindow()
 	LoadedTex* pixels;
 	SDL_Surface* surf;
 
-#ifndef PLATFORM_MOBILE
+//#ifndef PLATFORM_MOBILE
+#if 000	//icon
 	FullPath("gui/i-64x64.png", path);
 	pixels = LoadPNG(path);
 
@@ -225,9 +226,6 @@ ecbool InitWindow()
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
-
-	InitGLSL();
-	LoadFonts();
 
 	return ectrue;
 }
