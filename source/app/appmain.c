@@ -361,12 +361,15 @@ void Init()
 		ErrMess("Error", msg);
 	}
 
+#if 0
 	if(SDLNet_Init() == -1)
 	{
 		sprintf(msg, "SDLNet_Init: %s\n", SDLNet_GetError());
 		ErrMess("Error", msg);
 	}
+#endif
 
+#if 0
 	link_version=(SDL_version*)Mix_Linked_Version();
 	SDL_MIXER_VERSION(&compile_version);
 	printf("compiled with SDL_mixer version: %d.%d.%d\n",
@@ -400,6 +403,7 @@ void Init()
 	}
 
 	Mix_AllocateChannels(SNCHANS);
+#endif
 
 	if(!g_applog)
 		OpenLog("log.txt", APPVERSION);
@@ -450,9 +454,9 @@ void Deinit()
 //	List_free(&g_cn);
 
 //	FreeSounds();
-	Mix_CloseAudio();
-	Mix_Quit();
-	SDLNet_Quit();
+	//Mix_CloseAudio();
+	//Mix_Quit();
+	//SDLNet_Quit();
 	SDL_Quit();
 }
 

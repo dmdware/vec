@@ -20,14 +20,14 @@
 */
 #include "../../SDL_internal.h"
 
-#include "SDL_error.h"
-#include "SDL_haptic.h"
+#include "../../SDL_error.h"
+#include "../../SDL_haptic.h"
 #include "../SDL_syshaptic.h"
 
 #if SDL_HAPTIC_DINPUT
 
-#include "SDL_stdinc.h"
-#include "SDL_timer.h"
+#include "../../SDL_stdinc.h"
+#include "../../SDL_timer.h"
 #include "SDL_windowshaptic_c.h"
 #include "SDL_dinputhaptic_c.h"
 #include "../../joystick/windows/SDL_windowsjoystick_c.h"

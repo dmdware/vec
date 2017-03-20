@@ -24,10 +24,10 @@
 
 /* Allow access to a raw mixing buffer */
 
-#include "../SDL_assert.h"
-#include "SDL_timer.h"
-#include "SDL_loadso.h"
-#include "SDL_audio.h"
+#include "../../SDL_assert.h"
+#include "../../SDL_timer.h"
+#include "../../SDL_loadso.h"
+#include "../../SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_directsound.h"
 

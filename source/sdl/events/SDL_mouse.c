@@ -24,8 +24,8 @@
 
 #include "../SDL_assert.h"
 #include "../SDL_hints.h"
-#include "SDL_timer.h"
-#include "SDL_events.h"
+#include "../SDL_timer.h"
+#include "../SDL_events.h"
 #include "SDL_events_c.h"
 #include "default_cursor.h"
 #include "../video/SDL_sysvideo.h"

@@ -25,7 +25,7 @@
 #include "../../SDL_video.h"
 #include "../../SDL_opengles2.h"
 #include "SDL_shaders_gles2.h"
-#include "SDL_stdinc.h"
+#include "../../SDL_stdinc.h"
 
 /*************************************************************************************************
  * Vertex/fragment shader source                                                                 *

@@ -28,7 +28,7 @@
 #include <signal.h>
 #endif
 
-#include "SDL_events.h"
+#include "../SDL_events.h"
 #include "SDL_events_c.h"
 
 static SDL_bool disable_signals = SDL_FALSE;

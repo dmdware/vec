@@ -20,16 +20,16 @@
 */
 #include "../../SDL_internal.h"
 
-#include "SDL_render.h"
-#include "SDL_system.h"
+#include "../../SDL_render.h"
+#include "../../SDL_system.h"
 
 #if SDL_VIDEO_RENDER_D3D && !SDL_RENDER_DISABLED
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "../SDL_hints.h"
-#include "SDL_loadso.h"
-#include "SDL_syswm.h"
+#include "../../SDL_hints.h"
+#include "../../SDL_loadso.h"
+#include "../../SDL_syswm.h"
 #include "../SDL_sysrender.h"
 #include "../SDL_d3dmath.h"
 #include "../../video/windows/SDL_windowsvideo.h"

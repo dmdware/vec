@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "./SDL_internal.h"
+#include "SDL_internal.h"
 
 #if defined(__WIN32__)
 #include "core/windows/SDL_windows.h"
@@ -27,8 +27,8 @@
 #include "SDL.h"
 #include "SDL_atomic.h"
 #include "SDL_messagebox.h"
-#include "../SDL_video.h"
-#include "../SDL_assert.h"
+#include "SDL_video.h"
+#include "SDL_assert.h"
 #include "SDL_assert_c.h"
 #include "video/SDL_sysvideo.h"
 

@@ -28,7 +28,7 @@
 
 #include "SDL_sysvideo.h"
 #include "SDL_egl_c.h"
-#include "SDL_loadso.h"
+#include "../SDL_loadso.h"
 #include "../SDL_hints.h"
 
 #ifdef EGL_KHR_create_context

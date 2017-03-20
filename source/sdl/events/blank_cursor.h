@@ -18,24 +18,16 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "../../SDL_internal.h"
 
-#ifndef _SDL_diskaudio_h
-#define _SDL_diskaudio_h
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * A default blank 8x8 cursor                                                */
 
-#include "../../SDL_rwops.h"
-#include "../SDL_sysaudio.h"
+#define BLANK_CWIDTH    8
+#define BLANK_CHEIGHT   8
+#define BLANK_CHOTX 0
+#define BLANK_CHOTY 0
 
-/* Hidden "this" pointer for the audio functions */
-#define _THIS   SDL_AudioDevice *this
+static const unsigned char blank_cdata[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+static const unsigned char blank_cmask[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-struct SDL_PrivateAudioData
-{
-    /* The file descriptor for the audio device */
-    SDL_RWops *io;
-    Uint32 io_delay;
-    Uint8 *mixbuf;
-};
-
-#endif /* _SDL_diskaudio_h */
 /* vi: set ts=4 sw=4 expandtab: */

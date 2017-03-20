@@ -18,7 +18,7 @@
 #define _MATH_PRIVATE_H_
 
 /* #include <endian.h> */
-#include "SDL_endian.h"
+#include "../SDL_endian.h"
 /* #include <sys/types.h> */
 
 #define attribute_hidden

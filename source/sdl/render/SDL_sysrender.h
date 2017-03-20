@@ -23,8 +23,8 @@
 #ifndef _SDL_sysrender_h
 #define _SDL_sysrender_h
 
-#include "SDL_render.h"
-#include "SDL_events.h"
+#include "../SDL_render.h"
+#include "../SDL_events.h"
 #include "SDL_yuv_sw_c.h"
 
 /* The SDL 2D rendering system */

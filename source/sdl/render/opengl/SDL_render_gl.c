@@ -22,10 +22,10 @@
 
 #if SDL_VIDEO_RENDER_OGL && !SDL_RENDER_DISABLED
 
-#include "../SDL_hints.h"
-#include "SDL_log.h"
-#include "../SDL_assert.h"
-#include "SDL_opengl.h"
+#include "../../SDL_hints.h"
+#include "../../SDL_log.h"
+#include "../../SDL_assert.h"
+#include "../../SDL_opengl.h"
 #include "../SDL_sysrender.h"
 #include "SDL_shaders_gl.h"
 

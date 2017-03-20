@@ -22,7 +22,7 @@
 
 /* Functions for audio drivers to perform runtime conversion of audio format */
 
-#include "SDL_audio.h"
+#include "../SDL_audio.h"
 #include "SDL_audio_c.h"
 
 #include "../SDL_assert.h"

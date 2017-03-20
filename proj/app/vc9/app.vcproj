@@ -1606,6 +1606,14 @@
 				Name="sdl"
 				>
 				<File
+					RelativePath="..\..\..\source\sdl\events\blank_cursor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\events\default_cursor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\sdl\libm\e_atan2.c"
 					>
 				</File>
@@ -2031,6 +2039,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\sdl\include\SDL_gamecontroller.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\joystick\SDL_gamecontrollerdb.h"
 					>
 				</File>
 				<File
