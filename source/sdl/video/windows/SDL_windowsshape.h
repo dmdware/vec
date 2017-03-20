@@ -24,8 +24,8 @@
 #ifndef _SDL_windowsshape_h
 #define _SDL_windowsshape_h
 
-#include "SDL_video.h"
-#include "SDL_shape.h"
+#include "../../SDL_video.h"
+#include "../../SDL_shape.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_shape_internals.h"
 

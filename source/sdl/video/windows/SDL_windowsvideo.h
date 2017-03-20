@@ -46,8 +46,8 @@
 #include "SDL_windowsopengl.h"
 #include "SDL_windowsopengles.h"
 #include "SDL_windowswindow.h"
-#include "SDL_events.h"
-#include "SDL_loadso.h"
+#include "../../SDL_events.h"
+#include "../../SDL_loadso.h"
 
 
 #if WINVER < 0x0601

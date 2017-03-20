@@ -25,7 +25,7 @@
 #include "SDL.h"
 #include "SDL_events.h"
 #include "SDL_sysjoystick.h"
-#include "SDL_assert.h"
+#include "../SDL_assert.h"
 #include "../SDL_hints.h"
 
 #if !SDL_EVENTS_DISABLED

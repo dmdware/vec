@@ -23,9 +23,9 @@
 #ifndef _SDL_sysvideo_h
 #define _SDL_sysvideo_h
 
-#include "SDL_messagebox.h"
-#include "SDL_shape.h"
-#include "SDL_thread.h"
+#include "../SDL_messagebox.h"
+#include "../SDL_shape.h"
+#include "../SDL_thread.h"
 //
 #include "../SDL_video.h"
 

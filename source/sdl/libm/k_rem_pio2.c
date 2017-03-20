@@ -134,7 +134,7 @@ static const char rcsid[] =
 #include "math_libm.h"
 #include "math_private.h"
 
-#include "SDL_assert.h"
+#include "../SDL_assert.h"
 
 libm_hidden_proto(scalbn)
     libm_hidden_proto(floor)

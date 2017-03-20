@@ -506,6 +506,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\source\jpeg\jconfig.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\jpeg\jcparam.c"
 					>
 				</File>
@@ -1667,6 +1671,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\sdl\libm\s_scalbn.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\events\scancodes_windows.h"
 					>
 				</File>
 				<File

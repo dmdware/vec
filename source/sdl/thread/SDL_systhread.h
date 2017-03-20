@@ -25,7 +25,7 @@
 #ifndef _SDL_systhread_h
 #define _SDL_systhread_h
 
-#include "SDL_thread.h"
+#include "../SDL_thread.h"
 #include "SDL_thread_c.h"
 
 /* This function creates a thread, passing args to SDL_RunThread(),

@@ -25,7 +25,7 @@
 #include "SDL_audio.h"
 #include "SDL_audio_c.h"
 
-#include "SDL_assert.h"
+#include "../SDL_assert.h"
 
 /* #define DEBUG_CONVERT */
 

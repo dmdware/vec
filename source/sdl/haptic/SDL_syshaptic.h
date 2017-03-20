@@ -24,7 +24,7 @@
 #ifndef _SDL_syshaptic_h
 #define _SDL_syshaptic_h
 
-#include "SDL_haptic.h"
+#include "../SDL_haptic.h"
 
 
 struct haptic_effect

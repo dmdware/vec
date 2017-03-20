@@ -21,8 +21,8 @@
 #include "../SDL_internal.h"
 
 #include "SDL.h"
-#include "SDL_assert.h"
-#include "SDL_video.h"
+#include "../SDL_assert.h"
+#include "../SDL_video.h"
 #include "SDL_sysvideo.h"
 #include "SDL_pixels.h"
 #include "SDL_surface.h"

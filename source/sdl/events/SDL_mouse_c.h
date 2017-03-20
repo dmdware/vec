@@ -23,7 +23,7 @@
 #ifndef _SDL_mouse_c_h
 #define _SDL_mouse_c_h
 
-#include "SDL_mouse.h"
+#include "../SDL_mouse.h"
 
 typedef Uint32 SDL_MouseID;
 

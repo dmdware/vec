@@ -23,9 +23,9 @@
 #ifndef _SDL_blit_h
 #define _SDL_blit_h
 
-#include "SDL_cpuinfo.h"
-#include "SDL_endian.h"
-#include "SDL_surface.h"
+#include "../SDL_cpuinfo.h"
+#include "../SDL_endian.h"
+#include "../SDL_surface.h"
 
 /* Table to do pixel byte expansion */
 extern Uint8* SDL_expand_byte[9];

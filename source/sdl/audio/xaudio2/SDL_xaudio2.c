@@ -49,10 +49,10 @@
 #if SDL_AUDIO_DRIVER_XAUDIO2
 
 #include "../../core/windows/SDL_windows.h"
-#include "SDL_audio.h"
+#include "../SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "../SDL_sysaudio.h"
-#include "SDL_assert.h"
+#include "../SDL_assert.h"
 
 #ifdef __GNUC__
 /* The configure script already did any necessary checking */

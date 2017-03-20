@@ -26,7 +26,7 @@
    April 27, 2000 - Sam Lantinga
 */
 
-#include "SDL_video.h"
+#include "../SDL_video.h"
 #include "SDL_blit.h"
 
 /* This isn't ready for general consumption yet - it should be folded

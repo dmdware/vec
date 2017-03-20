@@ -20,7 +20,7 @@
 */
 #include "../../SDL_internal.h"
 
-#include "SDL_assert.h"
+#include "../../SDL_assert.h"
 #include "SDL_xinput.h"
 
 

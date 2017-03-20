@@ -82,9 +82,9 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "SDL_assert.h"
-#include "SDL_video.h"
-#include "SDL_cpuinfo.h"
+#include "../SDL_assert.h"
+#include "../SDL_video.h"
+#include "../SDL_cpuinfo.h"
 #include "SDL_yuv_sw_c.h"
 
 

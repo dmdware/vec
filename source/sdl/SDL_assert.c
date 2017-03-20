@@ -27,8 +27,8 @@
 #include "SDL.h"
 #include "SDL_atomic.h"
 #include "SDL_messagebox.h"
-#include "SDL_video.h"
-#include "SDL_assert.h"
+#include "../SDL_video.h"
+#include "../SDL_assert.h"
 #include "SDL_assert_c.h"
 #include "video/SDL_sysvideo.h"
 

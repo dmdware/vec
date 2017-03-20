@@ -20,7 +20,7 @@
 */
 #include "../SDL_internal.h"
 
-#include "SDL_video.h"
+#include "../SDL_video.h"
 #include "SDL_blit.h"
 
 
