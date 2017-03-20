@@ -222,7 +222,7 @@ UpdateXInputJoystickBatteryInformation(SDL_Joystick * joystick, XINPUT_BATTERY_I
 {
     if ( pBatteryInformation->BatteryType != BATTERY_TYPE_UNKNOWN )
     {
-        SDL_JoystickPowerLevel ePowerLevel = SDL_JOYSTICK_POWER_UNKNOWN;
+        enum SDL_JoystickPowerLevel ePowerLevel = SDL_JOYSTICK_POWER_UNKNOWN;
         if (pBatteryInformation->BatteryType == BATTERY_TYPE_WIRED) {
             ePowerLevel = SDL_JOYSTICK_POWER_WIRED;
         } else {

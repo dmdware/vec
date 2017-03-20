@@ -2082,7 +2082,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\sdl\include\SDL_joystick.h"
+					RelativePath="..\..\..\source\sdl\SDL_joystick.h"
 					>
 				</File>
 				<File
@@ -2659,6 +2659,14 @@
 				</File>
 				<File
 					RelativePath="..\..\..\source\sdl\video\windows\SDL_windowsopengl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\video\windows\SDL_windowsopengles.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\source\sdl\video\windows\SDL_windowsopengles.h"
 					>
 				</File>
 				<File

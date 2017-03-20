@@ -24,7 +24,7 @@
 
 #include "../../core/windows/SDL_windows.h"
 
-#include "SDL_assert.h"
+#include "../../SDL_assert.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_pixels_c.h"
 #include "../../events/SDL_keyboard_c.h"
@@ -32,7 +32,7 @@
 
 #include "SDL_windowsvideo.h"
 #include "SDL_windowswindow.h"
-#include "../SDL_hints.h"
+#include "../../SDL_hints.h"
 
 /* Dropfile support */
 #include <shellapi.h>

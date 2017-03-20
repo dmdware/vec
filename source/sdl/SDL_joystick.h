@@ -82,6 +82,10 @@ typedef enum
     SDL_JOYSTICK_POWER_MAX
 } SDL_JoystickPowerLevel;
 
+//vc9 ansi c ^^^^ doesn't work to def "enum SDL_JoystickPowerLevel blah;" illegal formal parameter list blah blah
+//ned "enum SDL_JoystickPowerLevel blah;"
+//typedef enum SDL_JoystickPowerLevel SDL_JoystickPowerLevel;
+
 /* Function prototypes */
 /**
  *  Count the number of joysticks attached to the system right now
@@ -260,7 +264,7 @@ extern DECLSPEC void SDLCALL SDL_JoystickClose(SDL_Joystick * joystick);
 /**
  *  Return the battery level of this joystick
  */
-extern DECLSPEC SDL_JoystickPowerLevel SDLCALL SDL_JoystickCurrentPowerLevel(SDL_Joystick * joystick);
+extern DECLSPEC enum SDL_JoystickPowerLevel SDLCALL SDL_JoystickCurrentPowerLevel(SDL_Joystick * joystick);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

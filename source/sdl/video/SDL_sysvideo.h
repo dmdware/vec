@@ -26,6 +26,8 @@
 #include "SDL_messagebox.h"
 #include "SDL_shape.h"
 #include "SDL_thread.h"
+//
+#include "../SDL_video.h"
 
 /* The SDL video driver */
 
@@ -101,7 +103,10 @@ struct SDL_Window
 
     SDL_WindowShaper *shaper;
 
-    SDL_HitTest hit_test;
+    //SDL_HitTest hit_test;
+	enum SDL_HitTestResult (SDLCALL *hit_test)(SDL_Window *win,
+                                                 const SDL_Point *area,
+                                                 void *data);
     void *hit_test_data;
 
     SDL_WindowUserData *data;

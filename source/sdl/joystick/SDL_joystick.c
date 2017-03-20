@@ -910,14 +910,14 @@ SDL_JoystickGUID SDL_JoystickGetGUIDFromString(const char *pchGUID)
 
 
 /* update the power level for this joystick */
-void SDL_PrivateJoystickBatteryLevel(SDL_Joystick * joystick, SDL_JoystickPowerLevel ePowerLevel)
+void SDL_PrivateJoystickBatteryLevel(SDL_Joystick * joystick, enum SDL_JoystickPowerLevel ePowerLevel)
 {
     joystick->epowerlevel = ePowerLevel;
 }
 
 
 /* return its power level */
-SDL_JoystickPowerLevel SDL_JoystickCurrentPowerLevel(SDL_Joystick * joystick)
+enum SDL_JoystickPowerLevel SDL_JoystickCurrentPowerLevel(SDL_Joystick * joystick)
 {
     if (!SDL_PrivateJoystickValid(joystick)) {
         return (SDL_JOYSTICK_POWER_UNKNOWN);

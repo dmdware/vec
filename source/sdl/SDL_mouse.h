@@ -69,6 +69,8 @@ typedef enum
     SDL_MOUSEWHEEL_FLIPPED    /**< The scroll direction is flipped / natural */
 } SDL_MouseWheelDirection;
 
+///ansi c vc9 ^^^^^^^^^^^ no "SDL.. def" -> "enum SDL... def";
+
 /* Function prototypes */
 
 /**

@@ -978,12 +978,14 @@ typedef enum
     SDL_HITTEST_RESIZE_LEFT
 } SDL_HitTestResult;
 
+//^^^^^^^^^^^^^^ vc9 ansi c error requires "enum enum SDL_HitTestResult def..."
+
 /**
  *  \brief Callback used for hit-testing.
  *
  *  \sa SDL_SetWindowHitTest
  */
-typedef SDL_HitTestResult (SDLCALL *SDL_HitTest)(SDL_Window *win,
+typedef enum SDL_HitTestResult (SDLCALL *SDL_HitTest)(SDL_Window *win,
                                                  const SDL_Point *area,
                                                  void *data);
 

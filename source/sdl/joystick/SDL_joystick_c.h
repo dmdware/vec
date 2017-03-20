@@ -44,7 +44,7 @@ extern int SDL_PrivateJoystickHat(SDL_Joystick * joystick,
 extern int SDL_PrivateJoystickButton(SDL_Joystick * joystick,
                                      Uint8 button, Uint8 state);
 extern void SDL_PrivateJoystickBatteryLevel(SDL_Joystick * joystick,
-                                            SDL_JoystickPowerLevel ePowerLevel);
+                                            enum SDL_JoystickPowerLevel ePowerLevel);
 
 /* Internal sanity checking functions */
 extern int SDL_PrivateJoystickValid(SDL_Joystick * joystick);

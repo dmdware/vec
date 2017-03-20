@@ -956,7 +956,7 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 POINT winpoint = { (int) LOWORD(lParam), (int) HIWORD(lParam) };
                 if (ScreenToClient(hwnd, &winpoint)) {
                     const SDL_Point point = { (int) winpoint.x, (int) winpoint.y };
-                    const SDL_HitTestResult rc = window->hit_test(window, &point, window->hit_test_data);
+                    const enum SDL_HitTestResult rc = window->hit_test(window, &point, window->hit_test_data);
                     switch (rc) {
                         #define POST_HIT_TEST(ret) { SDL_SendWindowEvent(data->window, SDL_WINDOWEVENT_HIT_TEST, 0, 0); return ret; }
                         case SDL_HITTEST_DRAGGABLE: POST_HIT_TEST(HTCAPTION);

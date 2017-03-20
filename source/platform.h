@@ -219,11 +219,11 @@
 #include "sdl/SDL.h"
 #ifndef MATCHMAKER
 #include "sdl/SDL_opengl.h"
-#include <SDL_mixer.h>
+//#include <SDL_mixer.h>
 //#include <SDL_ttf.h>
 #include "sdl/SDL_syswm.h"
 #endif
-#include <SDL_net.h>
+//#include <SDL_net.h>
 #endif
 
 #endif

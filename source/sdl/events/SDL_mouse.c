@@ -417,7 +417,7 @@ SDL_SendMouseButton(SDL_Window * window, SDL_MouseID mouseID, Uint8 state, Uint8
 }
 
 int
-SDL_SendMouseWheel(SDL_Window * window, SDL_MouseID mouseID, int x, int y, SDL_MouseWheelDirection direction)
+SDL_SendMouseWheel(SDL_Window * window, SDL_MouseID mouseID, int x, int y, enum SDL_MouseWheelDirection direction)
 {
     SDL_Mouse *mouse = SDL_GetMouse();
     int posted;
