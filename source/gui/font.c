@@ -384,8 +384,6 @@ void LoadFont(int i, char *fontfile)
 		return;
 	}
 
-	fseek(fp, 0, SEEK_END);
-
 	//skip 2 lines
 	do
 	{
@@ -398,7 +396,7 @@ void LoadFont(int i, char *fontfile)
 
 	do
 	{
-		fscanf(fp, "g_mv %h %h %h %h %h %h %h %h %h\r\n",
+		fscanf(fp, "%d %h %h %h %h %h %h %h %h\r\n",
 			   &n,
 			   &pixel[0], &pixel[1],
 			   &texsize[0], &texsize[1],
