@@ -12,6 +12,7 @@
 #include "../sim/player.h"
 #include "../sound/sound.h"
 #include "../net/net.h"
+#include "../gui/font.h"
 
 char g_appmode = APPMODE_LOGO;
 char g_viewmode = VIEWMODE_FIRST;
@@ -183,11 +184,26 @@ void DelFBO(unsigned int* rendertex, unsigned int* renderrb, unsigned int* rende
 
 void Draw()
 {
+	float white[4] = {1,1,1,1};
+	float frame[4] = {0,0,(float)g_width,(float)g_height};
 	Widget *gui;
 
 	gui = (Widget*)&g_gui;
 
 	/* TODO leave as float for now then use fixmath int's */
+
+	Ortho(g_width, g_height, 1, 1, 1, 1);
+
+	//DrawImage(g_tex[0].texname,
+	//	0,0,100,100, 
+	//	0,0,1,1,
+	//	frame);
+
+
+	DrawTx(MAINFONT8, frame, frame, "Test",
+	white, 0, -1, ecfalse, ecfalse);
+
+	EndS();
 
 	Widget_frameupd(gui);
 	Widget_draw(gui);
@@ -273,12 +289,6 @@ void LoadCfg()
 
 		if(sscanf(line, "%s %s", key, act) < 2)
 			continue;
-
-		for(i=0; i<strlen(act); ++i)
-		{
-			fprintf(g_applog, "act[%d]=%d\r\n", i, (int)act[i]);
-			fflush(g_applog);
-		}
 
 		sscanf(act, "%f", &valuef);
 		valuei = (int)valuef;

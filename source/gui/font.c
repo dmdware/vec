@@ -180,6 +180,7 @@ void DrawGlyph()
 		right = left + g->texsize[0];
 		top = y + g->offset[1];
 		bottom = top + g->texsize[1];
+
 		DrawGlyph2((float)left, (float)top, (float)right, (float)bottom, g->texcoord[0], g->texcoord[1], g->texcoord[2], g->texcoord[3]);
 	}
 }
@@ -396,7 +397,7 @@ void LoadFont(int i, char *fontfile)
 
 	do
 	{
-		fscanf(fp, "%d %h %h %h %h %h %h %h %h\r\n",
+		fscanf(fp, "%d %hu %hu %hu %hu %hu %hu %hu %hu\r\n",
 			   &n,
 			   &pixel[0], &pixel[1],
 			   &texsize[0], &texsize[1],
@@ -494,7 +495,7 @@ void DrawGlyph2(float left, float top, float right, float bottom, float texleft,
 	vertices[21] = newtop;
 	vertices[22] = newtexleft;
 	vertices[23] = newtextop;
-    
+
     s = &g_sh[g_curS];
 
 	glVertexPointer(2, GL_FLOAT, sizeof(float)*4, vertices);
