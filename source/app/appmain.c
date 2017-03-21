@@ -206,6 +206,7 @@ void LoadCfg()
 	float valuef;
 	int valuei;
 	ecbool valueb;
+	int i;
 
 	EnumDisp();
 
@@ -262,21 +263,26 @@ void LoadCfg()
 
 	while(!feof(fp))
 	{
-		strcpy(key, "");
-		strcpy(act, "");
-
 		fgets(line, 127, fp);
 
 		if(strlen(line) > 127)
 			continue;
 
 		act[0] = 0;
+		key[0] = 0;
 
-		sscanf(line, "%s %s", key, act);
+		if(sscanf(line, "%s %s", key, act) < 2)
+			continue;
+
+		for(i=0; i<strlen(act); ++i)
+		{
+			fprintf(g_applog, "act[%d]=%d\r\n", i, (int)act[i]);
+			fflush(g_applog);
+		}
 
 		sscanf(act, "%f", &valuef);
-		sscanf(act, "%d", &valuei);
-		sscanf(act, "%hhu", &valueb);
+		valuei = (int)valuef;
+		valueb = (ecbool)valuef;
 
 		if(strcmp(key, "fullscreen") == 0)					g_fs = valueb;
 		else if(strcmp(key, "client_width") == 0)			g_width = g_selres.x = valuei;
