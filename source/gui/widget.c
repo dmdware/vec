@@ -15,6 +15,7 @@
 #include "../window.h"
 #include "icon.h"
 #include "../debug.h"
+#include "widgets/button.h"
 
 void Widget_init(Widget* w)
 {
@@ -107,6 +108,9 @@ void Widget_draw(Widget *w)
 
 	switch(w->type)
 	{
+	case WIDGET_BUTTON:
+		Button_draw((Button*)w);
+		break;
 	default:
 		break;
 	}
@@ -219,9 +223,6 @@ void Widget_add(Widget *w, Widget *neww)
 		OUTOFMEM();
 
 	List_pushback2(&w->sub, sizeof(Widget*), &neww);
-
-	fprintf(g_applog, "add %s\r\n", neww->name);
-	fflush(g_applog);
 }
 
 void Widget_gainfocus(Widget *w)

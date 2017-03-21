@@ -19,41 +19,76 @@ const char *SHTEXT [SHADERS][4]
 	{
 "SH_ORTHO v",
 "SH_ORTHO f",
-"\r\n"
-"#version 120\r\n"\
-"\r\n"\
-"attribute vec4 position;\r\n"\
-"\r\n"\
-"uniform float width;\r\n"\
-"uniform float height;\r\n"\
-"\r\n"\
-"attribute vec2 texCoordIn0;\r\n"\
-"varying vec2 texCoordOut0;\r\n"\
-"\r\n"\
-"void main(void)\r\n"\
-"{\r\n"\
-"	gl_Position = vec4(gl_Vertex.x * 2.0 / width - 1.0,\r\n"\
-"		gl_Vertex.y * -2.0 / height + 1.0,\r\n"\
-"		gl_Vertex.z, \r\n"\
-"		1.0);\r\n"\
-"                    \r\n"\
-"	gl_TexCoord[0] = gl_MultiTexCoord0;\r\n"\
-"}\r\n"\
-"\r\n",
+"														\r\n"
+"#version 120											\r\n"\
+"														\r\n"\
+"attribute vec4 position;								\r\n"\
+"														\r\n"\
+"uniform float width;									\r\n"\
+"uniform float height;									\r\n"\
+"														\r\n"\
+"attribute vec2 texCoordIn0;							\r\n"\
+"varying vec2 texCoordOut0;								\r\n"\
+"														\r\n"\
+"void main(void)										\r\n"\
+"{														\r\n"\
+"	gl_Position = vec4(gl_Vertex.x * 2.0 / width - 1.0,	\r\n"\
+"		gl_Vertex.y * -2.0 / height + 1.0,				\r\n"\
+"		gl_Vertex.z,									\r\n"\
+"		1.0);											\r\n"\
+"														\r\n"\
+"	gl_TexCoord[0] = gl_MultiTexCoord0;					\r\n"\
+"}														\r\n"\
+"														\r\n",
 
-"\r\n"\
-"#version 120\r\n"\
-"\r\n"\
-"uniform vec4 color;\r\n"\
-"\r\n"\
-"varying vec2 texCoordOut0;\r\n"\
-"uniform sampler2D texture0;\r\n"\
-"\r\n"\
-"void main(void)\r\n"\
-"{\r\n"\
+"														\r\n"\
+"#version 120											\r\n"\
+"														\r\n"\
+"uniform vec4 color;									\r\n"\
+"														\r\n"\
+"varying vec2 texCoordOut0;								\r\n"\
+"uniform sampler2D texture0;							\r\n"\
+"														\r\n"\
+"void main(void)										\r\n"\
+"{														\r\n"\
 "	gl_FragColor = color * texture2D(texture0, gl_TexCoord[0].xy);\r\n"\
-"}\r\n"\
-"\r\n"
+"}														\r\n"\
+"														\r\n"
+	},
+
+	/* SH_COLOR2D */
+	{
+"SH_COLOR2D v",
+"SH_COLOR2D f",
+"														\r\n"\
+"#version 120											\r\n"\
+"														\r\n"\
+"attribute vec4 position;								\r\n"\
+"														\r\n"\
+"uniform float width;									\r\n"\
+"uniform float height;									\r\n"\
+"														\r\n"\
+"														\r\n"\
+"void main(void)										\r\n"\
+"{														\r\n"\
+"	gl_Position = vec4(gl_Vertex.x * 2.0 / width - 1.0,	\r\n"\
+"		gl_Vertex.y * -2.0 / height + 1.0,				\r\n"\
+"		gl_Vertex.z,									\r\n"\
+"		1.0);											\r\n"\
+"														\r\n"\
+"}														\r\n"\
+"														\r\n",
+"														\r\n"\
+"#version 120											\r\n"\
+"														\r\n"\
+"uniform vec4 color;									\r\n"\
+"														\r\n"\
+"														\r\n"\
+"void main(void)										\r\n"\
+"{														\r\n"\
+"	gl_FragColor = color;								\r\n"\
+"}														\r\n"\
+"														\r\n"\
 	}
 };
 
@@ -222,7 +257,11 @@ void InitGLSL()
 	}
 #endif
 
-	LoadSh(SH_ORTHO, SHTEXT[SH_ORTHO][0], SHTEXT[SH_ORTHO][1], SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][3], 
+	LoadSh(SH_ORTHO, SHTEXT[SH_ORTHO][0], SHTEXT[SH_ORTHO][1], 
+		SHTEXT[SH_ORTHO][2], SHTEXT[SH_ORTHO][3], 
+		ectrue, ecfalse);
+	LoadSh(SH_COLOR2D, SHTEXT[SH_COLOR2D][0], SHTEXT[SH_COLOR2D][1], 
+		SHTEXT[SH_COLOR2D][2], SHTEXT[SH_COLOR2D][3], 
 		ectrue, ecfalse);
 
 	return;

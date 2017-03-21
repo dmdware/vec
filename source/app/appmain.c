@@ -51,8 +51,8 @@ void UpdLoad()
 
 			g_appmode = APPMODE_MENU;
 			Widget_hide(gui);
-//			menu = Widget_get(gui, "menu");
-	//		Widget_show(menu);
+			menu = Widget_get(gui, "menu");
+			Widget_show(menu);
 		}
 		break;
 	}
