@@ -47,7 +47,7 @@ void Button_init(Button *b, Widget* parent,
 				 void (*overf2)(int p), void (*out)(), int parm, void (*click3)(Widget* w));
 void Button_draw(Button *b);
 void Button_drawover(Button *b);
-void Button_inev(Button *b, InEv* ie);
+void Button_inev2(Button *b, InEv* ie);
 void CenterLabel(Button *w);
 
 #endif

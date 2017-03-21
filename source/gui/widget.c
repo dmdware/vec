@@ -172,6 +172,9 @@ void Widget_inev(Widget *w, InEv* ie)
 
 	switch(w->type)
 	{
+	case WIDGET_BUTTON:
+		Button_inev2((Button*)w, ie);
+		break;
 	case WIDGET_GUI:
 		GUI_inev2((GUI*)w, ie);
 		break;

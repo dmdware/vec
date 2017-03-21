@@ -49,7 +49,7 @@ void Button_init(Button *b, Widget* parent, const char* name, const char* filepa
 	Widget_reframe(bw);
 }
 
-void Button_inev(Button *b, InEv* ie)
+void Button_inev2(Button *b, InEv* ie)
 {
 	Widget *bw;
 
